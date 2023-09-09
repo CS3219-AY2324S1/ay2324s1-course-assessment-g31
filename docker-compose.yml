@@ -1,0 +1,27 @@
+version: "3"
+services:
+  video-call:
+    container_name: video-call-service
+    build:
+      context: ./services/video-call-service
+      dockerfile: Dockerfile
+    ports:
+      - "5005:5000"
+    environment:
+      - PORT=5000
+    env_file:
+      - ./services/video-call-service/.env
+    links:
+      - broker
+      - postgres_video_call_service
+
+  postgres_video_call_service:
+    image: postgres:latest
+    container_name: postgres-video-call-service
+    volumes:
+      - progresDB:/data/postgres/video-call-service
+    env_file:
+      - ./services/video-call-service/.env
+
+volumes:
+  progresDB:
