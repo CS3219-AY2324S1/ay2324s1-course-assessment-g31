@@ -19,11 +19,11 @@ module.exports = {
     "import/no-absolute-path": "off",
     "import/no-extraneous-dependencies": [
       "error", 
-      { "devDependencies": true }
+      { "devDependencies": true, },
     ],
     'react-refresh/only-export-components': [
       'warn',
-      { allowConstantExport: true },
+      { allowConstantExport: true, },
     ],
   },
 }
