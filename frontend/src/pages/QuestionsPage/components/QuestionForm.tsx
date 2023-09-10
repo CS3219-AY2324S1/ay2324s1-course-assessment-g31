@@ -1,12 +1,21 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
 import {
   Category,
   CategoryMap,
   Complexity,
   ComplexityMap,
+  Question,
 } from "../../../types/question";
 
-export default function QuestionForm() {
+interface QuestionFormProps {
+  questionToEdit: Question | undefined;
+  setQuestionToEdit: React.Dispatch<React.SetStateAction<Question | undefined>>;
+}
+
+export default function QuestionForm({
+  questionToEdit,
+  setQuestionToEdit,
+}: QuestionFormProps) {
   const [title, setTitle] = useState<string>("");
   const [selectedComplexity, setSelectedComplexity] =
     useState<Complexity>("EASY");
@@ -29,18 +38,23 @@ export default function QuestionForm() {
     e.preventDefault();
     setError("");
     try {
-      const response = await fetch("http://localhost:5000/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        questionToEdit
+          ? `http://localhost:5000/update/${questionToEdit._id}`
+          : "http://localhost:5000/create",
+        {
+          method: questionToEdit ? "PATCH" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            complexity: selectedComplexity,
+            category: selectedCategory,
+            description,
+          }),
         },
-        body: JSON.stringify({
-          title,
-          complexity: selectedComplexity,
-          category: selectedCategory,
-          description,
-        }),
-      });
+      );
 
       const data = await response.json();
       if (!response.ok) {
@@ -52,8 +66,25 @@ export default function QuestionForm() {
     }
   };
 
+  useEffect(() => {
+    if (questionToEdit) {
+      // prefill form with question to edit
+      setTitle(questionToEdit.title);
+      setSelectedComplexity(questionToEdit.complexity);
+      setSelectedCategory([...questionToEdit.category]);
+      setDescription(questionToEdit.description);
+    } else {
+      // return to default
+      setTitle("");
+      setSelectedComplexity("EASY");
+      setSelectedCategory([]);
+      setDescription("");
+    }
+  }, [questionToEdit]);
+
   return (
     <div>
+      <span>question: {questionToEdit?.title}</span>
       <form onSubmit={handleSubmit}>
         <label htmlFor="title">
           Question Title
@@ -97,7 +128,14 @@ export default function QuestionForm() {
             onChange={(e) => setDescription(e.target.value)}
           />
         </label>
-        <button type="submit">submit</button>
+        <button type="submit">
+          {questionToEdit ? "save changes" : "submit"}
+        </button>
+        {questionToEdit && (
+          <button type="button" onClick={() => setQuestionToEdit(undefined)}>
+            cancel
+          </button>
+        )}
       </form>
       {error && <span>{error}</span>}
     </div>

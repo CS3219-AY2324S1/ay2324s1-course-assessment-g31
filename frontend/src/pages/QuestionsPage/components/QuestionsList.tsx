@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { Question } from "../../../types/question";
 import QuestionCard from "./QuestionCard";
 
-export default function QuestionsList() {
+interface QuestionsListProps {
+  setQuestionToEdit: React.Dispatch<React.SetStateAction<Question | undefined>>;
+}
+
+export default function QuestionsList({
+  setQuestionToEdit,
+}: QuestionsListProps) {
   const [questions, setQuestions] = useState<Question[]>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -16,11 +22,10 @@ export default function QuestionsList() {
       });
 
       const data = await response.json();
-      if (response.ok) {
-        setQuestions(data);
-        setIsLoading(false);
+      if (!response.ok) {
+        throw Error(data.error);
       } else {
-        setError(data.error);
+        setQuestions(data);
         setIsLoading(false);
       }
     } catch (err: any) {
@@ -41,7 +46,12 @@ export default function QuestionsList() {
     <div>
       <h2>Questions</h2>
       {questions?.map((question, index) => (
-        <QuestionCard key={question._id} question={question} index={index} />
+        <QuestionCard
+          key={question._id}
+          question={question}
+          index={index}
+          setQuestionToEdit={setQuestionToEdit}
+        />
       ))}
     </div>
   );
