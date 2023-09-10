@@ -110,8 +110,8 @@ export default function QuestionForm({
             </div>
           ))}
         </div>
+        <span>Category:</span>
         <div className={styles.categoryContainer}>
-          <span>Category:</span>
           {Object.values(CategoryMap).map((category) => (
             <div key={category}>
               <input

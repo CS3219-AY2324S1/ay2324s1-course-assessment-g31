@@ -14,6 +14,7 @@ enum Category {
   Databases = "Databases",
   Arrays = "Arrays",
   Brainteaser = "Brainteaser",
+  Recursion = "Recursion",
 }
 
 export interface IQuestion {

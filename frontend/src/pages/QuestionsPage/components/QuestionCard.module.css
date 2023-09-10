@@ -27,3 +27,7 @@
   border-radius: 8px;
   padding: 3px;
 }
+
+p {
+  white-space: pre-wrap;
+}

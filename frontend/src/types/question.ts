@@ -14,6 +14,7 @@ export enum CategoryMap {
   Databases = "Databases",
   Arrays = "Arrays",
   Brainteaser = "Brainteaser",
+  Recursion = "Recursion",
 }
 
 export type Category = `${CategoryMap}`;
