@@ -1,9 +1,7 @@
+import QuestionsPage from "./pages/QuestionsPage/QuestionsPage";
+
 function App() {
-  return (
-    <div>
-      <h2>CS3219 Project</h2>
-    </div>
-  );
+  return <QuestionsPage />;
 }
 
 export default App;
