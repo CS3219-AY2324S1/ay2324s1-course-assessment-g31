@@ -1,4 +1,4 @@
-import { Schema, model, connect } from 'mongoose';
+import { Schema, model, connect } from "mongoose";
 
 enum Complexity {
   Easy = "EASY",
@@ -30,6 +30,6 @@ const questionSchema = new Schema<IQuestion>({
   description: { type: String, required: true },
 });
 
-const Question = model<IQuestion>('Question', questionSchema);
+const Question = model<IQuestion>("Question", questionSchema);
 
 export default Question;
