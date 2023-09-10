@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Question } from "../../../types/question";
+import styles from "./QuestionCard.module.css";
 
 interface QuestionCardProps {
   setQuestionToEdit: React.Dispatch<React.SetStateAction<Question | undefined>>;
@@ -45,28 +46,41 @@ export default function QuestionCard({
   };
 
   return (
-    <div>
+    <div className={styles.questionContainer}>
       <div
         onClick={handleShowDescription}
         onKeyDown={handleShowDescription}
         role="button"
         tabIndex={index}
+        className={styles.detailsContainer}
       >
-        <span>{question.title}</span>
-        <span>{question.complexity}</span>
-        {question.category.map((cat) => (
-          <span key={cat}>{cat}</span>
-        ))}
-        {showDescription && <p>{question.description}</p>}
-
-        {error && <span>{error}</span>}
+        <span>Title: {question.title}</span>
+        <span>Complexity: {question.complexity}</span>
+        <div className={styles.categoryContainer}>
+          {question.category.map((cat) => (
+            <span className={styles.category} key={cat}>
+              {cat}
+            </span>
+          ))}
+        </div>
       </div>
-      <button type="button" disabled={isLoading} onClick={handleDeleteQuestion}>
-        delete
-      </button>
-      <button type="button" onClick={() => setQuestionToEdit(question)}>
-        edit
-      </button>
+      {showDescription && <p>{question.description}</p>}
+      {showDescription && (
+        <>
+          {" "}
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={handleDeleteQuestion}
+          >
+            delete
+          </button>
+          <button type="button" onClick={() => setQuestionToEdit(question)}>
+            edit
+          </button>
+        </>
+      )}
+      {error && <span>{error}</span>}
     </div>
   );
 }

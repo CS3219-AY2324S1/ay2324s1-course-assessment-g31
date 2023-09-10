@@ -1,0 +1,29 @@
+.questionContainer {
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.detailsContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.detailsContainer:hover {
+  background-color: rgb(240, 239, 239);
+  cursor: pointer;
+}
+
+.categoryContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category {
+  border: 1px solid black;
+  background-color: lightgray;
+  border-radius: 8px;
+  padding: 3px;
+}

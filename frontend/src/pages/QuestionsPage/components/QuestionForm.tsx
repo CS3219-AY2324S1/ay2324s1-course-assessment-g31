@@ -6,6 +6,7 @@ import {
   ComplexityMap,
   Question,
 } from "../../../types/question";
+import styles from "./QuestionForm.module.css";
 
 interface QuestionFormProps {
   questionToEdit: Question | undefined;
@@ -84,58 +85,64 @@ export default function QuestionForm({
 
   return (
     <div>
-      <span>question: {questionToEdit?.title}</span>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={styles.formContainer}>
         <label htmlFor="title">
-          Question Title
+          Question Title:
           <input
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
         </label>
-
-        {Object.values(ComplexityMap).map((complexity) => (
-          <div key={complexity}>
-            <input
-              type="radio"
-              id={complexity}
-              name="complexity"
-              value={complexity}
-              onChange={() => setSelectedComplexity(complexity)}
-              checked={selectedComplexity === complexity}
-            />
-            <label htmlFor={complexity}>{complexity}</label>
-          </div>
-        ))}
-        {Object.values(CategoryMap).map((category) => (
-          <div key={category}>
-            <input
-              type="checkbox"
-              id={category}
-              value={category}
-              onChange={handleCheckboxChange}
-              checked={selectedCategory.includes(category)}
-            />
-            <label htmlFor={category}>{category}</label>
-          </div>
-        ))}
+        <div className={styles.complexityContainer}>
+          <span>Complexity:</span>
+          {Object.values(ComplexityMap).map((complexity) => (
+            <div key={complexity}>
+              <input
+                type="radio"
+                id={complexity}
+                name="complexity"
+                value={complexity}
+                onChange={() => setSelectedComplexity(complexity)}
+                checked={selectedComplexity === complexity}
+              />
+              <label htmlFor={complexity}>{complexity}</label>
+            </div>
+          ))}
+        </div>
+        <div className={styles.categoryContainer}>
+          <span>Category:</span>
+          {Object.values(CategoryMap).map((category) => (
+            <div key={category}>
+              <input
+                type="checkbox"
+                id={category}
+                value={category}
+                onChange={handleCheckboxChange}
+                checked={selectedCategory.includes(category)}
+              />
+              <label htmlFor={category}>{category}</label>
+            </div>
+          ))}
+        </div>
         <label htmlFor="description">
-          Question Description
+          Question Description:
           <textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
         </label>
-        <button type="submit">
-          {questionToEdit ? "save changes" : "submit"}
-        </button>
-        {questionToEdit && (
-          <button type="button" onClick={() => setQuestionToEdit(undefined)}>
-            cancel
+        <div>
+          <button type="submit">
+            {questionToEdit ? "save changes" : "create"}
           </button>
-        )}
+          {questionToEdit && (
+            <button type="button" onClick={() => setQuestionToEdit(undefined)}>
+              cancel
+            </button>
+          )}
+        </div>
       </form>
       {error && <span>{error}</span>}
     </div>

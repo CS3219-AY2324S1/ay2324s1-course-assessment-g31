@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Question } from "../../../types/question";
 import QuestionCard from "./QuestionCard";
+import styles from "./QuestionsList.module.css";
 
 interface QuestionsListProps {
   setQuestionToEdit: React.Dispatch<React.SetStateAction<Question | undefined>>;
@@ -43,7 +44,7 @@ export default function QuestionsList({
   if (isLoading) return <div>Loading questions</div>;
 
   return (
-    <div>
+    <div className={styles.listContainer}>
       <h2>Questions</h2>
       {questions?.map((question, index) => (
         <QuestionCard
