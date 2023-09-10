@@ -11,10 +11,10 @@ export const getAllQuestions = async (req: Request, res: Response) => {
 }
 
 export const createQuestion = async (req: Request, res: Response) => {
-  const {title, complexity, description}: IQuestion = req.body;
+  const question: IQuestion = req.body;
   try {
-    const question = await Question.create({ title, complexity, description });
-    res.status(201).json({ question });
+    const questionResult = await Question.create(question);
+    res.status(201).json({ questionResult });
   } catch {
     res.status(500).json({ error: "Error creating question" });
   }
@@ -22,10 +22,10 @@ export const createQuestion = async (req: Request, res: Response) => {
 
 export const updateQuestion = async (req: Request, res: Response) => {
   const { id: questionId } = req.params;
-  const {title, complexity, description}: IQuestion = req.body;
+  const question: IQuestion = req.body;
   try {
-    const question = await Question.findByIdAndUpdate(questionId, {title, complexity, description});
-    res.status(201).json({ question });
+    const questionOriginal = await Question.findByIdAndUpdate(questionId, question);
+    res.status(201).json({ questionOriginal });
   } catch {
     res.status(500).json({ error: "Error updating question" });
   }

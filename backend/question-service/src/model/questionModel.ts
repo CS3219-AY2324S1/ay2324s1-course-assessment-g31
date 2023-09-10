@@ -6,15 +6,27 @@ enum Complexity {
   Hard = "HARD",
 }
 
+enum Category {
+  Strings = "Strings",
+  DataStructures = "Data Structures",
+  Algorithms = "Algorithms",
+  BitManipulation = "Bit Manipulation",
+  Databases = "Databases",
+  Arrays = "Arrays",
+  Brainteaser = "Brainteaser",
+}
+
 export interface IQuestion {
   title: string;
   complexity: Complexity;
+  category: Category[];
   description: string;
 }
 
 const questionSchema = new Schema<IQuestion>({
   title: { type: String, required: true },
-  complexity: { type: String, required: true },
+  complexity: { type: String, enum: Complexity, required: true },
+  category: { type: [String], enum: Category, required: true },
   description: { type: String, required: true },
 });
 
