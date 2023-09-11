@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom"; // Import Link
 import styles from "./LoginForm.module.css";
 
 export default function LoginForm() {
@@ -7,7 +8,8 @@ export default function LoginForm() {
     password: "",
   });
 
-  const [message, setMessage] = useState(""); // New state for generic message
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -39,6 +41,7 @@ export default function LoginForm() {
       } else {
         console.log("Successfully logged in:", formData);
         setMessage("Successfully logged in"); // Set the success message
+        navigate(`/profile?userId=${data.user_id}`);
       }
     } catch (err: any) {
       console.error("Network error:", err.message);
@@ -80,6 +83,9 @@ export default function LoginForm() {
           <button type="submit">Login</button>
           {message && <p>{message}</p>}
         </div>
+        <p>
+          No account?<Link to="/register"> Register</Link>
+        </p>
       </form>
     </div>
   );

@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { login, register } from '../controller/userController';
+import { login, register, getProfile, deleteProfile } from '../controller/userController';
 
 const router = Router();
 
@@ -9,7 +9,18 @@ router.route('/register').post(register);
 // login controller
 router.route('/login').post(login);
 
-// logout controller
-router.route('/logout').post();
+/* Profile controller */
+
+// GET user profile
+router.route('/profile').post(getProfile);
+
+// DELETE user profile
+router.delete("/delete/:id", deleteProfile);
+
+// TODO: log
+
+
+
+
 
 export default router;

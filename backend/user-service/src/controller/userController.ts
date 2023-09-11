@@ -11,8 +11,6 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export const register = async (req: Request, res: Response) => {
     try {
-        console.log("reached register controller");
-        console.log(req.body);
       // Parameters for users table
         const user_id = uuidv4();
         const username = req.body.username;
@@ -22,7 +20,6 @@ export const register = async (req: Request, res: Response) => {
         const account_type = (await userFunctions.getIdForUserAccountType()) || 'null';
 
         const emailTaken = await userFunctions.isEmailTaken(email);
-        console.log(emailTaken);
 
         if (emailTaken) {
             return res.status(400).json({ message: 'That email is already in use' });
@@ -74,3 +71,40 @@ export const login = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'An error occurred while logging in.' });
     }
 };
+
+export const getProfile = async (req: Request, res: Response) => {
+    try {
+        const user_id = req.body.userId;
+        const user = await userFunctions.getUserById(user_id);
+
+        if (!user) {
+            return res.status(400).json({ message: 'User profile does not exists.' });
+        }
+
+        const username = user.username;
+        const email = user.email;
+        const hashed_pw = user.hashed_pw;
+
+        //res.status(200).json({ message: 'Successfully retrieved profile!!!'});
+        res.status(200).json({ username: username, email: email, hashedPassword: hashed_pw });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'An error occurred while retreiving profile.' });
+    }
+};
+
+export const deleteProfile = async (req: Request, res: Response) => {
+    const { id: user_id } = req.params;
+
+    try {
+        const result = await userFunctions.deleteUserById(user_id);
+
+        res.status(201).json({message: 'Successfully deleted profile'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while deleting the profile.' });
+    }
+};
+
+

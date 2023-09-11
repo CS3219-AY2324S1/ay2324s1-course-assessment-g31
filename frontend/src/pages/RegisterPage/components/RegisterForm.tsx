@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
 import styles from "./RegisterForm.module.css";
 
 export default function RegisterForm() {
@@ -10,6 +11,7 @@ export default function RegisterForm() {
   });
 
   const [message, setMessage] = useState(""); // New state for generic message
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,6 +49,7 @@ export default function RegisterForm() {
       } else {
         console.log("Successfully registered:", formData);
         setMessage("Successfully registered"); // Set the success message
+        navigate("/login"); // Navigate to the login page
       }
     } catch (err: any) {
       console.error("Network error:", err.message);
@@ -114,6 +117,9 @@ export default function RegisterForm() {
           <button type="submit">Register</button>
           {message && <p>{message}</p>}
         </div>
+        <p>
+          Already have an account?<Link to="/login"> Login</Link>
+        </p>
       </form>
     </div>
   );

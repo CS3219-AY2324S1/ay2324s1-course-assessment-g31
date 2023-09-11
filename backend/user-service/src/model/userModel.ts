@@ -1,4 +1,5 @@
 import { UUID } from "crypto";
+import { parse } from 'uuid';
 import db from "../db";
 
 interface User {
@@ -78,5 +79,37 @@ export const userFunctions = {
             console.error('Error fetching user by email:', error);
             throw error;
         }
-    }
+    },
+
+    async getUserById(id: string): Promise<User | null> {
+        try {
+            const uuidConvert = parse(id);
+            const queryResult = await db.query<User>('SELECT * FROM public.users WHERE user_id = $1', [uuidConvert]);
+            
+            if (queryResult.rows && queryResult.rows.length > 0) {
+                const user = queryResult.rows[0];
+                return user;
+            } else {
+                return null;
+            }
+        } catch (error) {
+            console.error('Error fetching user by id:', error);
+            throw error;
+        }
+    },
+
+    async deleteUserById(id: string): Promise<void> {
+        try {
+            const uuidConvert = parse(id);
+            const deleteResult = await db.query('DELETE FROM public.users WHERE user_id = $1', [uuidConvert]);
+
+            if (deleteResult.rowCount === 0) {
+                throw new Error('User not found.');
+            }
+            console.log("User has been deleted from query YEET!");
+        } catch (error) {
+            console.error('Error deleting user by id:', error);
+            throw error;
+        }
+    },
 };
