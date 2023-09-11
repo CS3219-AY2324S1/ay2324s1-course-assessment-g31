@@ -1,0 +1,10 @@
+.registerFormContainer {
+  text-align: center; /* Center-align the contents */
+  max-width: 400px; /* Adjust the width as needed */
+  margin: 0 auto; /* Center the container horizontally */
+}
+
+.registerSubmitButton {
+  margin-top: 10px;
+  text-align: center; /* Center-align the button */
+}

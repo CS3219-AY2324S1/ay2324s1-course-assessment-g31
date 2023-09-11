@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Question } from "../../../types/question";
 import styles from "./QuestionCard.module.css";
 

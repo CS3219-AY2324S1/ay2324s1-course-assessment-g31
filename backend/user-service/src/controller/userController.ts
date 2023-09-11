@@ -11,7 +11,8 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export const register = async (req: Request, res: Response) => {
     try {
-
+        console.log("reached register controller");
+        console.log(req.body);
       // Parameters for users table
         const user_id = uuidv4();
         const username = req.body.username;
@@ -21,6 +22,7 @@ export const register = async (req: Request, res: Response) => {
         const account_type = (await userFunctions.getIdForUserAccountType()) || 'null';
 
         const emailTaken = await userFunctions.isEmailTaken(email);
+        console.log(emailTaken);
 
         if (emailTaken) {
             return res.status(400).json({ message: 'That email is already in use' });

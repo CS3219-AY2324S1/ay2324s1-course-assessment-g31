@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import router from "./routes";
+import cors from "cors";
 import db from './db';
 
 dotenv.config();
@@ -9,6 +10,9 @@ const app: Express = express();
 const port = process.env.PORT;
 
 app.use(express.json());
+
+// Configure CORS to allow requests from http://localhost:8080
+app.use(cors({ origin: "http://localhost:8080" }));
 
 app.listen(3000, () => {
   console.log(
@@ -22,17 +26,6 @@ app.get("/", (req: Request, res: Response) => {
 
 // routes
 app.use("/user-services", router);
-
-// Test database connection
-db.query('SELECT * FROM public.category', (err, result) => {
-    if (err) {
-        console.error('Error connecting to the database:', err);
-        return;
-    } 
-    console.log('Connected to the database');
-    console.log('Results', result.rows);
-    db.end();
-});
 
 
 

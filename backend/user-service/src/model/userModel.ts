@@ -13,7 +13,11 @@ export const userFunctions = {
     async isEmailTaken(email: string): Promise<boolean> {
         try {
             const user = await db.query('SELECT * FROM public.users WHERE email = $1', [email]);
-            return !!user; // If 'user' is not null, the email is taken; otherwise, it's not.
+            if (user.rows.length > 0) {
+                return true;
+            } else {
+                return false;
+            }
         } catch (error) {
             console.error('Error checking if email is taken:', error);
             throw error; 
@@ -22,7 +26,7 @@ export const userFunctions = {
 
     async getIdForUserAccountType(): Promise<UUID | null> {
         try {
-            const user = await db.query('SELECT * FROM public.account_type WHERE type = "User"');
+            const user = await db.query('SELECT * FROM public.account_type WHERE type = $1', ['User']);
         if (user.rows.length > 0) {
             return user.rows[0].type_id;
         } else {
