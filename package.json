@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "bcrypt": "^5.1.1",
+    "pg": "^8.11.3",
+    "pg-promise": "^11.5.4",
+    "uuid": "^9.0.0"
+  }
+}
