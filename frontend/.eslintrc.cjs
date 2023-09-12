@@ -7,13 +7,14 @@ module.exports = {
     "airbnb",
     "airbnb-typescript",
     "plugin:prettier/recommended",
+    "eslint:recommended",
   ],
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: ["./tsconfig.json", "./tsconfig.node.json"],
   },
-  plugins: ["react-refresh", "@typescript-eslint", "prettier"],
+  plugins: ["react-refresh", "@typescript-eslint", "prettier", "jsx-a11y"],
   rules: {
     "react/react-in-jsx-scope": "off",
     "import/no-absolute-path": "off",

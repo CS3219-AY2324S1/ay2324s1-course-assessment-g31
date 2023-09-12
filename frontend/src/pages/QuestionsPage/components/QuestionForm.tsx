@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useEffect } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import {
   Category,
   CategoryMap,

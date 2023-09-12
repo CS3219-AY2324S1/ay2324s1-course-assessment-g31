@@ -11,7 +11,6 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export const register = async (req: Request, res: Response) => {
     try {
-
       // Parameters for users table
         const user_id = uuidv4();
         const username = req.body.username;
@@ -72,3 +71,69 @@ export const login = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'An error occurred while logging in.' });
     }
 };
+
+export const getProfile = async (req: Request, res: Response) => {
+    try {
+        const { id: user_id } = req.params;
+        const user = await userFunctions.getUserById(user_id);
+
+        if (!user) {
+            return res.status(400).json({ message: 'User profile does not exists.' });
+        }
+
+        const username = user.username;
+        const email = user.email;
+        const hashed_pw = user.hashed_pw;
+
+        //res.status(200).json({ message: 'Successfully retrieved profile!!!'});
+        res.status(200).json({ username: username, email: email, hashedPassword: hashed_pw });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'An error occurred while retreiving profile.' });
+    }
+};
+
+export const deleteProfile = async (req: Request, res: Response) => {
+    const { id: user_id } = req.params;
+
+    try {
+        const result = await userFunctions.deleteUserById(user_id);
+
+        res.status(201).json({message: 'Successfully deleted profile'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while deleting the profile.' });
+    }
+};
+
+export const updateProfile = async (req: Request, res: Response) => {
+    const { id: user_id } = req.params;
+    const { email, username } = req.body;
+
+    try {
+        const result = await userFunctions.updateUserProfile(user_id, email, username);
+
+        return res.status(201).json({ message: 'Profile updated successfully' });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        return res.status(500).json({ message: 'Failed to update profile: ', error });
+    }
+};
+
+export const changePassword = async (req: Request, res: Response) => {
+    const { id: user_id } = req.params;
+    const { oldPassword, newPassword } = req.body;
+
+    try {
+        const result = await userFunctions.changeUserPassword(user_id, oldPassword, newPassword);
+
+        return res.status(201).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        return res.status(500).json({ message: error});
+    }
+
+}
+
+
