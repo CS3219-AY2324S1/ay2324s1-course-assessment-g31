@@ -4,15 +4,15 @@ import { login, register, getProfile, deleteProfile, updateProfile, changePasswo
 const router = Router();
 
 // register controller
-router.route('/register').post(register);
+router.post("/register", login);
 
 // login controller
-router.route('/login').post(login);
+router.post("/login", login)
 
 /* Profile controller */
 
 // GET user profile
-router.route('/profile').post(getProfile);
+router.get("/profile/:id", getProfile);
 
 // DELETE user profile
 router.delete("/delete/:id", deleteProfile);

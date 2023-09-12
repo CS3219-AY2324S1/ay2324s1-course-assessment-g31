@@ -74,7 +74,7 @@ export const login = async (req: Request, res: Response) => {
 
 export const getProfile = async (req: Request, res: Response) => {
     try {
-        const user_id = req.body.userId;
+        const { id: user_id } = req.params;
         const user = await userFunctions.getUserById(user_id);
 
         if (!user) {

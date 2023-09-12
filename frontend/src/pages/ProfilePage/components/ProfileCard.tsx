@@ -47,13 +47,12 @@ export default function ProfileCard() {
     async function fetchProfileData() {
       try {
         const response = await fetch(
-          `http://localhost:3000/user-services/profile`,
+          `http://localhost:3000/user-services/profile/${userId}`,
           {
-            method: "POST",
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ userId }),
           },
         );
         const data = await response.json();
