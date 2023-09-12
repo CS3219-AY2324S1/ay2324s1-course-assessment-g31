@@ -27,9 +27,15 @@
 .logoutButton {
     color: white;
     background-color: rgb(80, 80, 80);
+    margin-left: 10px;
 }
 .deleteProfileButton {
     margin-left: 10px;
     color: white;
     background-color: red;
+}
+
+.updateProfileButton {
+    background-color: turquoise;
+    color: white;
 }

@@ -1,4 +1,5 @@
 import { UUID } from "crypto";
+import * as bcrypt from 'bcrypt';
 import { parse } from 'uuid';
 import db from "../db";
 
@@ -106,10 +107,59 @@ export const userFunctions = {
             if (deleteResult.rowCount === 0) {
                 throw new Error('User not found.');
             }
-            console.log("User has been deleted from query YEET!");
+            console.log("User has been deleted from query");
         } catch (error) {
             console.error('Error deleting user by id:', error);
             throw error;
         }
     },
+
+    async updateUserProfile(id: string, email: string, username: string): Promise<void> {
+        try {
+            const uuidConvert = parse(id);
+            const updateResult = await db.query(
+            'UPDATE public.users SET email = $2, username = $3 WHERE user_id = $1',
+            [uuidConvert, email, username]
+            );
+            if (updateResult.rowCount === 1) {
+            console.log('Profile updated successfully');
+            } else {
+            console.error('User not found or profile update failed');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            throw error;
+        }
+    },
+
+    async changeUserPassword(id: string, oldPassword: string, newPassword: string): Promise<void> {
+        try {
+            const user = await this.getUserById(id);
+
+            if (!user) {
+                throw new Error("User not found");
+            }
+
+            const passwordMatch = await bcrypt.compare(oldPassword, user.hashed_pw);
+
+            if (!passwordMatch) {
+                throw new Error("Old password is incorrect");
+            }
+
+            const newPasswordHash = await bcrypt.hash(newPassword, 8);
+            const updateResult = await db.query(
+                'UPDATE public.users SET hashed_pw = $2 WHERE user_id = $1',
+                [user.user_id, newPasswordHash]);
+            
+            if (updateResult.rowCount === 1) {
+            console.log('Password changed successfully');
+            } else {
+            console.error('User not found or password change failed');
+            }
+
+        } catch (error) {
+            console.error("Error changing password: ", error);
+            throw error;
+        }
+    }
 };

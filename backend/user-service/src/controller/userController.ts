@@ -107,4 +107,33 @@ export const deleteProfile = async (req: Request, res: Response) => {
     }
 };
 
+export const updateProfile = async (req: Request, res: Response) => {
+    const { id: user_id } = req.params;
+    const { email, username } = req.body;
+
+    try {
+        const result = await userFunctions.updateUserProfile(user_id, email, username);
+
+        return res.status(201).json({ message: 'Profile updated successfully' });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        return res.status(500).json({ message: 'Failed to update profile: ', error });
+    }
+};
+
+export const changePassword = async (req: Request, res: Response) => {
+    const { id: user_id } = req.params;
+    const { oldPassword, newPassword } = req.body;
+
+    try {
+        const result = await userFunctions.changeUserPassword(user_id, oldPassword, newPassword);
+
+        return res.status(201).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        return res.status(500).json({ message: error});
+    }
+
+}
+
 

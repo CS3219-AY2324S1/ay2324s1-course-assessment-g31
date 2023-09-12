@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { login, register, getProfile, deleteProfile } from '../controller/userController';
+import { login, register, getProfile, deleteProfile, updateProfile, changePassword } from '../controller/userController';
 
 const router = Router();
 
@@ -17,10 +17,12 @@ router.route('/profile').post(getProfile);
 // DELETE user profile
 router.delete("/delete/:id", deleteProfile);
 
-// TODO: log
+// UPDATE user profile (email and username)
+router.put("/update/:id", updateProfile);
 
+// UPDATE user profile (change password)
+router.put("/change-password/:id", changePassword);
 
-
-
+// TODO: logout
 
 export default router;

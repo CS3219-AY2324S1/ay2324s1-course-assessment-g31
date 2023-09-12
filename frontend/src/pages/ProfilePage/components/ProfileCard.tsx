@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DeleteProfileModal from "./DeleteProfileModal";
+import UpdateProfileModal from "./UpdateProfileModal";
 import styles from "./ProfileCard.module.css";
 
 export default function ProfileCard() {
@@ -16,19 +17,30 @@ export default function ProfileCard() {
   });
 
   const [message, setMessage] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteProfileModalOpen, setIsDeleteProfileModalOpen] =
+    useState(false);
+  const [isUpdateProfileModalOpen, setIsUpdateProfileModalOpen] =
+    useState(false);
 
   const handleLogout = () => {
     // TODO: Perform logout actions here (e.g., clearing user session)
     navigate("/login");
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openUpdateProfileModal = () => {
+    setIsUpdateProfileModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeUpdateProfileModal = () => {
+    setIsUpdateProfileModalOpen(false);
+  };
+
+  const openDeleteProfileModal = () => {
+    setIsDeleteProfileModalOpen(true);
+  };
+
+  const closeDeleteProfileModal = () => {
+    setIsDeleteProfileModalOpen(false);
   };
 
   useEffect(() => {
@@ -45,7 +57,6 @@ export default function ProfileCard() {
           },
         );
         const data = await response.json();
-        console.log(data);
 
         if (!response.ok) {
           console.error("Failed to fetch profile:", data.message);
@@ -68,17 +79,24 @@ export default function ProfileCard() {
         <div className={styles.publicButtons}>
           <button
             type="button"
-            className={styles.logoutButton}
-            onClick={handleLogout}
+            className={styles.updateProfileButton}
+            onClick={openUpdateProfileModal}
           >
-            Logout
+            Update Account
           </button>
           <button
             type="button"
             className={styles.deleteProfileButton}
-            onClick={openModal}
+            onClick={openDeleteProfileModal}
           >
             Delete Account
+          </button>
+          <button
+            type="button"
+            className={styles.logoutButton}
+            onClick={handleLogout}
+          >
+            Logout
           </button>
         </div>
         <h2>Profile Card</h2>
@@ -93,9 +111,16 @@ export default function ProfileCard() {
         {message && <p>{message}</p>}
       </div>
       <DeleteProfileModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
+        isOpen={isDeleteProfileModalOpen}
+        onClose={closeDeleteProfileModal}
         userId={userId}
+      />
+      <UpdateProfileModal
+        isOpen={isUpdateProfileModalOpen}
+        onClose={closeUpdateProfileModal}
+        userId={userId}
+        emailProp={profileData.email}
+        usernameProp={profileData.username}
       />
     </div>
   );
