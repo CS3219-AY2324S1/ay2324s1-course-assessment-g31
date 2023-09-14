@@ -41,7 +41,7 @@ export default function LoginForm() {
       } else {
         console.log("Successfully logged in:", formData);
         setMessage("Successfully logged in"); // Set the success message
-        navigate(`/profile?userId=${data.user_id}`);
+        navigate(`/user/profile?userId=${data.user_id}`);
       }
     } catch (err: any) {
       console.error("Network error:", err.message);
@@ -84,7 +84,7 @@ export default function LoginForm() {
           {message && <p>{message}</p>}
         </div>
         <p>
-          No account?<Link to="/register"> Register</Link>
+          No account?<Link to="/user/register"> Register</Link>
         </p>
       </form>
     </div>

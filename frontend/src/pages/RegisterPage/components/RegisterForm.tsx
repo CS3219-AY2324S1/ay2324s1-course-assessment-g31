@@ -118,7 +118,7 @@ export default function RegisterForm() {
           {message && <p>{message}</p>}
         </div>
         <p>
-          Already have an account?<Link to="/login"> Login</Link>
+          Already have an account?<Link to="/user/login"> Login</Link>
         </p>
       </form>
     </div>

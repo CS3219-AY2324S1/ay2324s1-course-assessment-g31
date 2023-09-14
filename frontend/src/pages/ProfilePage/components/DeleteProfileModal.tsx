@@ -26,7 +26,7 @@ export default function DeleteProfileModal({
 
       if (response.ok) {
         // Account deletion was successful
-        navigate("/login");
+        navigate("/user/login");
       } else {
         // Account deletion failed
         const data = await response.json();
