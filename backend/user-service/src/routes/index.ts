@@ -1,13 +1,20 @@
-import { Request, Response, Router } from 'express';
-import { login, register, getProfile, deleteProfile, updateProfile, changePassword } from '../controller/userController';
+import { Request, Response, Router } from "express";
+import {
+  login,
+  register,
+  getProfile,
+  deleteProfile,
+  updateProfile,
+  changePassword,
+} from "../controller/userController";
 
 const router = Router();
 
 // register controller
-router.post("/register", login);
+router.post("/register", register);
 
 // login controller
-router.post("/login", login)
+router.post("/login", login);
 
 /* Profile controller */
 

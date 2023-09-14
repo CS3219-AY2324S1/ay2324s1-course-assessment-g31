@@ -2,12 +2,15 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import router from "./routes";
 import cors from "cors";
-import db from './db';
+import morgan from "morgan";
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000; //TODO: remove default once dockerized
+
+// logging for debugging
+app.use(morgan("tiny"));
 
 app.use(express.json());
 
@@ -21,11 +24,8 @@ app.get("/", (req: Request, res: Response) => {
 // routes
 app.use("/user-services", router);
 
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log(
-    `⚡️[server]: Authentication Service is running at http://localhost:3000`
+    `⚡️[server]: Authentication Service is running at http://localhost:${port}`
   );
 });
-
-
-

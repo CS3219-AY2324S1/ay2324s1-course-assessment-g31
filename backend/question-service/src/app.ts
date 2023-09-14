@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import morgan from "morgan";
@@ -10,8 +10,12 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 5000;
 
+// TODO: remove hardcoded string
 mongoose
-  .connect(process.env.MONGO_CONNECTION_STRING || "")
+  .connect(
+    process.env.MONGO_CONNECTION_STRING ||
+      "mongodb+srv://admin:werty1232@cs3219.bzs0gbq.mongodb.net/question-service?retryWrites=true&w=majority"
+  )
   .then(() => {
     app.listen(port, () => {
       console.log(
