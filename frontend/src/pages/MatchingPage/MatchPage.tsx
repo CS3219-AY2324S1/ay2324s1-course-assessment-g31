@@ -1,12 +1,13 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from "react";
 
-import { MatchingContext } from '../../context/MatchingContext';
-import MatchingController from '../../controllers/matching/matching.controller';
-import MatchingModal from './components/MatchingModal';
-import ThreeTier from './components/ThreeTier';
+import { useAuth } from "../../context/AuthContext";
+import { MatchingContext } from "../../context/MatchingContext";
+import MatchingController from "../../controllers/matching/matching.controller";
+import MatchingModal from "./components/MatchingModal";
+import ThreeTier from "./components/ThreeTier";
 
 const MatchPage = () => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useAuth();
   const { foundMatch, establishedConnection, connectionLoading, matchLoading } =
     useContext(MatchingContext)!;
 

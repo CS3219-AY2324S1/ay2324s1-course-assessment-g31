@@ -8,7 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { socket } from "../util/socket";
-import { AuthContext } from "./FirebaseAuthContext";
+import { useAuth } from "./AuthContext";
 
 interface Props {
   children?: ReactNode;
@@ -56,7 +56,7 @@ export const MatchingProvider = ({ children }: Props) => {
     ["cancel-collaboration", "collaboration-cancelled"],
   ]);
 
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useAuth();
 
   const [establishedConnection, setEstablishedConnection] =
     useState<boolean>(false);
