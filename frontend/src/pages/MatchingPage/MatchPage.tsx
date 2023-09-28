@@ -6,7 +6,7 @@ import MatchingController from "../../controllers/matching/matching.controller";
 import MatchingModal from "./components/MatchingModal";
 import ThreeTier from "./components/ThreeTier";
 
-const MatchPage = () => {
+function MatchPage() {
   const { currentUser } = useAuth();
   const { foundMatch, establishedConnection, connectionLoading, matchLoading } =
     useContext(MatchingContext)!;
@@ -19,8 +19,9 @@ const MatchPage = () => {
   );
 
   useEffect(() => {
+    console.log("MatchPage: useEffect: currentUser:", currentUser);
     if (
-      difficulty == "" ||
+      difficulty.length === 0 ||
       foundMatch ||
       !establishedConnection ||
       !currentUser
@@ -57,6 +58,6 @@ const MatchPage = () => {
       />
     </div>
   );
-};
+}
 
 export default MatchPage;

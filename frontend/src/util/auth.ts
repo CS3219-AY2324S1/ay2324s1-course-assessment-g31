@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp } from "@firebase/app";
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -7,7 +7,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   User,
-} from "firebase/auth";
+} from "@firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBIcUU17g1xZeCta6MPArw34pVhgo72qpY",
@@ -23,18 +23,18 @@ const auth = getAuth(app);
 
 export const signInUser = async (email: string, password: string) => {
   if (!email && !password) return;
-
-  return await signInWithEmailAndPassword(auth, email, password);
+  await signInWithEmailAndPassword(auth, email, password);
 };
 
 export const registerUser = async (email: string, password: string) => {
   if (!email && !password) return;
-
-  return await createUserWithEmailAndPassword(auth, email, password);
+  await createUserWithEmailAndPassword(auth, email, password);
 };
 
 export const userStateListener = (callback: NextOrObserver<User>) => {
   return onAuthStateChanged(auth, callback);
 };
 
-export const SignOutUser = async () => await signOut(auth);
+export const SignOutUser = async () => {
+  await signOut(auth);
+};

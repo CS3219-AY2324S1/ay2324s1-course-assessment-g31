@@ -1,5 +1,6 @@
 class GenericController {
   private mainUri: string;
+
   private servicePath: string;
 
   constructor(mainUri: string, servicePath: string) {
@@ -20,8 +21,6 @@ class GenericController {
   }
 
   public async post(routePath: string, data: any, headers?: any) {
-    console.log(this.getUri(routePath));
-    console.log(data);
     const response = await fetch(this.getUri(routePath), {
       body: JSON.stringify(data),
       headers: {
@@ -29,6 +28,38 @@ class GenericController {
         ...headers,
       },
       method: "POST",
+    });
+
+    if (response.status === 400) {
+      console.error(response);
+    }
+
+    return response.json();
+  }
+
+  public async put(routePath: string, data: any) {
+    const response = await fetch(this.getUri(routePath), {
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+    });
+
+    if (response.status === 400) {
+      console.error(response);
+    }
+
+    return response.json();
+  }
+
+  public async delete(routePath: string, data: any) {
+    const response = await fetch(this.getUri(routePath), {
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "DELETE",
     });
 
     if (response.status === 400) {

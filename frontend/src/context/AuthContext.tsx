@@ -8,8 +8,7 @@ import {
   signOut,
   updatePassword,
 } from "@firebase/auth";
-import React, { useContext, useEffect, useState } from "react";
-import LoadingPage from "../pages/LoadingPage/LoadingPage";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import database from "./FirebaseConfig";
 
 interface AuthContextType {
@@ -23,10 +22,10 @@ interface AuthContextType {
 
 const AuthContext = React.createContext<AuthContextType>({
   currentUser: {} as User | null,
-  login: (email: string, password: string) => Promise.resolve(),
-  signup: (email: string, password: string) => Promise.resolve(),
+  login: () => Promise.resolve(),
+  signup: () => Promise.resolve(),
   logout: () => Promise.resolve(),
-  updateThePassword: (password: string) => Promise.resolve(),
+  updateThePassword: () => Promise.resolve(),
   deleteTheUser: () => Promise.resolve(),
 });
 
@@ -34,13 +33,12 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-interface Props {
-  children?: React.ReactNode;
+interface AuthProviderProps {
+  children: React.ReactNode;
 }
 
-export function AuthProvider({ children }: Props) {
+export function AuthProvider({ children }: AuthProviderProps) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
 
   function signup(email: string, password: string) {
     return createUserWithEmailAndPassword(database, email, password);
@@ -86,25 +84,22 @@ export function AuthProvider({ children }: Props) {
       } else {
         setCurrentUser(null);
       }
-      setLoading(false);
     });
     return unsubscribe;
   }, []);
 
-  const value = {
-    currentUser,
-    login,
-    signup,
-    logout,
-    updateThePassword,
-    deleteTheUser,
-    // updatePassword,
-    //resetPassword
-  };
+  const value = useMemo(() => {
+    return {
+      currentUser,
+      login,
+      signup,
+      logout,
+      updateThePassword,
+      deleteTheUser,
+      // updatePassword,
+      // resetPassword
+    };
+  }, []);
 
-  return (
-    <AuthContext.Provider value={value}>
-      {loading ? <LoadingPage /> : children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

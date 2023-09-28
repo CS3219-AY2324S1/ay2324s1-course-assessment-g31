@@ -7,8 +7,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { Fragment, useContext } from "react";
 import { MatchingContext } from "../../../context/MatchingContext";
-import { classNames } from "../../../util/ClassNames";
-import { titleCase } from "../../../util/titleCase";
+import classNames from "../../../util/ClassNames";
+import titleCase from "../../../util/titleCase";
 
 interface IModalProps {
   difficulty: string;
@@ -20,7 +20,7 @@ interface IModalProps {
   matchSuccess: boolean;
   cancelMatch: () => void;
 }
-const MatchingModal: React.FC<IModalProps> = ({
+function MatchingModal({
   difficulty,
   open,
   setOpen,
@@ -29,7 +29,7 @@ const MatchingModal: React.FC<IModalProps> = ({
   matchLoading,
   matchSuccess,
   cancelMatch,
-}) => {
+}: IModalProps) {
   const { matchedUserId } = useContext(MatchingContext);
 
   return (
@@ -86,16 +86,15 @@ const MatchingModal: React.FC<IModalProps> = ({
                       {`Difficulty Chosen: ${titleCase(difficulty)}`}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {matchLoading
-                        ? "Matching..."
-                        : matchSuccess
+                      {matchLoading ? "Matching..." : ""}
+                      {matchSuccess
                         ? `Match Found! ${matchedUserId}`
                         : "No Match Found!"}
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-col mt-4">
-                  <ul role="list" className="-mb-8">
+                  <ul className="-mb-8">
                     <li>
                       <div className="relative pb-8">
                         <span
@@ -106,9 +105,8 @@ const MatchingModal: React.FC<IModalProps> = ({
                           <div>
                             <span
                               className={classNames(
-                                connectionLoading
-                                  ? "bg-gray-400"
-                                  : connectionSuccess
+                                connectionLoading ? "bg-gray-400" : "",
+                                connectionSuccess
                                   ? "bg-green-500"
                                   : "bg-red-500",
                                 "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white",
@@ -119,7 +117,10 @@ const MatchingModal: React.FC<IModalProps> = ({
                                   className="h-5 w-5 text-white"
                                   aria-hidden="true"
                                 />
-                              ) : connectionSuccess ? (
+                              ) : (
+                                ""
+                              )}
+                              {connectionSuccess ? (
                                 <CheckIcon
                                   className="h-5 w-5 text-white"
                                   aria-hidden="true"
@@ -150,11 +151,8 @@ const MatchingModal: React.FC<IModalProps> = ({
                           <div>
                             <span
                               className={classNames(
-                                matchLoading
-                                  ? "bg-gray-400"
-                                  : matchSuccess
-                                  ? "bg-green-500"
-                                  : "bg-red-500",
+                                matchLoading ? "bg-gray-400" : "",
+                                matchSuccess ? "bg-green-500" : "bg-red-500",
                                 "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white",
                               )}
                             >
@@ -163,7 +161,10 @@ const MatchingModal: React.FC<IModalProps> = ({
                                   className="h-5 w-5 text-white"
                                   aria-hidden="true"
                                 />
-                              ) : matchSuccess ? (
+                              ) : (
+                                ""
+                              )}
+                              {matchSuccess ? (
                                 <CheckIcon
                                   className="h-5 w-5 text-white"
                                   aria-hidden="true"
@@ -179,9 +180,8 @@ const MatchingModal: React.FC<IModalProps> = ({
                           <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
                             <div>
                               <p className="text-sm text-gray-500">
-                                {matchLoading
-                                  ? "Finding Match..."
-                                  : matchSuccess
+                                {matchLoading ? "Finding Match..." : ""}
+                                {matchSuccess
                                   ? "Match Found!"
                                   : "No Match Found!"}
                               </p>
@@ -212,6 +212,6 @@ const MatchingModal: React.FC<IModalProps> = ({
       </Dialog>
     </Transition.Root>
   );
-};
+}
 
 export default MatchingModal;

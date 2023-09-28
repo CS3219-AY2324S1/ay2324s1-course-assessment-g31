@@ -1,6 +1,7 @@
+import React from "react";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import ComponentContainer from "./Container/Component";
-import { titleCase } from "../../../util/titleCase";
+import titleCase from "../../../util/titleCase";
 
 const tiers = [
   {
@@ -37,7 +38,7 @@ interface IThreeTierProps {
   setDifficulty: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ThreeTier: React.FC<IThreeTierProps> = ({ setDifficulty }) => {
+function ThreeTier({ setDifficulty }: IThreeTierProps) {
   return (
     <ComponentContainer>
       <div className="mx-auto max-w-4xl sm:text-center">
@@ -71,6 +72,7 @@ const ThreeTier: React.FC<IThreeTierProps> = ({ setDifficulty }) => {
                 </span>
               </p>
               <button
+                type="button"
                 aria-describedby={tier.id}
                 className="mt-10 block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 onClick={() => {
@@ -82,10 +84,7 @@ const ThreeTier: React.FC<IThreeTierProps> = ({ setDifficulty }) => {
               <p className="mt-10 text-sm font-semibold leading-6 text-gray-900">
                 {tier.description}
               </p>
-              <ul
-                role="list"
-                className="mt-6 space-y-3 text-sm leading-6 text-gray-600"
-              >
+              <ul className="mt-6 space-y-3 text-sm leading-6 text-gray-600">
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex gap-x-3">
                     <CheckCircleIcon
@@ -102,6 +101,6 @@ const ThreeTier: React.FC<IThreeTierProps> = ({ setDifficulty }) => {
       </div>
     </ComponentContainer>
   );
-};
+}
 
 export default ThreeTier;

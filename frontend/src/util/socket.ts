@@ -5,4 +5,6 @@ const URL =
     ? "https://localhost:5006"
     : "localhost:5006";
 
-export const socket = io(URL, { autoConnect: false });
+const socket = io(URL, { autoConnect: false });
+
+export default socket;
