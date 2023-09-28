@@ -1,14 +1,15 @@
 import {
   Route,
+  RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
-  RouterProvider,
 } from "react-router-dom";
+import Layout from "./pages/Layout/Layout";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import MatchPage from "./pages/MatchingPage/MatchPage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import QuestionsPage from "./pages/QuestionsPage/QuestionsPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import ProfilePage from "./pages/ProfilePage/ProfilePage";
-import Layout from "./pages/Layout/Layout";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,7 +22,8 @@ const router = createBrowserRouter(
         <Route path="login" element={<LoginPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
-      ~
+      <Route path="match" element={<MatchPage />} />
+      <Route path="*" element={<h1>404</h1>} />~
     </Route>,
   ),
 );

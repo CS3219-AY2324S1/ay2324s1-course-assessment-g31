@@ -31,8 +31,8 @@ class GenericController {
       method: "POST",
     });
 
-    if(response.status === 400) {
-        console.error(response);
+    if (response.status === 400) {
+      console.error(response);
     }
 
     return response.json();
