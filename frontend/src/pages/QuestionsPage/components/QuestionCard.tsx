@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Question } from "../../../types/question";
 import styles from "./QuestionCard.module.css";
+import { useAuth } from "../../../context/AuthContext";
 
 interface QuestionCardProps {
   setQuestionToEdit: React.Dispatch<React.SetStateAction<Question | undefined>>;
@@ -18,6 +19,7 @@ export default function QuestionCard({
   const handleShowDescription = () => setShowDescription(!showDescription);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const { currentRole } = useAuth();
 
   const handleDeleteQuestion = async () => {
     if (window.confirm("Are you sure you want to delete this question")) {
@@ -68,16 +70,20 @@ export default function QuestionCard({
       {showDescription && (
         <>
           {" "}
-          <button
-            type="button"
-            disabled={isLoading}
-            onClick={handleDeleteQuestion}
-          >
-            delete
-          </button>
-          <button type="button" onClick={() => setQuestionToEdit(question)}>
-            edit
-          </button>
+          {currentRole == "Admin" && (
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={handleDeleteQuestion}
+            >
+              delete
+            </button>
+          )}
+          {currentRole == "Admin" && (
+            <button type="button" onClick={() => setQuestionToEdit(question)}>
+              edit
+            </button>
+          )}
         </>
       )}
       {error && <span>{error}</span>}

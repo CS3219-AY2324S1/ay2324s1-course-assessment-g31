@@ -1,13 +1,22 @@
 import React, { useState } from "react";
+// Add useNavigate to below import
 import { useNavigate, Link } from "react-router-dom"; // Import Link
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import styles from "./LoginForm.module.css";
+import database from "../../../../FirebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth/cordova";
+import { FirebaseError } from "firebase/app";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
+    userid: "", //this value shldnt be updated in any case
     email: "",
     password: "",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -21,32 +30,36 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted with data:", formData);
-    try {
-      const response = await fetch(
-        `http://localhost:3000/user-services/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        },
-      );
-      const data = await response.json();
 
-      if (!response.ok) {
-        console.error("Login error:", data.message);
-        setMessage(`${data.message}`);
-      } else {
-        console.log("Successfully logged in:", formData);
-        setMessage("Successfully logged in"); // Set the success message
-        navigate(`/user/profile?userId=${data.user_id}`);
-      }
-    } catch (err: any) {
-      console.error("Network error:", err.message);
-      setMessage(`Network error: ${err.message}`);
-    }
+    console.log("Form submitted with data:", formData);
+    // try {
+    // Removal of post request to user-service controller. Because firebase should conduct the login check, not psql
+
+    setIsLoading(true);
+
+    await login(formData.email, formData.password)
+      .then((data) => {
+        if (data) {
+          console.log(data, "authData");
+          setMessage("Successfully logged in"); // Set the success message
+          // navigate(`/user/profile?userId=${data.user.uid}`);
+          navigate(`/questions`);
+        }
+      })
+      .catch((err) => {
+        console.log(err.code);
+        setMessage(`${err.code}`);
+      });
+    // } catch (err: any) {
+    //   if (err instanceof FirebaseError) {
+    //     console.log(err.code);
+    //     setMessage(`${err.code}`);
+    //   } else {
+    //     console.error("Network error:", err);
+    //     setMessage(`Network error: ${err.message}`);
+    //   }
+    // }
+    setIsLoading(false);
   };
 
   return (
@@ -80,11 +93,13 @@ export default function LoginForm() {
           </label>
         </div>
         <div className={styles.loginSubmitButton}>
-          <button type="submit">Login</button>
+          <button disabled={isLoading} type="submit">
+            Login
+          </button>
           {message && <p>{message}</p>}
         </div>
         <p>
-          No account?<Link to="/user/register"> Register</Link>
+          No account?<Link to="/register"> Register</Link>
         </p>
       </form>
     </div>

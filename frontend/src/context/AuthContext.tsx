@@ -9,24 +9,30 @@ import {
   UserCredential,
   updatePassword,
   deleteUser,
+  verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import LoadingPage from "../pages/LoadingPage/LoadingPage";
 
 interface AuthContextType {
   currentUser: User | null;
+  currentRole: string | null;
   login: (email: string, password: string) => Promise<UserCredential | void>;
   signup: (email: string, password: string) => Promise<UserCredential | void>;
   logout: () => Promise<void>;
   updateThePassword: (password: string) => Promise<void | Error>;
+  verifyBeforeTheEmailUpdate: (email: string) => Promise<void | Error>;
   deleteTheUser: () => Promise<void | Error>;
 }
 
+// ES removed unused variables
 const AuthContext = React.createContext<AuthContextType>({
   currentUser: {} as User | null,
-  login: (email: string, password: string) => Promise.resolve(),
-  signup: (email: string, password: string) => Promise.resolve(),
+  currentRole: {} as string | null,
+  login: () => Promise.resolve(),
+  signup: () => Promise.resolve(),
   logout: () => Promise.resolve(),
-  updateThePassword: (password: string) => Promise.resolve(),
+  updateThePassword: () => Promise.resolve(),
+  verifyBeforeTheEmailUpdate: () => Promise.resolve(),
   deleteTheUser: () => Promise.resolve(),
 });
 
@@ -41,6 +47,7 @@ interface Props {
 export function AuthProvider({ children }: Props) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentRole, setCurrentRole] = useState(null);
 
   function signup(email: string, password: string) {
     return createUserWithEmailAndPassword(database, email, password);
@@ -79,12 +86,60 @@ export function AuthProvider({ children }: Props) {
     return Promise.resolve(new Error("Current user is not defined"));
   }
 
+  // function updateTheEmail(email: string) {
+  //   if (currentUser) {
+  //     return updateEmail(currentUser, email);
+  //   }
+  //   return Promise.resolve(new Error("Current user is not defined"));
+  // }
+
+  function verifyBeforeTheEmailUpdate(email: string) {
+    if (currentUser) {
+      return verifyBeforeUpdateEmail(currentUser, email);
+    }
+    return Promise.resolve(new Error("Current user is not defined"));
+  }
+
+  async function getUserRole(user: User) {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/user-services/userRole/${user.uid}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Failed to fetch role:", data.message);
+        return "User";
+      } else {
+        console.log("Successfully fetched role: ", data.user_role);
+        return data.user_role;
+      }
+      // } else {
+      //   console.log("Unauthenticated access");
+      //   setMessage("Unauthenticated user access");
+      // }
+    } catch (error: any) {
+      console.log("Error fetching profile data:", error.message);
+    }
+  }
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(database, (user) => {
+    const unsubscribe = onAuthStateChanged(database, async (user) => {
       if (user) {
         setCurrentUser(user);
+        await getUserRole(user).then((role) => {
+          setCurrentRole(role);
+        });
       } else {
         setCurrentUser(null);
+        setCurrentRole(null);
       }
       setLoading(false);
     });
@@ -93,12 +148,13 @@ export function AuthProvider({ children }: Props) {
 
   const value = {
     currentUser,
+    currentRole,
     login,
     signup,
     logout,
     updateThePassword,
     deleteTheUser,
-    // updatePassword,
+    verifyBeforeTheEmailUpdate,
     //resetPassword
   };
 
