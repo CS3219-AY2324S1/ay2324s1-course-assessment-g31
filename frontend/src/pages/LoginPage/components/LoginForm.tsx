@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-// Add useNavigate to below import
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./LoginForm.module.css";
 import { useAuth } from "../../../context/AuthContext";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
-    userid: "", // this value shldnt be updated in any case
+    userid: "",
     email: "",
     password: "",
   });
@@ -26,19 +25,14 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     console.log("Form submitted with data:", formData);
-    // try {
-    // Removal of post request to user-service controller. Because firebase should conduct the login check, not psql
-
     setIsLoading(true);
 
     await login(formData.email, formData.password)
       .then((data) => {
         if (data) {
           console.log(data, "authData");
-          setMessage("Successfully logged in"); // Set the success message
-          // navigate(`/user/profile?userId=${data.user.uid}`);
+          setMessage("Successfully logged in");
           navigate(`/questions`);
         }
       })
@@ -46,15 +40,6 @@ export default function LoginForm() {
         console.log(err.code);
         setMessage(`${err.code}`);
       });
-    // } catch (err: any) {
-    //   if (err instanceof FirebaseError) {
-    //     console.log(err.code);
-    //     setMessage(`${err.code}`);
-    //   } else {
-    //     console.error("Network error:", err);
-    //     setMessage(`Network error: ${err.message}`);
-    //   }
-    // }
     setIsLoading(false);
   };
 

@@ -10,7 +10,7 @@ import {
   deleteUser,
   verifyBeforeUpdateEmail,
 } from "@firebase/auth";
-import database from "../../FirebaseConfig";
+import database from "./FirebaseConfig";
 import LoadingPage from "../pages/LoadingPage/LoadingPage";
 
 interface AuthContextType {
@@ -61,21 +61,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return signOut(database);
   }
 
-  // function getSignInMethodsForEmail(email: string) {
-  //   return fetchSignInMethodsForEmail(database, email);
-  // }
-
-  //   function resetPassword(email) {
-  //     return auth.sendPasswordResetEmail(email);
-  //   }
-
-  //   function updateTheEmail(email: string) {
-  //     //   return currentUser?.updateEmail(email);
-  //     if (currentUser) {
-  //       return updateEmail(currentUser, email);
-  //     }
-  //     return Promise.resolve(new Error("Current user is not defined"));
-  //   }
   function deleteTheUser() {
     if (currentUser) {
       return deleteUser(currentUser);
@@ -89,13 +74,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
     return Promise.resolve(new Error("Current user is not defined"));
   }
-
-  // function updateTheEmail(email: string) {
-  //   if (currentUser) {
-  //     return updateEmail(currentUser, email);
-  //   }
-  //   return Promise.resolve(new Error("Current user is not defined"));
-  // }
 
   function verifyBeforeTheEmailUpdate(email: string) {
     if (currentUser) {
@@ -166,18 +144,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     deleteTheUser,
     verifyBeforeTheEmailUpdate,
   ]);
-
-  // const value = {
-  //   currentUser,
-  //   currentRole,
-  //   login,
-  //   signup,
-  //   logout,
-  //   updateThePassword,
-  //   deleteTheUser,
-  //   verifyBeforeTheEmailUpdate,
-  //   getSignInMethodsForEmail,
-  // };
 
   return (
     <AuthContext.Provider value={value}>

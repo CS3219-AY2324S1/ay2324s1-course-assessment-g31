@@ -4,7 +4,6 @@ import DeleteProfileModal from "./DeleteProfileModal";
 import UpdateProfileModal from "./UpdateProfileModal";
 import styles from "./ProfileCard.module.css";
 import { useAuth } from "../../../context/AuthContext";
-// import { FirebaseError } from "firebase/app";
 
 export default function ProfileCard() {
   const location = useLocation();
@@ -27,10 +26,8 @@ export default function ProfileCard() {
     useState(false);
 
   const handleLogout = () => {
-    // TODO: Perform logout actions here (e.g., clearing user session)
     logout()
       .then(() => {
-        // Sign-out successful.
         navigate("/");
         console.log("Signed out successfully");
       })
@@ -45,7 +42,6 @@ export default function ProfileCard() {
 
   const closeUpdateProfileModal = (username: string, email: string) => {
     setIsUpdateProfileModalOpen(false);
-    // Property shorthand added, was username:username and email:email prev
     setProfileData({
       username,
       email,
@@ -63,34 +59,8 @@ export default function ProfileCard() {
   useEffect(() => {
     async function fetchProfileData() {
       try {
-        // const user = database.currentUser;
-
         // Check if firebase has this user
         if (currentUser !== null) {
-          // Check if postgres has this user
-          // const response = await fetch(
-          //   `http://localhost:3000/user-services/profile/${userId}`,
-          //   {
-          //     method: "GET",
-          //     headers: {
-          //       "Content-Type": "application/json",
-          //     },
-          //   },
-          // );
-
-          // const data = await response.json();
-
-          // if psql no user, register the user
-          // if (!response.ok) {
-
-          //   console.error("Failed to fetch profile:", data.message);
-          // } else {
-          //   console.log("Successfully fetched profile: ", data);
-          //   setProfileData(data);
-          // }
-          // console.log("user id: " + user.uid);
-          // console.log("Successfully fetched profile: ", data);
-
           const response = await fetch(
             `http://localhost:3000/user-services/profile/${userId}`,
             {

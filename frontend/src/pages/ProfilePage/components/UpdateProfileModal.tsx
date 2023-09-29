@@ -38,7 +38,6 @@ export default function UpdateProfileModal({
   const [newEmail, setNewEmail] = useState("");
   const [passwordNewEmail, setPasswordNewEmail] = useState("");
 
-  // const [successMessage, setSuccessMessage] = useState("");
   const { updateThePassword, verifyBeforeTheEmailUpdate, currentUser, logout } =
     useAuth();
   const navigate = useNavigate();
@@ -55,54 +54,7 @@ export default function UpdateProfileModal({
     }
   }, [emailProp, usernameProp, isOpen]);
 
-  // const handleUpdateProfile = async () => {
-  //   try {
-  //     // handle update username
-  //     const response = await fetch(
-  //       `http://localhost:3000/user-services/update/${userId}`,
-  //       {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           username,
-  //         }),
-  //       },
-  //     );
-
-  //     // await updateTheEmail(email);
-  //     // setSuccessMessage("Profile updated successfully");
-  //     navigate(`/`);
-  //     setTimeout(() => {
-  //       window.location.reload();
-  //     }, 3000);
-  //     if (response.ok) {
-  //       console.log("Successfully updated profile!");
-  //       // setSuccessMessage("Profile updated successfully");
-  //       setTimeout(() => {
-  //         window.location.reload();
-  //       }, 3000);
-  //     } else {
-  //       // Update failed
-  //       const data = await response.json();
-  //       console.error("Failed to update profile:", data.message);
-  //       setMessage(data.message);
-  //     }
-  //   } catch (error: any) {
-  //     if (error instanceof FirebaseError) {
-  //       setMessage(error.message);
-  //     } else if (error && error.message) {
-  //       if (error.message == "Current user is not defined") {
-  //         navigate(`/`);
-  //       } else {
-  //         setMessage(error.message);
-  //       }
-  //     }
-  //   }
-  // };
   const handleLogout = () => {
-    // TODO: Perform logout actions here (e.g., clearing user session)
     logout()
       .then(() => {
         // Sign-out successful.
@@ -138,41 +90,12 @@ export default function UpdateProfileModal({
         });
       }
 
-      // const response = await fetch(
-      //   `http://localhost:3000/user-services/change-password/${userId}`,
-      //   {
-      //     method: "PUT",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({
-      //       oldPassword,
-      //       newPassword,
-      //     }),
-      //   },
-      // );
-
       setPasswordChangeFormOpen(false);
       setMessage("");
       setOldPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
       setMessage("Password changed successfully!");
-      // navigate(`/user/profile?userId=${currentUser?.uid}`);
-
-      // if (response.ok) {
-      //   console.log("Password changed successfully!");
-      //   setPasswordChangeFormOpen(false);
-      //   setMessage("");
-      //   setOldPassword("");
-      //   setNewPassword("");
-      //   setConfirmNewPassword("");
-      //   setSuccessMessage("Password changed successfully");
-      // } else {
-      //   // Password change failed
-      //   const data = await response.json();
-      //   console.error("Failed to change password:", data.message);
-      // }
     } catch (error: any) {
       console.error("Error changing password:", error);
       if (error instanceof FirebaseError) {
@@ -266,49 +189,7 @@ export default function UpdateProfileModal({
 
       if (currentUser) {
         await reauthenticateWithCredential(currentUser, credential);
-        // .then(async () => {
-        //   console.log(newEmail);
-        //   return await getSignInMethodsForEmail(newEmail);
-        // })
-        // .then((signInMethods) => {
-        //   // setTimeout(() => {
-        //   //   console.log("In sign in mthds"), 10000;
-        //   // });
-        //   // return methods;
-        //   console.log(signInMethods);
-        //   if (signInMethods && signInMethods.length > 0) {
-        //     // Email address is already taken
-        //     console.log("Email is already registered");
-        //     setMessage("Email is already registered, please try again");
-        //     return;
-        //   }
-        //   console.log("Email not yet already registered");
-        // })
-        // .then(() => {
-        //   return verifyBeforeTheEmailUpdate(newEmail);
-        //   //   setEmailChangeFormOpen(false);
-        //   //   setMessage("");
-        //   //   setEmail(newEmail);
-        //   //   setNewEmail("");
-        //   //   setPasswordNewEmail("");
-        //   //   setMessage(
-        //   //     "Verification link sent to new email. Do click on the link and attempt to login using new email.",
-        //   //   );
-        //   //   setTimeout(handleLogout, 3000);
-        // })
-        // .catch((err) => {
-        //   setMessage(err.message);
-        // });
-
-        // if (signInMethods && signInMethods.length > 0) {
-        //   // Email address is already taken
-        //   console.log("Email is already registered");
-        //   setMessage("Email is already registered, please try again");
-        //   return;
-        // }
-
         await verifyBeforeTheEmailUpdate(newEmail);
-
         setTimeout(handleLogout, 3000);
       }
 

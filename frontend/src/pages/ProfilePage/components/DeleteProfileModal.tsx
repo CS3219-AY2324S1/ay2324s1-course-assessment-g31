@@ -40,23 +40,7 @@ export default function DeleteProfileModal({
 
   const handleDeleteAccount = async () => {
     try {
-      // setMessage("");
       setIsLoading(true);
-      // const response = await fetch(
-      //   `http://localhost:3000/user-services/delete/${userId}`,
-      //   {
-      //     method: "DELETE",
-      //   },
-      // );
-
-      // if (response.ok) {
-      //   // Account deletion was successful
-      //   navigate("/user/login");
-      // } else {
-      //   // Account deletion failed
-      //   const data = await response.json();
-      //   console.error("Failed to delete account:", data.message);
-      // }
 
       if (currentUser) {
         const credential = EmailAuthProvider.credential(
@@ -87,7 +71,7 @@ export default function DeleteProfileModal({
       }
     } catch (error: any) {
       if (error instanceof FirebaseError) {
-        setMessage(error.message);
+        setMessage(error.code);
       } else if (error && error.message) {
         if (error.message === "Current user is not defined") {
           navigate(`/`);

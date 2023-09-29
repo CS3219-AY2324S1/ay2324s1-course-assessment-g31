@@ -1,34 +1,15 @@
-import { UUID } from "crypto";
 import * as bcrypt from "bcrypt";
-import { parse } from "uuid";
 import db from "../db";
 
 export type user_role = "User" | "Admin";
-
 export interface User {
   user_id: string;
   username: string;
   user_role: user_role;
 }
+// removed hashed password
 
 export const userFunctions = {
-  async isEmailTaken(email: string): Promise<boolean> {
-    try {
-      const user = await db.query(
-        "SELECT * FROM public.users WHERE email = $1",
-        [email]
-      );
-      if (user.rows.length > 0) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      console.error("Error checking if email is taken:", error);
-      throw error;
-    }
-  },
-
   async insertUser(user: User): Promise<void> {
     try {
       const query = `

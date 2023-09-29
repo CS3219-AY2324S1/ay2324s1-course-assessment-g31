@@ -4,7 +4,6 @@ import {
   register,
   getProfile,
   deleteProfile,
-  updateProfile,
   changePassword,
   changeUsername,
   getRole,
@@ -28,9 +27,6 @@ router.get("/userRole/:id", getRole);
 
 // DELETE user profile
 router.delete("/delete/:id", deleteProfile);
-
-// UPDATE user profile (email and username)
-router.put("/update/:id", updateProfile);
 
 // UPDATE user profile (change password)
 router.put("/change-password/:id", changePassword);

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "@firebase/util";
 import styles from "./RegisterForm.module.css";
 import { useAuth } from "../../../context/AuthContext";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
-    userid: "", // this value shldnt be updated in any case
+    userid: "",
     email: "",
     username: "",
     password: "",
@@ -29,7 +29,6 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // console.log("Form submitted with data:", formData);
     setIsLoading(true);
 
     if (formData.password !== formData.confirmPassword) {

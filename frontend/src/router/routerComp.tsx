@@ -18,20 +18,14 @@ export interface ProtectedRouteProp {
 }
 
 function ProtectedRoute({ user, children }: ProtectedRouteProp) {
-  console.log(user);
-  console.log("I have entered protected route");
   if (!user || Object.keys(user).length === 0) {
-    // console.log(user);
     return <Navigate to="/" replace />;
   }
   return children;
 }
 
 function PostLoginNoAccessRoute({ user, children }: ProtectedRouteProp) {
-  console.log(user);
-  console.log("I have entered postlogin route");
   if (user) {
-    console.log(user);
     return <Navigate to="/questions" replace />;
   }
   return children;
@@ -40,32 +34,9 @@ function PostLoginNoAccessRoute({ user, children }: ProtectedRouteProp) {
 export default function RouterCompon() {
   const { currentUser } = useAuth();
 
-  // const ProtectedRoute = ({ user, children }: ProtectedRouteProp) => {
-  //   console.log(user);
-  //   console.log("I have entered protected route");
-  //   if (!user || Object.keys(user).length === 0) {
-  //     // console.log(user);
-  //     return <Navigate to="/" replace />;
-  //   }
-  //   return children;
-  // };
-
-  // const PostLoginNoAccessRoute = ({ user, children }: ProtectedRouteProp) => {
-  //   console.log(user);
-  //   console.log("I have entered postlogin route");
-  //   if (user) {
-  //     console.log(user);
-  //     return <Navigate to="/questions" replace />;
-  //   }
-  //   return children;
-  // };
-
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        {/* <Route path="/" element={<LoginPage />} /> */}
-        {/* <Route path="/register" element={<RegisterPage />} /> */}
-
         <Route
           path="/"
           element={
