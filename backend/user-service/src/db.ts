@@ -3,9 +3,9 @@ import { Pool, QueryResult } from "pg";
 // Create a PostgreSQL connection pool
 const db = new Pool({
   user: "postgres",
-  host: "34.142.179.10",
+  host: "localhost",
   database: "postgres",
-  password: "cs3219assignmentgroup31",
+  password: "sam",
   port: 5432,
 });
 

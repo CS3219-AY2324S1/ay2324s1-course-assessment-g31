@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DeleteProfileModal from "./DeleteProfileModal";
 import UpdateProfileModal from "./UpdateProfileModal";
 import styles from "./ProfileCard.module.css";
-import database from "../../../../FirebaseConfig";
-import { signOut } from "firebase/auth";
 import { useAuth } from "../../../context/AuthContext";
 // import { FirebaseError } from "firebase/app";
 
@@ -37,7 +35,7 @@ export default function ProfileCard() {
         console.log("Signed out successfully");
       })
       .catch((error) => {
-        setMessage("Error, " + error);
+        setMessage(`Error, ${error.message}`);
       });
   };
 
@@ -47,9 +45,10 @@ export default function ProfileCard() {
 
   const closeUpdateProfileModal = (username: string, email: string) => {
     setIsUpdateProfileModalOpen(false);
+    // Property shorthand added, was username:username and email:email prev
     setProfileData({
-      username: username,
-      email: email,
+      username,
+      email,
     });
   };
 

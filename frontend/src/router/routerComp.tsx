@@ -1,4 +1,6 @@
+import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
+import { User } from "@firebase/auth";
 import QuestionsPage from "../pages/QuestionsPage/QuestionsPage";
 // import RegisterPage from "./pages/RegisterPage/RegisterPage";
 // import LoginPage from "./pages/LoginPage/LoginPage";
@@ -7,37 +9,56 @@ import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import Layout from "../pages/Layout/Layout";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import PageNotFoundPage from "../pages/PageNotFoundPage/PageNotFoundPage";
-import { User } from "firebase/auth";
 
 import { useAuth } from "../context/AuthContext";
 
-export interface protectedRouteProp {
+export interface ProtectedRouteProp {
   user: User | null;
   children: React.ReactNode;
+}
+
+function ProtectedRoute({ user, children }: ProtectedRouteProp) {
+  console.log(user);
+  console.log("I have entered protected route");
+  if (!user || Object.keys(user).length === 0) {
+    // console.log(user);
+    return <Navigate to="/" replace />;
+  }
+  return children;
+}
+
+function PostLoginNoAccessRoute({ user, children }: ProtectedRouteProp) {
+  console.log(user);
+  console.log("I have entered postlogin route");
+  if (user) {
+    console.log(user);
+    return <Navigate to="/questions" replace />;
+  }
+  return children;
 }
 
 export default function RouterCompon() {
   const { currentUser } = useAuth();
 
-  const ProtectedRoute = ({ user, children }: protectedRouteProp) => {
-    console.log(user);
-    console.log("I have entered protected route");
-    if (!user || Object.keys(user).length == 0) {
-      // console.log(user);
-      return <Navigate to="/" replace />;
-    }
-    return children;
-  };
+  // const ProtectedRoute = ({ user, children }: ProtectedRouteProp) => {
+  //   console.log(user);
+  //   console.log("I have entered protected route");
+  //   if (!user || Object.keys(user).length === 0) {
+  //     // console.log(user);
+  //     return <Navigate to="/" replace />;
+  //   }
+  //   return children;
+  // };
 
-  const PostLoginNoAccessRoute = ({ user, children }: protectedRouteProp) => {
-    console.log(user);
-    console.log("I have entered postlogin route");
-    if (user) {
-      console.log(user);
-      return <Navigate to="/questions" replace />;
-    }
-    return children;
-  };
+  // const PostLoginNoAccessRoute = ({ user, children }: ProtectedRouteProp) => {
+  //   console.log(user);
+  //   console.log("I have entered postlogin route");
+  //   if (user) {
+  //     console.log(user);
+  //     return <Navigate to="/questions" replace />;
+  //   }
+  //   return children;
+  // };
 
   return (
     <Routes>

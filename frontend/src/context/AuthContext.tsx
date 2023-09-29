@@ -1,5 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
-import database from "../../FirebaseConfig";
+import React, { useContext, useState, useEffect, useMemo } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -10,7 +9,8 @@ import {
   updatePassword,
   deleteUser,
   verifyBeforeUpdateEmail,
-} from "firebase/auth";
+} from "@firebase/auth";
+import database from "../../FirebaseConfig";
 import LoadingPage from "../pages/LoadingPage/LoadingPage";
 
 interface AuthContextType {
@@ -40,14 +40,14 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-interface Props {
-  children?: React.ReactNode;
+interface AuthProviderProps {
+  children: React.ReactNode;
 }
 
-export function AuthProvider({ children }: Props) {
+export function AuthProvider({ children }: AuthProviderProps) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentRole, setCurrentRole] = useState(null);
+  const [currentRole, setCurrentRole] = useState<string | null>(null);
 
   function signup(email: string, password: string) {
     return createUserWithEmailAndPassword(database, email, password);
@@ -60,6 +60,10 @@ export function AuthProvider({ children }: Props) {
   function logout() {
     return signOut(database);
   }
+
+  // function getSignInMethodsForEmail(email: string) {
+  //   return fetchSignInMethodsForEmail(database, email);
+  // }
 
   //   function resetPassword(email) {
   //     return auth.sendPasswordResetEmail(email);
@@ -100,7 +104,7 @@ export function AuthProvider({ children }: Props) {
     return Promise.resolve(new Error("Current user is not defined"));
   }
 
-  async function getUserRole(user: User) {
+  async function getUserRole(user: User): Promise<string> {
     try {
       const response = await fetch(
         `http://localhost:3000/user-services/userRole/${user.uid}`,
@@ -117,16 +121,12 @@ export function AuthProvider({ children }: Props) {
       if (!response.ok) {
         console.error("Failed to fetch role:", data.message);
         return "User";
-      } else {
-        console.log("Successfully fetched role: ", data.user_role);
-        return data.user_role;
       }
-      // } else {
-      //   console.log("Unauthenticated access");
-      //   setMessage("Unauthenticated user access");
-      // }
+      console.log("Successfully fetched role: ", data.user_role);
+      return data.user_role;
     } catch (error: any) {
       console.log("Error fetching profile data:", error.message);
+      return "User";
     }
   }
 
@@ -134,9 +134,8 @@ export function AuthProvider({ children }: Props) {
     const unsubscribe = onAuthStateChanged(database, async (user) => {
       if (user) {
         setCurrentUser(user);
-        await getUserRole(user).then((role) => {
-          setCurrentRole(role);
-        });
+        const role = await getUserRole(user);
+        setCurrentRole(role);
       } else {
         setCurrentUser(null);
         setCurrentRole(null);
@@ -146,7 +145,18 @@ export function AuthProvider({ children }: Props) {
     return unsubscribe;
   }, []);
 
-  const value = {
+  const value = useMemo(() => {
+    return {
+      currentUser,
+      currentRole,
+      login,
+      signup,
+      logout,
+      updateThePassword,
+      deleteTheUser,
+      verifyBeforeTheEmailUpdate,
+    };
+  }, [
     currentUser,
     currentRole,
     login,
@@ -155,8 +165,19 @@ export function AuthProvider({ children }: Props) {
     updateThePassword,
     deleteTheUser,
     verifyBeforeTheEmailUpdate,
-    //resetPassword
-  };
+  ]);
+
+  // const value = {
+  //   currentUser,
+  //   currentRole,
+  //   login,
+  //   signup,
+  //   logout,
+  //   updateThePassword,
+  //   deleteTheUser,
+  //   verifyBeforeTheEmailUpdate,
+  //   getSignInMethodsForEmail,
+  // };
 
   return (
     <AuthContext.Provider value={value}>

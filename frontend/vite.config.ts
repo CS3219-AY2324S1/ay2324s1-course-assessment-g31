@@ -7,7 +7,6 @@ export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
   return defineConfig({
-    //removed eslint plugin
     plugins: [eslint(), react()],
     server: {
       proxy: {
@@ -22,7 +21,7 @@ export default ({ mode }) => {
         },
       },
       host: true,
-      port: parseInt(process.env.VITE_PORT) || 8080,
+      port: parseInt(process.env.VITE_PORT, 10) || 8080,
     },
   });
 };

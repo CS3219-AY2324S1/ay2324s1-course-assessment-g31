@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
-import styles from "./DeleteProfileModal.module.css"; // Create a CSS module for modal styles
-import { useAuth } from "../../../context/AuthContext";
-import { FirebaseError } from "firebase/app";
+import { FirebaseError } from "@firebase/app";
 import {
-  deleteUser,
   EmailAuthProvider,
   reauthenticateWithCredential,
-} from "firebase/auth";
+} from "@firebase/auth";
+import styles from "./DeleteProfileModal.module.css"; // Create a CSS module for modal styles
+import { useAuth } from "../../../context/AuthContext";
 
 interface DeleteProfileModalProps {
   isOpen: boolean;
@@ -90,7 +89,7 @@ export default function DeleteProfileModal({
       if (error instanceof FirebaseError) {
         setMessage(error.message);
       } else if (error && error.message) {
-        if (error.message == "Current user is not defined") {
+        if (error.message === "Current user is not defined") {
           navigate(`/`);
         } else {
           setMessage(error.message);
@@ -123,7 +122,7 @@ export default function DeleteProfileModal({
               />
             </label>
           </div>
-          <br></br>
+          <br />
           <div className={styles.modalButtons}>
             <button
               type="button"

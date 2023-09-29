@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import {
   Category,
   CategoryMap,
@@ -7,7 +8,6 @@ import {
   Question,
 } from "../../../types/question";
 import styles from "./QuestionForm.module.css";
-import { useNavigate } from "react-router";
 import { useAuth } from "../../../context/AuthContext";
 
 interface QuestionFormProps {
@@ -98,9 +98,9 @@ export default function QuestionForm({
       >
         View Profile
       </button>
-      <br></br>
-      <br></br>
-      {currentRole == "Admin" && (
+      <br />
+      <br />
+      {currentRole === "Admin" && (
         <form onSubmit={handleSubmit} className={styles.formContainer}>
           <label htmlFor="title">
             Question Title:

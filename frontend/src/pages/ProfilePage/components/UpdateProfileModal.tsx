@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Modal from "react-modal";
-import styles from "./UpdateProfileModal.module.css";
-import { useAuth } from "../../../context/AuthContext";
-import { FirebaseError } from "firebase/app";
+import { FirebaseError } from "@firebase/app";
 import { useNavigate } from "react-router";
 import {
+  EmailAuthProvider,
   reauthenticateWithCredential,
-  sendEmailVerification,
-} from "firebase/auth";
-import { EmailAuthProvider } from "firebase/auth";
+} from "@firebase/auth";
+import styles from "./UpdateProfileModal.module.css";
+import { useAuth } from "../../../context/AuthContext";
 
 interface UpdateProfileModalProps {
   isOpen: boolean;
@@ -25,8 +24,6 @@ export default function UpdateProfileModal({
   emailProp,
   usernameProp,
 }: UpdateProfileModalProps) {
-  console.log(emailProp);
-  console.log(usernameProp);
   const [email, setEmail] = useState(emailProp || "");
   const [username, setUsername] = useState(usernameProp || "");
   const [isPasswordChangeFormOpen, setPasswordChangeFormOpen] = useState(false);
@@ -113,7 +110,7 @@ export default function UpdateProfileModal({
         console.log("Signed out successfully");
       })
       .catch((error) => {
-        setMessage("Error, " + error);
+        setMessage(`Error, ${error}`);
       });
   };
 
@@ -127,7 +124,7 @@ export default function UpdateProfileModal({
         return;
       }
 
-      if (oldPassword == newPassword) {
+      if (oldPassword === newPassword) {
         setMessage("The same old password and new password have been entered");
         return;
       }
@@ -177,11 +174,11 @@ export default function UpdateProfileModal({
       //   console.error("Failed to change password:", data.message);
       // }
     } catch (error: any) {
-      // console.error("Error changing password:", error);
+      console.error("Error changing password:", error);
       if (error instanceof FirebaseError) {
-        setMessage(error.message);
+        setMessage(error.code);
       } else if (error && error.message) {
-        if (error.message == "Current user is not defined") {
+        if (error.message === "Current user is not defined") {
           navigate(`/`);
         } else {
           setMessage(error.message);
@@ -197,12 +194,12 @@ export default function UpdateProfileModal({
       setMessage("");
       setIsLoading(true);
 
-      if (newUsername == username) {
+      if (newUsername === username) {
         setMessage("New Username same as old Username.");
         return;
       }
 
-      if (newUsername.trim() == "") {
+      if (newUsername.trim() === "") {
         setMessage("The new Username is invalid");
         return;
       }
@@ -234,8 +231,8 @@ export default function UpdateProfileModal({
       setNewUsername("");
       setMessage("Username changed successfully!");
     } catch (error: any) {
-      console.error("Error changing email:", error);
-      setMessage("Error changing email: " + error.message);
+      console.error("Error changing usernmae:", error);
+      setMessage(`Error changing username: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -246,32 +243,73 @@ export default function UpdateProfileModal({
       setMessage("");
       setIsLoading(true);
 
-      if (newEmail == email) {
+      if (newEmail === email) {
         setMessage("The email is the same");
         return;
       }
 
-      let emailRegex = new RegExp(
-        "([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|[[\t -Z^-~]*])",
-      );
+      const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-      if (newEmail.trim() == "" || !emailRegex.test(newEmail)) {
+      if (newEmail.trim() === "" || !emailRegex.test(newEmail)) {
         setMessage("The new email is invalid");
         return;
       }
 
-      if (passwordNewEmail.trim() == "") {
+      if (passwordNewEmail.trim() === "") {
         setMessage("The email is the same");
         return;
       }
 
       const credential = EmailAuthProvider.credential(email, passwordNewEmail);
 
+      console.log(currentUser);
+
       if (currentUser) {
-        await reauthenticateWithCredential(currentUser, credential).then(() => {
-          // If reauthentication is successful, update the email
-          return verifyBeforeTheEmailUpdate(newEmail);
-        });
+        await reauthenticateWithCredential(currentUser, credential);
+        // .then(async () => {
+        //   console.log(newEmail);
+        //   return await getSignInMethodsForEmail(newEmail);
+        // })
+        // .then((signInMethods) => {
+        //   // setTimeout(() => {
+        //   //   console.log("In sign in mthds"), 10000;
+        //   // });
+        //   // return methods;
+        //   console.log(signInMethods);
+        //   if (signInMethods && signInMethods.length > 0) {
+        //     // Email address is already taken
+        //     console.log("Email is already registered");
+        //     setMessage("Email is already registered, please try again");
+        //     return;
+        //   }
+        //   console.log("Email not yet already registered");
+        // })
+        // .then(() => {
+        //   return verifyBeforeTheEmailUpdate(newEmail);
+        //   //   setEmailChangeFormOpen(false);
+        //   //   setMessage("");
+        //   //   setEmail(newEmail);
+        //   //   setNewEmail("");
+        //   //   setPasswordNewEmail("");
+        //   //   setMessage(
+        //   //     "Verification link sent to new email. Do click on the link and attempt to login using new email.",
+        //   //   );
+        //   //   setTimeout(handleLogout, 3000);
+        // })
+        // .catch((err) => {
+        //   setMessage(err.message);
+        // });
+
+        // if (signInMethods && signInMethods.length > 0) {
+        //   // Email address is already taken
+        //   console.log("Email is already registered");
+        //   setMessage("Email is already registered, please try again");
+        //   return;
+        // }
+
+        await verifyBeforeTheEmailUpdate(newEmail);
+
+        setTimeout(handleLogout, 3000);
       }
 
       setEmailChangeFormOpen(false);
@@ -280,19 +318,18 @@ export default function UpdateProfileModal({
       setNewEmail("");
       setPasswordNewEmail("");
       setMessage(
-        "Verification link sent to new email. Do click on the link and attempt to login using new email.",
+        "If new email is not already registered, you will receive a verification link in your new email. Click on it and login with new email.",
       );
-
-      setTimeout(handleLogout, 2000);
+      setTimeout(handleLogout, 8500);
     } catch (error: any) {
       console.error("Error changing email:", error);
       if (error instanceof FirebaseError) {
-        if (error.code == "auth/invalid-login-credentials") {
+        if (error.code === "auth/invalid-login-credentials") {
           setMessage("Wrong password provided");
         } else {
           setMessage(error.code);
         }
-      } else if (error.message == "Current user is not defined") {
+      } else if (error.message === "Current user is not defined") {
         navigate(`/`);
       } else {
         setMessage(error.message);
@@ -325,7 +362,7 @@ export default function UpdateProfileModal({
                 className="form-control"
                 id="email"
                 value={email}
-                disabled={true}
+                disabled
               />
             </label>
           </div>
@@ -337,7 +374,7 @@ export default function UpdateProfileModal({
                 className="form-control"
                 id="username"
                 value={username}
-                disabled={true}
+                disabled
               />
             </label>
           </div>
@@ -455,7 +492,7 @@ export default function UpdateProfileModal({
         )}
         {isEmailChangeFormOpen && (
           <form>
-            <br></br>
+            <br />
             <div className="mb-3">
               <label htmlFor="newEmail" className={styles.formLabel}>
                 New Email
@@ -505,7 +542,7 @@ export default function UpdateProfileModal({
         )}
         {isUsernameChangeFormOpen && (
           <form>
-            <br></br>
+            <br />
             <div className="mb-3">
               <label htmlFor="newUsername" className={styles.formLabel}>
                 New Username

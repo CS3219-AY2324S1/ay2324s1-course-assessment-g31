@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 // Add useNavigate to below import
-import { useNavigate, Link } from "react-router-dom"; // Import Link
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useNavigate, Link } from "react-router-dom";
 import styles from "./LoginForm.module.css";
-import database from "../../../../FirebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth/cordova";
-import { FirebaseError } from "firebase/app";
 import { useAuth } from "../../../context/AuthContext";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
-    userid: "", //this value shldnt be updated in any case
+    userid: "", // this value shldnt be updated in any case
     email: "",
     password: "",
   });

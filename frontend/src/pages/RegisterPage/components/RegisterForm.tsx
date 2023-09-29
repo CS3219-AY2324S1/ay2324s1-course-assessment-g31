@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
-import {
-  createUserWithEmailAndPassword,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-} from "firebase/auth";
-import styles from "./RegisterForm.module.css";
-import database from "../../../../FirebaseConfig";
 import { FirebaseError } from "@firebase/util";
+import styles from "./RegisterForm.module.css";
 import { useAuth } from "../../../context/AuthContext";
 
 export default function RegisterForm() {
@@ -80,11 +74,11 @@ export default function RegisterForm() {
       navigate(`/questions`);
     } catch (err: any) {
       if (err instanceof FirebaseError) {
-        setMessage("Error " + err.code);
-        console.error("Error " + err.message);
+        setMessage(`Error ${err.code}`);
+        console.error(`Error ${err.message}`);
       } else {
         console.error("Network error: ", err.message);
-        setMessage("Network error: " + err.message);
+        setMessage(`Network error: ${err.message}`);
       }
     } finally {
       setIsLoading(false);

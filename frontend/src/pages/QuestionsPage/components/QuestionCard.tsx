@@ -70,7 +70,7 @@ export default function QuestionCard({
       {showDescription && (
         <>
           {" "}
-          {currentRole == "Admin" && (
+          {currentRole === "Admin" && (
             <button
               type="button"
               disabled={isLoading}
@@ -79,7 +79,7 @@ export default function QuestionCard({
               delete
             </button>
           )}
-          {currentRole == "Admin" && (
+          {currentRole === "Admin" && (
             <button type="button" onClick={() => setQuestionToEdit(question)}>
               edit
             </button>
