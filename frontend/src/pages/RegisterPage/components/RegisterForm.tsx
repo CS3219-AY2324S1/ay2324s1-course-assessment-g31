@@ -33,6 +33,7 @@ export default function RegisterForm() {
 
     if (formData.password !== formData.confirmPassword) {
       setMessage("Passwords do not match");
+      setIsLoading(false);
       return;
     }
 

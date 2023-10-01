@@ -38,8 +38,9 @@ export default function DeleteProfileModal({
     console.log(password);
   };
 
-  const handleDeleteAccount = async () => {
+  const handleDeleteAccount = async (e: React.FormEvent) => {
     try {
+      e.preventDefault();
       setIsLoading(true);
 
       if (currentUser) {
@@ -48,11 +49,9 @@ export default function DeleteProfileModal({
           password,
         );
 
-        await reauthenticateWithCredential(currentUser, credential).then(() => {
-          // If reauthentication is successful, update the password
-          return deleteTheUser();
-        });
-
+        await reauthenticateWithCredential(currentUser, credential);
+        // If reauthentication is successful, delete user from firebase
+        await deleteTheUser();
         const response = await fetch(
           `http://localhost:3000/user-services/delete/${userId}`,
           {
@@ -60,14 +59,12 @@ export default function DeleteProfileModal({
           },
         );
 
-        if (response.ok) {
-          // Account deletion from psql was successful
-          navigate("/");
-        } else {
+        if (!response.ok) {
           // Account deletion from psql failed
           const data = await response.json();
           console.error("Failed to delete account from psql:", data.message);
         }
+        navigate(`/`);
       }
     } catch (error: any) {
       if (error instanceof FirebaseError) {
@@ -90,7 +87,7 @@ export default function DeleteProfileModal({
       className={styles.modalContent}
       overlayClassName={styles.modalOverlay}
     >
-      <form>
+      <form onSubmit={handleDeleteAccount}>
         <div className={styles.deleteModalCard}>
           <h2>Confirm Account Deletion</h2>
           <p>Enter password to confirm account deletion</p>
@@ -109,8 +106,7 @@ export default function DeleteProfileModal({
           <br />
           <div className={styles.modalButtons}>
             <button
-              type="button"
-              onClick={handleDeleteAccount}
+              type="submit"
               disabled={isLoading}
               className={styles.deleteAccountButton}
             >

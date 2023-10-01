@@ -93,24 +93,6 @@ export const deleteProfile = async (req: Request, res: Response) => {
   }
 };
 
-export const changePassword = async (req: Request, res: Response) => {
-  const { id: user_id } = req.params;
-  const { oldPassword, newPassword } = req.body;
-
-  try {
-    const result = await userFunctions.changeUserPassword(
-      user_id,
-      oldPassword,
-      newPassword
-    );
-
-    return res.status(201).json({ message: "Password changed successfully" });
-  } catch (error) {
-    console.error("Error updating profile:", error);
-    return res.status(500).json({ message: error });
-  }
-};
-
 export const changeUsername = async (req: Request, res: Response) => {
   const { id: user_id } = req.params;
   const { newUsername } = req.body;
