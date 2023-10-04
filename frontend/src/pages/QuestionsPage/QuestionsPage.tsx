@@ -7,8 +7,10 @@ import styles from "./QuestionsPage.module.css";
 export default function QuestionsPage() {
   // TODO replace with useContext
   const [questionToEdit, setQuestionToEdit] = useState<Question>();
+
   return (
     <div className={styles.pageContainer}>
+      {/* <QuestionsToProfileLink /> */}
       <QuestionsList setQuestionToEdit={setQuestionToEdit} />
       <QuestionForm
         questionToEdit={questionToEdit}

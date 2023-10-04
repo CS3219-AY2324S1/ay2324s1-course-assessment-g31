@@ -3,36 +3,49 @@ import { useLocation, useNavigate } from "react-router-dom";
 import DeleteProfileModal from "./DeleteProfileModal";
 import UpdateProfileModal from "./UpdateProfileModal";
 import styles from "./ProfileCard.module.css";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function ProfileCard() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const userId = searchParams.get("userId");
   const navigate = useNavigate();
+  const { logout, currentUser } = useAuth();
 
   const [profileData, setProfileData] = useState({
     username: "",
     email: "",
-    hashedPassword: "",
   });
 
   const [message, setMessage] = useState("");
+  const [disableUpdateProfileModal, setDisableUpdateProfileModal] =
+    useState(true);
   const [isDeleteProfileModalOpen, setIsDeleteProfileModalOpen] =
     useState(false);
   const [isUpdateProfileModalOpen, setIsUpdateProfileModalOpen] =
     useState(false);
 
   const handleLogout = () => {
-    // TODO: Perform logout actions here (e.g., clearing user session)
-    navigate("/login");
+    logout()
+      .then(() => {
+        navigate("/");
+        console.log("Signed out successfully");
+      })
+      .catch((error) => {
+        setMessage(`Error, ${error.message}`);
+      });
   };
 
   const openUpdateProfileModal = () => {
     setIsUpdateProfileModalOpen(true);
   };
 
-  const closeUpdateProfileModal = () => {
+  const closeUpdateProfileModal = (username: string, email: string) => {
     setIsUpdateProfileModalOpen(false);
+    setProfileData({
+      username,
+      email,
+    });
   };
 
   const openDeleteProfileModal = () => {
@@ -46,22 +59,37 @@ export default function ProfileCard() {
   useEffect(() => {
     async function fetchProfileData() {
       try {
-        const response = await fetch(
-          `http://localhost:3000/user-services/profile/${userId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
+        // Check if firebase has this user
+        if (currentUser !== null) {
+          const response = await fetch(
+            `http://localhost:3000/user-services/profile/${userId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
             },
-          },
-        );
-        const data = await response.json();
+          );
 
-        if (!response.ok) {
-          console.error("Failed to fetch profile:", data.message);
+          const data = await response.json();
+
+          if (!response.ok) {
+            console.error("Failed to fetch profile:", data.message);
+
+            setMessage(`Error fetching profile data: ${data.message}`);
+          } else {
+            console.log("Successfully fetched username: ", data);
+            setProfileData({
+              ...profileData,
+              username: data.username,
+              email: currentUser.email ? currentUser.email : "",
+            });
+            setMessage("Profile fetched successfully");
+            setDisableUpdateProfileModal(false);
+          }
         } else {
-          console.log("Successfully fetched profile: ", data);
-          setProfileData(data);
+          console.log("Unauthenticated access");
+          setMessage("Unauthenticated user access");
         }
       } catch (error: any) {
         console.log("Error fetching profile data:", error.message);
@@ -70,7 +98,7 @@ export default function ProfileCard() {
     }
 
     fetchProfileData();
-  }, [userId]);
+  }, [userId, currentUser]);
 
   return (
     <div className={styles.profileCardContainer}>
@@ -80,6 +108,7 @@ export default function ProfileCard() {
             type="button"
             className={styles.updateProfileButton}
             onClick={openUpdateProfileModal}
+            disabled={disableUpdateProfileModal}
           >
             Update Account
           </button>

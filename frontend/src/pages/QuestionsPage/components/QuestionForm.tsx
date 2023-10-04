@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import {
   Category,
   CategoryMap,
@@ -7,6 +8,7 @@ import {
   Question,
 } from "../../../types/question";
 import styles from "./QuestionForm.module.css";
+import { useAuth } from "../../../context/AuthContext";
 
 interface QuestionFormProps {
   questionToEdit: Question | undefined;
@@ -23,6 +25,8 @@ export default function QuestionForm({
   const [description, setDescription] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<Category[]>([]);
   const [error, setError] = useState<string>("");
+  const navigate = useNavigate();
+  const { currentUser, currentRole } = useAuth();
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedValue = event.target.value as Category;
@@ -85,65 +89,81 @@ export default function QuestionForm({
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className={styles.formContainer}>
-        <label htmlFor="title">
-          Question Title:
-          <input
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </label>
-        <div className={styles.complexityContainer}>
-          <span>Complexity:</span>
-          {Object.values(ComplexityMap).map((complexity) => (
-            <div key={complexity}>
-              <input
-                type="radio"
-                id={complexity}
-                name="complexity"
-                value={complexity}
-                onChange={() => setSelectedComplexity(complexity)}
-                checked={selectedComplexity === complexity}
-              />
-              <label htmlFor={complexity}>{complexity}</label>
-            </div>
-          ))}
-        </div>
-        <span>Category:</span>
-        <div className={styles.categoryContainer}>
-          {Object.values(CategoryMap).map((category) => (
-            <div key={category}>
-              <input
-                type="checkbox"
-                id={category}
-                value={category}
-                onChange={handleCheckboxChange}
-                checked={selectedCategory.includes(category)}
-              />
-              <label htmlFor={category}>{category}</label>
-            </div>
-          ))}
-        </div>
-        <label htmlFor="description">
-          Question Description:
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </label>
-        <div>
-          <button type="submit">
-            {questionToEdit ? "save changes" : "create"}
-          </button>
-          {questionToEdit && (
-            <button type="button" onClick={() => setQuestionToEdit(undefined)}>
-              cancel
+      <button
+        type="button"
+        className={styles.logoutButton}
+        onClick={() => {
+          navigate(`/user/profile?userId=${currentUser?.uid}`);
+        }}
+      >
+        View Profile
+      </button>
+      <br />
+      <br />
+      {currentRole === "Admin" && (
+        <form onSubmit={handleSubmit} className={styles.formContainer}>
+          <label htmlFor="title">
+            Question Title:
+            <input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </label>
+          <div className={styles.complexityContainer}>
+            <span>Complexity:</span>
+            {Object.values(ComplexityMap).map((complexity) => (
+              <div key={complexity}>
+                <input
+                  type="radio"
+                  id={complexity}
+                  name="complexity"
+                  value={complexity}
+                  onChange={() => setSelectedComplexity(complexity)}
+                  checked={selectedComplexity === complexity}
+                />
+                <label htmlFor={complexity}>{complexity}</label>
+              </div>
+            ))}
+          </div>
+          <span>Category:</span>
+          <div className={styles.categoryContainer}>
+            {Object.values(CategoryMap).map((category) => (
+              <div key={category}>
+                <input
+                  type="checkbox"
+                  id={category}
+                  value={category}
+                  onChange={handleCheckboxChange}
+                  checked={selectedCategory.includes(category)}
+                />
+                <label htmlFor={category}>{category}</label>
+              </div>
+            ))}
+          </div>
+          <label htmlFor="description">
+            Question Description:
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </label>
+          <div>
+            <button type="submit">
+              {questionToEdit ? "save changes" : "create"}
             </button>
-          )}
-        </div>
-      </form>
+            {questionToEdit && (
+              <button
+                type="button"
+                onClick={() => setQuestionToEdit(undefined)}
+              >
+                cancel
+              </button>
+            )}
+          </div>
+        </form>
+      )}
       {error && <span>{error}</span>}
     </div>
   );
