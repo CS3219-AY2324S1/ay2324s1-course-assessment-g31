@@ -1,18 +1,23 @@
 import express from "express";
 import { checkSchema } from "express-validator";
+
 import MatchingRequestController from "../../controllers/matchingRequest/matchingRequest.controller";
 import createMatchingRequestSchema from "../../util/validation/matchingRequest/createMatchingRequest.schema";
-import { BaseRouter } from "../router.abstract";
+import BaseRouter from "../router.abstract";
 
 class MatchingRequestRouter extends BaseRouter<MatchingRequestController> {
   override registerRoutes(): express.Router {
-    this.router
-      .route("/")
-      .post(checkSchema(createMatchingRequestSchema), this.controller.create);
+    this.router.route("/healthCheck").get(this.controller.healthCheck);
 
     this.router
-      .route("/healthCheck")
-      .get(this.controller.healthCheck);
+      .route("/:id")
+      .get(this.controller.findById)
+      .put(this.controller.update);
+
+    this.router
+      .route("/")
+      .get(this.controller.findAll)
+      .post(checkSchema(createMatchingRequestSchema), this.controller.create);
 
     return this.router;
   }

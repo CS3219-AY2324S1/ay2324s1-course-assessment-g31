@@ -26,7 +26,7 @@ class MatchingService
     try {
       const matching = await this.prismaClient.matching.findUnique({
         where: {
-          id: id,
+          id,
         },
       });
       return matching;
@@ -59,7 +59,7 @@ class MatchingService
     try {
       return await this.prismaClient.matching.update({
         where: {
-          id: id,
+          id,
         },
         data: body,
       });
@@ -72,7 +72,7 @@ class MatchingService
     try {
       return await this.prismaClient.matching.delete({
         where: {
-          id: id,
+          id,
         },
       });
     } catch (error) {
@@ -81,7 +81,7 @@ class MatchingService
   }
 
   public async findMatch(
-    body: MatchingRequest
+    body: MatchingRequest,
   ): Promise<MatchingRequest | null> {
     try {
       let foundMatchRequest;

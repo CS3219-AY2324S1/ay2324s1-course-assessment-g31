@@ -1,6 +1,6 @@
 import { Message, Producer } from "kafkajs";
 
-export abstract class EventProducer<Object> {
+abstract class EventProducer<Obj> {
   private producer: Producer;
 
   constructor(producer: Producer) {
@@ -16,7 +16,9 @@ export abstract class EventProducer<Object> {
     await this.producer.disconnect();
   };
 
-  abstract create(object: Object): void;
-  abstract update(object: Object): void;
-  abstract delete(object: Object): void;
+  abstract create(object: Obj): void;
+  abstract update(object: Obj): void;
+  abstract delete(object: Obj): void;
 }
+
+export default EventProducer;

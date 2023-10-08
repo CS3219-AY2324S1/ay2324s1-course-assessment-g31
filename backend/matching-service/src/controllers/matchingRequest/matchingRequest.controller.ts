@@ -9,7 +9,7 @@ import CRUDController from "../crudController.interface";
 class MatchingRequestController extends Controller implements CRUDController {
   constructor(
     private readonly service: MatchingRequestService,
-    private readonly parser: MatchingRequestParser
+    private readonly parser: MatchingRequestParser,
   ) {
     super();
   }
@@ -37,7 +37,7 @@ class MatchingRequestController extends Controller implements CRUDController {
     }
 
     try {
-      const parsedId = this.parser.parseFindByIdInput(req.params["id"]);
+      const parsedId = this.parser.parseFindByIdInput(req.params.id);
       const matchingRequest = await this.service.findById(parsedId);
       return MatchingRequestController.handleSuccess(res, matchingRequest);
     } catch (e: any) {
@@ -84,7 +84,7 @@ class MatchingRequestController extends Controller implements CRUDController {
     }
 
     try {
-      const parsedId = this.parser.parseFindByIdInput(req.params["id"]);
+      const parsedId = this.parser.parseFindByIdInput(req.params.id);
       const parsedUpdateInput = this.parser.parseUpdateInput(req.body);
       const matchingRequest = this.service.update(parsedId, parsedUpdateInput);
       return MatchingRequestController.handleSuccess(res, matchingRequest);
@@ -101,7 +101,7 @@ class MatchingRequestController extends Controller implements CRUDController {
     }
 
     try {
-      const parsedId = this.parser.parseFindByIdInput(req.params["id"]);
+      const parsedId = this.parser.parseFindByIdInput(req.params.id);
       const matchingRequest = this.service.delete(parsedId);
       return MatchingRequestController.handleSuccess(res, matchingRequest);
     } catch (e: any) {

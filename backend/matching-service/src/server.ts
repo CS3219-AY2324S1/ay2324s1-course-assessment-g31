@@ -1,16 +1,17 @@
 import app from "./app";
 import matchingEventConsumer from "./events/consumers/main";
+import logger from "./util/logger";
 
-const port = process.env["PORT"];
+const port = process.env.SERVER_PORT;
 
 app.listen(port, () => {
-  console.log(
-    `⚡️[server]: Matching Service is running at http://localhost:${port}`
+  logger.info(
+    `⚡️[server]: Matching Service is running at http://localhost:${port}`,
   );
 
-  if (process.env["NODE_ENV"] != "test") {
+  if (process.env.NODE_ENV !== "test") {
     matchingEventConsumer().catch((err: Error) => {
-      console.error("Error in Matching Service Consumer: ", err);
+      logger.error("Error in Matching Service Consumer: ", err);
     });
   }
 });

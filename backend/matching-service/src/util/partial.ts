@@ -1,4 +1,4 @@
 // Converts all keys to be optional
-export type OptionalInterface<T> = {
+export type Partial<T> = {
   [P in keyof T]?: T[P];
 };

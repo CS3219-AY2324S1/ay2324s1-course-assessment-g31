@@ -1,10 +1,10 @@
-import { MatchingRequest, PrismaClient } from '@prisma/client';
+import { MatchingRequest, PrismaClient } from "@prisma/client";
 
-import { MatchingRequestCreateDTO } from '../../interfaces/matchingRequest/createDTO';
-import { OptionalMatchingRequest } from '../../interfaces/matchingRequest/object';
-import { MatchingRequestUpdateDTO } from '../../interfaces/matchingRequest/updateDTO';
-import Service from '../service.interface';
-import { EventProducer } from '../../events/producers/main.interface';
+import EventProducer from "../../events/producers/main.interface";
+import { MatchingRequestCreateDTO } from "../../interfaces/matchingRequest/createDTO";
+import { OptionalMatchingRequest } from "../../interfaces/matchingRequest/object";
+import { MatchingRequestUpdateDTO } from "../../interfaces/matchingRequest/updateDTO";
+import Service from "../service.interface";
 
 class MatchingRequestService
   implements
@@ -16,11 +16,11 @@ class MatchingRequestService
 {
   constructor(
     private readonly eventProducer: EventProducer<MatchingRequest>,
-    private readonly prismaClient: PrismaClient
+    private readonly prismaClient: PrismaClient,
   ) {}
 
   public async create(
-    body: MatchingRequestCreateDTO
+    body: MatchingRequestCreateDTO,
   ): Promise<MatchingRequest> {
     try {
       const matchingRequest = await this.prismaClient.matchingRequest.create({
@@ -36,14 +36,14 @@ class MatchingRequestService
   }
 
   public async findById(
-    id: number | undefined
+    id: number | undefined,
   ): Promise<MatchingRequest | null> {
     if (!id) throw new Error("No id provided");
 
     try {
       return await this.prismaClient.matchingRequest.findUnique({
         where: {
-          id: id,
+          id,
         },
       });
     } catch (error) {
@@ -52,32 +52,32 @@ class MatchingRequestService
   }
 
   public async findOne(
-    body: OptionalMatchingRequest
+    body: OptionalMatchingRequest,
   ): Promise<MatchingRequest | null> {
     try {
       const matchingRequest = this.prismaClient.matchingRequest.findFirst({
         where: body,
       });
-      return matchingRequest;
+      return await matchingRequest;
     } catch (error) {
       throw new Error("Failed to find matching request.");
     }
   }
 
   public async findAll(): Promise<MatchingRequest[]> {
-    return await this.prismaClient.matchingRequest.findMany();
+    return this.prismaClient.matchingRequest.findMany();
   }
 
   public async update(
     id: number | undefined,
-    body: MatchingRequestUpdateDTO
+    body: MatchingRequestUpdateDTO,
   ): Promise<MatchingRequest> {
     if (!id) throw new Error("No id provided");
 
     try {
       return await this.prismaClient.matchingRequest.update({
         where: {
-          id: id,
+          id,
         },
         data: body,
       });
@@ -92,7 +92,7 @@ class MatchingRequestService
     try {
       return await this.prismaClient.matchingRequest.delete({
         where: {
-          id: id,
+          id,
         },
       });
     } catch (error) {

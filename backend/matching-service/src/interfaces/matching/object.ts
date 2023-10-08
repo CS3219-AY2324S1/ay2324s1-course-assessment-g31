@@ -1,4 +1,4 @@
-import { OptionalInterface } from "../../util/optionalInterface";
+import { Partial } from "../../util/partial";
 
 export type Matching = {
   id: number;
@@ -8,4 +8,4 @@ export type Matching = {
   dateTimeMatched: Date;
 };
 
-export type OptionalMatching = OptionalInterface<Matching>;
+export type OptionalMatching = Partial<Matching>;

@@ -1,10 +1,10 @@
 import { MatchingRequest } from "../../../interfaces/matchingRequest/object";
-import { MATCHING_REQUEST_TOPICS } from "../../topics/matchingRequest/topic";
-import { EventProducer } from "../main.interface";
+import MatchingRequestTopics from "../../topics/matchingRequest/topic";
+import EventProducer from "../main.interface";
 
 class MatchingRequestProducer extends EventProducer<MatchingRequest> {
   override create = (object: MatchingRequest): void => {
-    this.sendEvent(MATCHING_REQUEST_TOPICS.CREATE, [
+    this.sendEvent(MatchingRequestTopics.CREATE, [
       {
         key: object.id.toString(),
         value: JSON.stringify(object),
@@ -13,7 +13,7 @@ class MatchingRequestProducer extends EventProducer<MatchingRequest> {
   };
 
   override update = (object: MatchingRequest): void => {
-    this.sendEvent(MATCHING_REQUEST_TOPICS.UPDATE, [
+    this.sendEvent(MatchingRequestTopics.UPDATE, [
       {
         key: object.id.toString(),
         value: JSON.stringify(object),
@@ -22,7 +22,7 @@ class MatchingRequestProducer extends EventProducer<MatchingRequest> {
   };
 
   override delete = (object: MatchingRequest): void => {
-    this.sendEvent(MATCHING_REQUEST_TOPICS.DELETE, [
+    this.sendEvent(MatchingRequestTopics.DELETE, [
       {
         key: object.id.toString(),
         value: JSON.stringify(object),
@@ -31,13 +31,13 @@ class MatchingRequestProducer extends EventProducer<MatchingRequest> {
   };
 
   fail = (object: MatchingRequest): void => {
-    this.sendEvent(MATCHING_REQUEST_TOPICS.FAIL, [
+    this.sendEvent(MatchingRequestTopics.FAIL, [
       {
         key: object.id.toString(),
         value: JSON.stringify(object),
       },
     ]);
-  }
+  };
 }
 
 export default MatchingRequestProducer;
