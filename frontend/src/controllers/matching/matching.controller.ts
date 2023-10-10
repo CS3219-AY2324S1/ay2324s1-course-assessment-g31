@@ -30,6 +30,14 @@ class MatchingController extends GenericController {
       return null;
     }
   }
+
+  public async getMatchingRequests() {
+    try {
+      return await this.get("matchingRequest");
+    } catch (error) {
+      return null;
+    }
+  }
 }
 
 export default MatchingController;

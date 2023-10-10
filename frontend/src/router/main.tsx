@@ -110,7 +110,7 @@ export default function MainRouter() {
         <Route
           path="/matching/admin"
           element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["maintainer"]}>
+            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
               <MatchingControlPanelPage />
             </ProtectedRoute>
           }
