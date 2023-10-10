@@ -95,25 +95,21 @@ export default function SingleQuestionPage() {
             <div className="flex flex-col">
               <div className="flex">
                 {matchedUserId === "" ? (
-                  <div className="animate-pulse h-5 bg-gray-700 dark:bg-gray-300 rounded col-span-3" />
+                  <div className="animate-pulse h-5 bg-gray-700 rounded col-span-3" />
                 ) : (
                   <h4 className="text-lg font-bold">{matchedUserId}</h4>
                 )}
 
-                <p className="text-gray-900 dark:text-gray-100">
-                  Current Match
-                </p>
+                <p className="text-gray-900">Current Match</p>
               </div>
               <div className="flex">
                 {matchingId === "" ? (
-                  <div className="animate-pulse h-5 bg-gray-700 dark:bg-gray-300 rounded col-span-3" />
+                  <div className="animate-pulse h-5 bg-gray-700 rounded col-span-3" />
                 ) : (
                   <h4 className="text-lg font-bold">{matchingId}</h4>
                 )}
 
-                <p className="col-span-2 mt-1 text-gray-900 dark:text-gray-100">
-                  Match Id
-                </p>
+                <p className="col-span-2 mt-1 text-gray-900">Match Id</p>
               </div>
               {matchedUserId && matchingId && (
                 <div className="flex">
