@@ -41,13 +41,15 @@ class MatchingRequestService
     if (!id) throw new Error("No id provided");
 
     try {
-      return await this.prismaClient.matchingRequest.findUnique({
-        where: {
-          id,
-        },
-      });
-    } catch (error) {
-      throw new Error("Failed to create matching request.");
+      const matchingRequest =
+        await this.prismaClient.matchingRequest.findUnique({
+          where: {
+            id,
+          },
+        });
+      return matchingRequest;
+    } catch (e: any) {
+      throw new Error("Failed to find matching request.");
     }
   }
 

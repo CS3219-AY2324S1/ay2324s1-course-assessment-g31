@@ -67,7 +67,7 @@ app.use(bodyParser.json());
 app.use("/api/healthCheck", (_req, res) => {
   res.send("OK");
 });
-app.use("/api/matching", matchingRouter.registerRoutes());
 app.use("/api/matchingRequest", matchingRequestRouter.registerRoutes());
+app.use("/api/matching", matchingRouter.registerRoutes());
 
 export default app;
