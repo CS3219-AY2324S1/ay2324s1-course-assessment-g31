@@ -10,6 +10,7 @@ import PageNotFoundPage from "../pages/PageNotFoundPage/PageNotFoundPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import QuestionsPage from "../pages/QuestionsPage/QuestionsPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
+import SingleQuestionPage from "../pages/SingleQuestionPage";
 
 // import RegisterPage from "./pages/RegisterPage/RegisterPage";
 // import LoginPage from "./pages/LoginPage/LoginPage";
@@ -77,6 +78,15 @@ export default function MainRouter() {
           element={
             <ProtectedRoute user={currentUser}>
               <MatchPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/questions/:id"
+          element={
+            <ProtectedRoute user={currentUser}>
+              <SingleQuestionPage />
             </ProtectedRoute>
           }
         />

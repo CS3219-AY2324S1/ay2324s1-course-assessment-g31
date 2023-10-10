@@ -18,6 +18,8 @@
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@types/react-modal": "^3.16.0",
+    "@uiw/codemirror-extensions-langs": "^4.21.19",
+    "@uiw/react-codemirror": "^4.21.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-modal": "^3.16.1",

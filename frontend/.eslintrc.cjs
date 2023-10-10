@@ -25,5 +25,13 @@ module.exports = {
       "warn",
       { allowConstantExport: true },
     ],
+    "jsx-a11y/label-has-associated-control": [
+      2,
+      {
+        labelComponents: ["label"],
+        labelAttributes: ["htmlFor"],
+        controlComponents: ["input"],
+      },
+    ],
   },
 };
