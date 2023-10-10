@@ -3,8 +3,8 @@ import express, { Express, Request, Response } from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 
-import consume from "./kafka/consumer";
 import logger from "./util/logger";
+import questionEventConsumer from "./kafka/consumer";
 
 dotenv.config();
 
@@ -75,7 +75,7 @@ server.listen(port, () => {
     `⚡️[server]: Question Service is running at http://localhost:${port}`,
   );
 
-  consume(io).catch((err: any) => {
+  questionEventConsumer(io).catch((err: any) => {
     logger.error("Error in Question Service Consumer: ", err);
   });
 });

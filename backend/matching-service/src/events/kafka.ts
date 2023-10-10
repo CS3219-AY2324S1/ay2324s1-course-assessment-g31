@@ -17,6 +17,9 @@ const prodKafkaConfig: KafkaConfig = {
     username: process.env.KAFKA_BROKER_USERNAME!,
     password: process.env.KAFKA_BROKER_PASSWORD!,
   },
+  retry: {
+    retries: 10,
+  },
 };
 
 const kafka = new Kafka(

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
+import httpStatus from "http-status";
 
 import MatchingRequestParser from "../../parsers/matchingRequest/matchingRequest.parser";
 import MatchingRequestService from "../../services/matchingRequest/matchingRequest.service";
@@ -30,18 +31,24 @@ class MatchingRequestController extends Controller implements CRUDController {
   };
 
   public findById = async (req: Request, res: Response) => {
-    const errors = validationResult(req);
+    let parsedId;
 
-    if (!errors.isEmpty()) {
-      return MatchingRequestController.handleValidationError(res, errors);
+    try {
+      parsedId = this.parser.parseFindByIdInput(req.params.id);
+    } catch (e: any) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        message: e.message,
+      });
     }
 
     try {
-      const parsedId = this.parser.parseFindByIdInput(req.params.id);
       const matchingRequest = await this.service.findById(parsedId);
       return MatchingRequestController.handleSuccess(res, matchingRequest);
-    } catch (e: any) {
-      return MatchingRequestController.handleBadRequest(res, e.message);
+    } catch (error: any) {
+      return MatchingRequestController.handleInternalServerError(
+        res,
+        error.message,
+      );
     }
   };
 
@@ -69,7 +76,7 @@ class MatchingRequestController extends Controller implements CRUDController {
     }
 
     try {
-      const matchingRequests = this.service.findAll();
+      const matchingRequests = await this.service.findAll();
       return MatchingRequestController.handleSuccess(res, matchingRequests);
     } catch (e: any) {
       return MatchingRequestController.handleBadRequest(res, e.message);
@@ -86,7 +93,10 @@ class MatchingRequestController extends Controller implements CRUDController {
     try {
       const parsedId = this.parser.parseFindByIdInput(req.params.id);
       const parsedUpdateInput = this.parser.parseUpdateInput(req.body);
-      const matchingRequest = this.service.update(parsedId, parsedUpdateInput);
+      const matchingRequest = await this.service.update(
+        parsedId,
+        parsedUpdateInput,
+      );
       return MatchingRequestController.handleSuccess(res, matchingRequest);
     } catch (e: any) {
       return MatchingRequestController.handleBadRequest(res, e.message);
@@ -102,7 +112,7 @@ class MatchingRequestController extends Controller implements CRUDController {
 
     try {
       const parsedId = this.parser.parseFindByIdInput(req.params.id);
-      const matchingRequest = this.service.delete(parsedId);
+      const matchingRequest = await this.service.delete(parsedId);
       return MatchingRequestController.handleSuccess(res, matchingRequest);
     } catch (e: any) {
       return MatchingRequestController.handleBadRequest(res, e.message);

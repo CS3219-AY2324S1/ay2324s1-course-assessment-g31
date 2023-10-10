@@ -14,7 +14,7 @@ class MatchingRouter extends BaseRouter<MatchingController> {
       .put(this.controller.update);
 
     this.router
-      .route("/")
+      .route("")
       .get(this.controller.findAll)
       .post(checkSchema(createMatchingSchema), this.controller.create);
 
