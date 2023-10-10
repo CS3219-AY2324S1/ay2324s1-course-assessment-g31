@@ -1,6 +1,8 @@
 import { Disclosure } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import parse from "html-react-parser";
 import React from "react";
+
 import classNames from "../util/ClassNames";
 
 interface IQuestionDetail {
@@ -22,13 +24,13 @@ interface IQuestionProps {
 function Question({ question }: IQuestionProps) {
   return (
     <div>
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+      <h1 className="text-3xl font-bold tracking-tight text-gray-900">
         {question.name}
       </h1>
 
       <div className="mt-3">
         <h2 className="sr-only">Product information</h2>
-        <p className="text-xl tracking-tight text-gray-900 dark:text-gray-100">
+        <p className="text-xl tracking-tight text-gray-900">
           {question.difficulty}
         </p>
       </div>
@@ -37,9 +39,9 @@ function Question({ question }: IQuestionProps) {
         <h3 className="sr-only">Description</h3>
 
         <div className="space-y-6">
-          <p className="text-base text-gray-700 dark:text-gray-300">
-            {question.description}
-          </p>
+          <div className="text-base text-gray-700">
+            {parse(question.description)}
+          </div>
         </div>
       </div>
 
@@ -48,7 +50,7 @@ function Question({ question }: IQuestionProps) {
           Additional details
         </h2>
 
-        <div className="divide-y divide-gray-200 dark:divide-gray-800 border-t">
+        <div className="divide-y divide-gray-200 border-t">
           {question.details.map((detail) => (
             <Disclosure as="div" key={detail.name}>
               {({ open }) => (
@@ -60,9 +62,7 @@ function Question({ question }: IQuestionProps) {
                     >
                       <span
                         className={classNames(
-                          open
-                            ? "text-indigo-600 dark:text-indigo-400"
-                            : "text-gray-900 dark:text-gray-100",
+                          open ? "text-indigo-600" : "text-gray-900",
                           "text-sm font-medium",
                         )}
                       >
@@ -71,12 +71,12 @@ function Question({ question }: IQuestionProps) {
                       <span className="ml-6 flex items-center">
                         {open ? (
                           <MinusIcon
-                            className="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500 dark:text-indigo-600 dark:group-hover:text-indigo-400"
+                            className="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
                             aria-hidden="true"
                           />
                         ) : (
                           <PlusIcon
-                            className="block h-6 w-6 text-gray-400 group-hover:text-gray-500 dark:text-gray-600 dark:group-hover:text-gray-400"
+                            className="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
                             aria-hidden="true"
                           />
                         )}
@@ -87,9 +87,7 @@ function Question({ question }: IQuestionProps) {
                     <ul>
                       {detail.items.map((item) => (
                         <li key={item}>
-                          <p className="text-gray-700 dark:text-gray-300">
-                            {item}
-                          </p>
+                          <div className="text-gray-700">{parse(item)}</div>
                         </li>
                       ))}
                     </ul>

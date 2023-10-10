@@ -4,7 +4,6 @@ import { useCallback, useContext, useEffect, useState } from "react";
 
 import { MatchingContext } from "../context/MatchingContext";
 import CodeResult from "./CodeResult";
-import { useAuth } from "../context/AuthContext";
 
 interface ICodeEditorProps {
   selectedLanguage: string;
@@ -16,7 +15,6 @@ function CodeEditor({ selectedLanguage }: ICodeEditorProps) {
   const [codeResult, setCodeResult] = useState<string>("");
   const [extensions, setExtensions] = useState<Extension[]>();
   const { socketCode, changeCode } = useContext(MatchingContext);
-  const { currentUser } = useAuth();
 
   const onChange = useCallback((value: string) => {
     setCurrentCode(value);
@@ -37,16 +35,14 @@ function CodeEditor({ selectedLanguage }: ICodeEditorProps) {
   }, [selectedLanguage]);
 
   useEffect(() => {
-    if (!currentUser) return;
-    if (socketCode === "") return;
-    if (socketCode === currentCode) return;
-    setCurrentCode(socketCode);
-  }, [socketCode, currentUser, currentCode]);
+    if (currentCode === socketCode) return;
+    changeCode(currentCode);
+  }, [currentCode]);
 
   useEffect(() => {
-    if (!currentUser) return;
-    changeCode(currentCode);
-  }, [currentCode, changeCode, currentUser]);
+    if (currentCode === socketCode) return;
+    setCurrentCode(socketCode);
+  }, [socketCode]);
 
   return (
     <div>
@@ -64,7 +60,7 @@ function CodeEditor({ selectedLanguage }: ICodeEditorProps) {
         ) : (
           <button
             type="button"
-            className="rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-400"
+            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             onClick={handleSubmit}
           >
             Submit Code
