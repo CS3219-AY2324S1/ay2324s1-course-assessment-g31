@@ -15,7 +15,7 @@ import LoadingPage from "../pages/LoadingPage/LoadingPage";
 
 interface AuthContextType {
   currentUser: User | null;
-  currentRole: string | null;
+  currentRole: string;
   login: (email: string, password: string) => Promise<UserCredential | void>;
   signup: (email: string, password: string) => Promise<UserCredential | void>;
   logout: () => Promise<void>;
@@ -27,7 +27,7 @@ interface AuthContextType {
 // ES removed unused variables
 const AuthContext = React.createContext<AuthContextType>({
   currentUser: {} as User | null,
-  currentRole: {} as string | null,
+  currentRole: "user",
   login: () => Promise.resolve(),
   signup: () => Promise.resolve(),
   logout: () => Promise.resolve(),
@@ -47,7 +47,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentRole, setCurrentRole] = useState<string | null>(null);
+  const [currentRole, setCurrentRole] = useState<string>("user");
 
   function signup(email: string, password: string) {
     return createUserWithEmailAndPassword(database, email, password);
@@ -98,13 +98,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (!response.ok) {
         console.error("Failed to fetch role:", data.message);
-        return "User";
+        return "user";
       }
       console.log("Successfully fetched role: ", data.user_role);
       return data.user_role;
     } catch (error: any) {
       console.log("Error fetching profile data:", error.message);
-      return "User";
+      return "user";
     }
   }
 
@@ -116,7 +116,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setCurrentRole(role);
       } else {
         setCurrentUser(null);
-        setCurrentRole(null);
+        setCurrentRole("user");
       }
       setLoading(false);
     });
