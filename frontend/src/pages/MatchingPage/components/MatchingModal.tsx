@@ -9,6 +9,7 @@ import { Fragment, useContext } from "react";
 import { MatchingContext } from "../../../context/MatchingContext";
 import classNames from "../../../util/ClassNames";
 import titleCase from "../../../util/titleCase";
+import StateHoc from "../../../components/StateHoc";
 
 interface IModalProps {
   difficulty: string;
@@ -112,25 +113,28 @@ function MatchingModal({
                                 "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white",
                               )}
                             >
-                              {connectionLoading ? (
-                                <WifiIcon
-                                  className="h-5 w-5 text-white"
-                                  aria-hidden="true"
-                                />
-                              ) : (
-                                ""
-                              )}
-                              {connectionSuccess ? (
-                                <CheckIcon
-                                  className="h-5 w-5 text-white"
-                                  aria-hidden="true"
-                                />
-                              ) : (
-                                <XCircleIcon
-                                  className="h-5 w-5 text-white"
-                                  aria-hidden="true"
-                                />
-                              )}
+                              <StateHoc
+                                isLoading={connectionLoading}
+                                isSuccess={connectionSuccess}
+                                loadingComponent={
+                                  <WifiIcon
+                                    className="h-5 w-5 text-white"
+                                    aria-hidden="true"
+                                  />
+                                }
+                                successComponent={
+                                  <CheckIcon
+                                    className="h-5 w-5 text-white"
+                                    aria-hidden="true"
+                                  />
+                                }
+                                failureComponent={
+                                  <XCircleIcon
+                                    className="h-5 w-5 text-white"
+                                    aria-hidden="true"
+                                  />
+                                }
+                              />
                             </span>
                           </div>
                           <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
@@ -156,25 +160,28 @@ function MatchingModal({
                                 "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white",
                               )}
                             >
-                              {matchLoading ? (
-                                <MagnifyingGlassIcon
-                                  className="h-5 w-5 text-white"
-                                  aria-hidden="true"
-                                />
-                              ) : (
-                                ""
-                              )}
-                              {matchSuccess ? (
-                                <CheckIcon
-                                  className="h-5 w-5 text-white"
-                                  aria-hidden="true"
-                                />
-                              ) : (
-                                <XCircleIcon
-                                  className="h-5 w-5 text-white"
-                                  aria-hidden="true"
-                                />
-                              )}
+                              <StateHoc
+                                isLoading={matchLoading}
+                                isSuccess={matchSuccess}
+                                loadingComponent={
+                                  <MagnifyingGlassIcon
+                                    className="h-5 w-5 text-white"
+                                    aria-hidden="true"
+                                  />
+                                }
+                                successComponent={
+                                  <CheckIcon
+                                    className="h-5 w-5 text-white"
+                                    aria-hidden="true"
+                                  />
+                                }
+                                failureComponent={
+                                  <XCircleIcon
+                                    className="h-5 w-5 text-white"
+                                    aria-hidden="true"
+                                  />
+                                }
+                              />
                             </span>
                           </div>
                           <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">

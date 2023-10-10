@@ -1,17 +1,18 @@
-import React from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
 import { User } from "@firebase/auth";
-import QuestionsPage from "../pages/QuestionsPage/QuestionsPage";
-// import RegisterPage from "./pages/RegisterPage/RegisterPage";
-// import LoginPage from "./pages/LoginPage/LoginPage";
-import LoginPage from "../pages/LoginPage/LoginPage";
-import ProfilePage from "../pages/ProfilePage/ProfilePage";
-import Layout from "../pages/Layout/Layout";
-import RegisterPage from "../pages/RegisterPage/RegisterPage";
-import PageNotFoundPage from "../pages/PageNotFoundPage/PageNotFoundPage";
+import React from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import Layout from "../pages/Layout/Layout";
+import LoginPage from "../pages/LoginPage/LoginPage";
+import MatchPage from "../pages/MatchingPage/MatchPage";
+import PageNotFoundPage from "../pages/PageNotFoundPage/PageNotFoundPage";
+import ProfilePage from "../pages/ProfilePage/ProfilePage";
+import QuestionsPage from "../pages/QuestionsPage/QuestionsPage";
+import RegisterPage from "../pages/RegisterPage/RegisterPage";
 
+// import RegisterPage from "./pages/RegisterPage/RegisterPage";
+// import LoginPage from "./pages/LoginPage/LoginPage";
 export interface ProtectedRouteProp {
   user: User | null;
   children: React.ReactNode;
@@ -31,7 +32,7 @@ function PostLoginNoAccessRoute({ user, children }: ProtectedRouteProp) {
   return children;
 }
 
-export default function RouterCompon() {
+export default function MainRouter() {
   const { currentUser } = useAuth();
 
   return (
@@ -63,10 +64,19 @@ export default function RouterCompon() {
         />
 
         <Route
-          path="/user/profile"
+          path="/profile"
           element={
             <ProtectedRoute user={currentUser}>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/match"
+          element={
+            <ProtectedRoute user={currentUser}>
+              <MatchPage />
             </ProtectedRoute>
           }
         />

@@ -1,11 +1,14 @@
 import { AuthProvider } from "./context/AuthContext";
-import RouterCompon from "./router/routerComp";
+import { MatchingProvider } from "./context/MatchingContext";
+import MainRouter from "./router/main";
 
 // ES added a default
 export default function App() {
   return (
     <AuthProvider>
-      <RouterCompon />
+      <MatchingProvider>
+        <MainRouter />
+      </MatchingProvider>
     </AuthProvider>
   );
 }

@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
 import { MatchingContext } from "../../context/MatchingContext";
@@ -8,40 +9,64 @@ import ThreeTier from "./components/ThreeTier";
 
 function MatchPage() {
   const { currentUser } = useAuth();
-  const { foundMatch, establishedConnection, connectionLoading, matchLoading } =
-    useContext(MatchingContext)!;
+  const {
+    foundMatch,
+    establishedConnection,
+    connectionLoading,
+    matchLoading,
+    matchedUserId,
+    matchingId,
+    beginCollaboration,
+  } = useContext(MatchingContext);
 
   const [difficulty, setDifficulty] = useState<string>("");
   const [open, setOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const matchingController = useRef<MatchingController>(
     new MatchingController(),
   );
 
   useEffect(() => {
-    console.log("MatchPage: useEffect: currentUser:", currentUser);
-    if (
-      difficulty.length === 0 ||
-      foundMatch ||
-      !establishedConnection ||
-      !currentUser
-    ) {
+    if (difficulty === "" || foundMatch || !currentUser) {
       return;
     }
     setOpen(true);
 
     matchingController.current.createMatchingRequest({
-      userId: currentUser!.uid,
+      userId: currentUser.uid,
       difficulty,
     });
-  }, [difficulty, foundMatch, establishedConnection, currentUser]);
+  }, [difficulty, foundMatch, currentUser]);
 
   const cancelMatch = () => {
+    if (!currentUser) return;
     setOpen(false);
     matchingController.current.cancelMatchingRequest({
-      userId: currentUser!.uid,
+      userId: currentUser.uid,
     });
   };
+
+  useEffect(() => {
+    if (
+      currentUser &&
+      foundMatch &&
+      matchedUserId !== "" &&
+      matchingId !== ""
+    ) {
+      setOpen(false);
+      beginCollaboration();
+      navigate("/questions/1?lang=javascript");
+    }
+  }, [
+    foundMatch,
+    matchedUserId,
+    matchingId,
+    currentUser,
+    beginCollaboration,
+    navigate,
+  ]);
 
   return (
     <div className="space-y-16 py-16 xl:space-y-20">

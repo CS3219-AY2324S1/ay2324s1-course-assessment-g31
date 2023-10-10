@@ -40,21 +40,21 @@ export default function ProfileCard() {
     setIsUpdateProfileModalOpen(true);
   };
 
-  const closeUpdateProfileModal = (username: string, email: string) => {
-    setIsUpdateProfileModalOpen(false);
-    setProfileData({
-      username,
-      email,
-    });
-  };
+  //   const closeUpdateProfileModal = (username: string, email: string) => {
+  //     setIsUpdateProfileModalOpen(false);
+  //     setProfileData({
+  //       username,
+  //       email,
+  //     });
+  //   };
 
-  const openDeleteProfileModal = () => {
-    setIsDeleteProfileModalOpen(true);
-  };
+  //   const openDeleteProfileModal = () => {
+  //     setIsDeleteProfileModalOpen(true);
+  //   };
 
-  const closeDeleteProfileModal = () => {
-    setIsDeleteProfileModalOpen(false);
-  };
+  //   const closeDeleteProfileModal = () => {
+  //     setIsDeleteProfileModalOpen(false);
+  //   };
 
   useEffect(() => {
     async function fetchProfileData() {
@@ -101,12 +101,12 @@ export default function ProfileCard() {
   }, [userId, currentUser]);
 
   return (
-    <div className={styles.profileCardContainer}>
+    <div className="bg-gray-400/5 m-5 rounded">
       <div className={styles.profileCardCard}>
-        <div className={styles.publicButtons}>
+        <div className="flex gap-2 justify-end">
           <button
             type="button"
-            className={styles.updateProfileButton}
+            className="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
             onClick={openUpdateProfileModal}
             disabled={disableUpdateProfileModal}
           >
@@ -114,14 +114,14 @@ export default function ProfileCard() {
           </button>
           <button
             type="button"
-            className={styles.deleteProfileButton}
-            onClick={openDeleteProfileModal}
+            className="rounded-md bg-red-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            onClick={() => setIsDeleteProfileModalOpen(true)}
           >
             Delete Account
           </button>
           <button
             type="button"
-            className={styles.logoutButton}
+            className="rounded-md bg-slate-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
             onClick={handleLogout}
           >
             Logout
@@ -140,12 +140,12 @@ export default function ProfileCard() {
       </div>
       <DeleteProfileModal
         isOpen={isDeleteProfileModalOpen}
-        onClose={closeDeleteProfileModal}
+        setOpen={setIsDeleteProfileModalOpen}
         userId={userId}
       />
       <UpdateProfileModal
         isOpen={isUpdateProfileModalOpen}
-        onClose={closeUpdateProfileModal}
+        setOpen={setIsUpdateProfileModalOpen}
         userId={userId}
         emailProp={profileData.email}
         usernameProp={profileData.username}

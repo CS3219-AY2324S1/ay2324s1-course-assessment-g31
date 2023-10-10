@@ -1,4 +1,3 @@
-import React from "react";
 import { IContainerProps } from "./Container.interface";
 
 function ComponentContainer({ children }: IContainerProps) {
