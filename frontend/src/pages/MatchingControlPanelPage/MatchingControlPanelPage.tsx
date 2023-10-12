@@ -109,13 +109,13 @@ function MatchingControlPanelPage() {
     matchingController.getMatchingRequests().then((res) => {
       setRequests(res);
     });
-  }, []);
+  }, [matchingController]);
 
   useEffect(() => {
     matchingController.getMatchings().then((res) => {
       setMatchings(res);
     });
-  }, []);
+  }, [matchingController]);
 
   useEffect(() => {
     setEasyQueueRequests(
