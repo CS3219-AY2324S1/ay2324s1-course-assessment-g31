@@ -14,6 +14,7 @@ import MatchingRequestRouter from "./routers/matchingRequest/router";
 import MatchingService from "./services/matching/matching.service";
 import MatchingRequestService from "./services/matchingRequest/matchingRequest.service";
 import prismaClient from "./util/prisma/client";
+import MatchingProducer from "./events/producers/matching/producer";
 
 dotenv.config();
 
@@ -25,16 +26,15 @@ const corsOptions = {
 };
 
 // Event Producer
+const matchingEventProducer = new MatchingProducer(kafka.producer());
+
 const matchingRequestEventProducer = new MatchingRequestProducer(
   kafka.producer(),
 );
 
 // Services
 const matchingService = new MatchingService(prismaClient);
-const matchingRequestService = new MatchingRequestService(
-  matchingRequestEventProducer,
-  prismaClient,
-);
+const matchingRequestService = new MatchingRequestService(prismaClient);
 
 // Parsers
 const matchingParser = new MatchingParser();
@@ -44,10 +44,12 @@ const matchingRequestParser = new MatchingRequestParser();
 const matchingController = new MatchingController(
   matchingService,
   matchingParser,
+  matchingEventProducer,
 );
 const matchingRequestController = new MatchingRequestController(
   matchingRequestService,
   matchingRequestParser,
+  matchingRequestEventProducer,
 );
 
 // Routers
@@ -67,7 +69,7 @@ app.use(bodyParser.json());
 app.use("/api/healthCheck", (_req, res) => {
   res.send("OK");
 });
-app.use("/api/matchingRequest", matchingRequestRouter.registerRoutes());
 app.use("/api/matching", matchingRouter.registerRoutes());
+app.use("/api/matchingRequest", matchingRequestRouter.registerRoutes());
 
 export default app;

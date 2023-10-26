@@ -1,10 +1,10 @@
 import { Matching } from "../../../interfaces/matching/object";
 import MatchingTopics from "../../topics/matching/matching";
-import EventProducer from "../main.interface";
+import EventProducer from "../main.abstract";
 
 class MatchingProducer extends EventProducer<Matching> {
-  override create(object: Matching): void {
-    this.sendEvent(MatchingTopics.CREATE, [
+  override async create(object: Matching): Promise<void> {
+    await this.sendEvent(MatchingTopics.CREATE, [
       {
         key: object.id.toString(),
         value: JSON.stringify(object),
@@ -12,8 +12,8 @@ class MatchingProducer extends EventProducer<Matching> {
     ]);
   }
 
-  override update(object: Matching): void {
-    this.sendEvent(MatchingTopics.CREATE, [
+  override async update(object: Matching): Promise<void> {
+    await this.sendEvent(MatchingTopics.UPDATE, [
       {
         key: object.id.toString(),
         value: JSON.stringify(object),
@@ -21,8 +21,8 @@ class MatchingProducer extends EventProducer<Matching> {
     ]);
   }
 
-  override delete(object: Matching): void {
-    this.sendEvent(MatchingTopics.CREATE, [
+  override async delete(object: Matching): Promise<void> {
+    await this.sendEvent(MatchingTopics.DELETE, [
       {
         key: object.id.toString(),
         value: JSON.stringify(object),

@@ -1,4 +1,3 @@
-import { Partial } from "../util/partial";
 import { StringInterface } from "../util/stringInterface";
 
 type ObjWithId = {
