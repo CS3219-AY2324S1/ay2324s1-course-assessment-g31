@@ -1,7 +1,7 @@
 import { MatchingCreateDTO } from "../../interfaces/matching/createDTO";
 import { Matching } from "../../interfaces/matching/object";
 import { MatchingUpdateDTO } from "../../interfaces/matching/updateDTO";
-import { Partial } from "../../util/partial";
+
 import { StringInterface } from "../../util/stringInterface";
 import Parser from "../parser.interface";
 
@@ -31,6 +31,9 @@ class MatchingParser
   public parseFindOneInput(
     input: Partial<StringInterface<Matching>>,
   ): Partial<Matching> {
+    if (!input || Object.keys(input).length == 0) {
+      throw new Error("Invalid input");
+    }
     const parsedInput: Partial<Matching> = {};
     if (input.id) {
       parsedInput.id = parseInt(input.id, 10);

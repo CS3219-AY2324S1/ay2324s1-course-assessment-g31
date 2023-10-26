@@ -16,7 +16,6 @@ const matchingRequestEventProducer = new MatchingRequestProducer(
 );
 const matchingService = new MatchingService(prismaClient);
 const matchingRequestService = new MatchingRequestService(
-  matchingRequestEventProducer,
   prismaClient,
 );
 

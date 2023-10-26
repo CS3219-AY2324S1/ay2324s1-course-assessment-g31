@@ -1,5 +1,3 @@
-import { Partial } from "../../util/partial";
-
 export type Matching = {
   id: number;
   user1Id: string;
@@ -7,5 +5,3 @@ export type Matching = {
   requestId: number;
   dateTimeMatched: Date;
 };
-
-export type OptionalMatching = Partial<Matching>;

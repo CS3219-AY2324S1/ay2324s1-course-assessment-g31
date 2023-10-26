@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 import { MatchingCreateDTO } from "../../interfaces/matching/createDTO";
-import { Matching, OptionalMatching } from "../../interfaces/matching/object";
+import { Matching } from "../../interfaces/matching/object";
 import { MatchingUpdateDTO } from "../../interfaces/matching/updateDTO";
 import { MatchingRequest } from "../../interfaces/matchingRequest/object";
 import Service from "../service.interface";
@@ -35,7 +35,7 @@ class MatchingService
     }
   }
 
-  public async findOne(body: OptionalMatching): Promise<Matching | null> {
+  public async findOne(body: Partial<Matching>): Promise<Matching | null> {
     try {
       const matching = await this.prismaClient.matching.findFirst({
         where: body,

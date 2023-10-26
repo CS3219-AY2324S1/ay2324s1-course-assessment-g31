@@ -1,8 +1,6 @@
 import { MatchingRequest, PrismaClient } from "@prisma/client";
 
-import EventProducer from "../../events/producers/main.interface";
 import { MatchingRequestCreateDTO } from "../../interfaces/matchingRequest/createDTO";
-import { OptionalMatchingRequest } from "../../interfaces/matchingRequest/object";
 import { MatchingRequestUpdateDTO } from "../../interfaces/matchingRequest/updateDTO";
 import Service from "../service.interface";
 
@@ -14,10 +12,7 @@ class MatchingRequestService
       MatchingRequest
     >
 {
-  constructor(
-    private readonly eventProducer: EventProducer<MatchingRequest>,
-    private readonly prismaClient: PrismaClient,
-  ) {}
+  constructor(private readonly prismaClient: PrismaClient) {}
 
   public async create(
     body: MatchingRequestCreateDTO,
@@ -26,9 +21,6 @@ class MatchingRequestService
       const matchingRequest = await this.prismaClient.matchingRequest.create({
         data: body,
       });
-      if (matchingRequest) {
-        this.eventProducer.create(matchingRequest);
-      }
       return matchingRequest;
     } catch (error) {
       throw new Error("Failed to create matching request.");
@@ -41,20 +33,18 @@ class MatchingRequestService
     if (!id) throw new Error("No id provided");
 
     try {
-      const matchingRequest =
-        await this.prismaClient.matchingRequest.findUnique({
-          where: {
-            id,
-          },
-        });
-      return matchingRequest;
-    } catch (e: any) {
-      throw new Error("Failed to find matching request.");
+      return await this.prismaClient.matchingRequest.findUnique({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      throw new Error("Failed to create matching request.");
     }
   }
 
   public async findOne(
-    body: OptionalMatchingRequest,
+    body: Partial<MatchingRequest>,
   ): Promise<MatchingRequest | null> {
     try {
       const matchingRequest = this.prismaClient.matchingRequest.findFirst({
