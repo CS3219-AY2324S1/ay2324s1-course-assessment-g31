@@ -61,7 +61,7 @@ function SingleQueue({
 function MatchingList({ matchings }: { matchings: Matching[] }) {
   return (
     <ul className="divide-y divide-gray-100">
-      {matchings.length > 0 ? (
+      {matchings && matchings.length > 0 ? (
         matchings.map((matching) => (
           <li
             key={`${matching.user1Id}-${matching.user2Id}-${matching.requestId}`}
@@ -118,21 +118,23 @@ function MatchingControlPanelPage() {
   }, [matchingController]);
 
   useEffect(() => {
-    setEasyQueueRequests(
-      requests.filter(
-        (request) => request.difficulty === "easy" && !request.success,
-      ),
-    );
-    setMediumQueueRequests(
-      requests.filter(
-        (request) => request.difficulty === "medium" && !request.success,
-      ),
-    );
-    setHardQueueRequests(
-      requests.filter(
-        (request) => request.difficulty === "hard" && !request.success,
-      ),
-    );
+    if (requests) {
+      setEasyQueueRequests(
+        requests.filter(
+          (request) => request.difficulty === "easy" && !request.success,
+        ),
+      );
+      setMediumQueueRequests(
+        requests.filter(
+          (request) => request.difficulty === "medium" && !request.success,
+        ),
+      );
+      setHardQueueRequests(
+        requests.filter(
+          (request) => request.difficulty === "hard" && !request.success,
+        ),
+      );
+    }
   }, [requests]);
 
   return (
