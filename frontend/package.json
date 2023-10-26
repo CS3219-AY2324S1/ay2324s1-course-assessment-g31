@@ -9,7 +9,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint --fix",
     "preview": "vite preview",
-    "format": "prettier --write ./src"
+    "format": "prettier --write ./src",
+    "test-ct": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
     "@firebase/app": "^0.9.19",
@@ -29,6 +30,8 @@
     "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
+    "@playwright/experimental-ct-react": "^1.39.0",
+    "@playwright/test": "^1.39.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.6",
     "@tailwindcss/typography": "^0.5.10",
@@ -41,6 +44,7 @@
     "@typescript-eslint/parser": "^6.6.0",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.16",
+    "dotenv": "^16.3.1",
     "eslint": "^8.48.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.1.0",
