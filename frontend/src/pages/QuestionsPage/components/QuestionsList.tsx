@@ -18,7 +18,7 @@ export default function QuestionsList({
     setError("");
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/all", {
+      const response = await fetch("http://localhost:5003/all", {
         method: "GET",
       });
 

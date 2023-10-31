@@ -27,7 +27,7 @@ export default function QuestionCard({
       setIsLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:5000/delete/${question._id}`,
+          `http://localhost:5003/delete/${question._id}`,
           {
             method: "DELETE",
           },

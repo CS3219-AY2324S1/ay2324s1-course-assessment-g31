@@ -1,9 +1,18 @@
 import { Request, Response } from "express";
-import Question, { IQuestion } from "../model/questionModel";
+import { PrismaClient, Category, Complexity } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+type Question = {
+  title: string;
+  complexity: Complexity;
+  category: Category[];
+  description: string;
+};
 
 export const getAllQuestions = async (req: Request, res: Response) => {
   try {
-    const questions = await Question.find();
+    const questions = await prisma.question.findMany();
     res.status(200).json(questions);
   } catch (err: any) {
     res.status(500).json({ error: "Error getting questions" });
@@ -11,9 +20,11 @@ export const getAllQuestions = async (req: Request, res: Response) => {
 };
 
 export const createQuestion = async (req: Request, res: Response) => {
-  const question: IQuestion = req.body;
+  const question: Question = req.body;
   try {
-    const questionResult = await Question.create(question);
+    const questionResult = await prisma.question.create({
+      data: question,
+    });
     res.status(201).json({ questionResult });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -22,12 +33,12 @@ export const createQuestion = async (req: Request, res: Response) => {
 
 export const updateQuestion = async (req: Request, res: Response) => {
   const { id: questionId } = req.params;
-  const question: IQuestion = req.body;
+  const question: Question = req.body;
   try {
-    const questionOriginal = await Question.findByIdAndUpdate(
-      questionId,
-      question
-    );
+    const questionOriginal = await prisma.question.update({
+      where: { id: questionId },
+      data: question,
+    });
     res.status(201).json({ questionOriginal });
   } catch (err: any) {
     res.status(500).json({ error: "Error updating question" });
@@ -37,7 +48,9 @@ export const updateQuestion = async (req: Request, res: Response) => {
 export const deleteQuestion = async (req: Request, res: Response) => {
   const { id: questionId } = req.params;
   try {
-    const question = await Question.findByIdAndDelete(questionId);
+    const question = await prisma.question.delete({
+      where: { id: questionId },
+    });
     if (!question) {
       res.status(404).json({ error: "Question Not Found" });
     }

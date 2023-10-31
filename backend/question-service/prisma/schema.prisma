@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Question {
+    id String @id @default(uuid())
+    title   String
+    category Category[]
+    complexity Complexity
+    description String
+}
+
+enum Complexity {
+  Easy
+  Medium
+  Hard
+}
+
+enum Category {
+  Strings
+  DataStructures
+  Algorithms
+  BitManipulation
+  Databases
+  Arrays
+  Brainteaser
+  Recursion
+}

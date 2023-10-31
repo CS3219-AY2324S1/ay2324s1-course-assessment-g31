@@ -45,8 +45,8 @@ export default function QuestionForm({
     try {
       const response = await fetch(
         questionToEdit
-          ? `http://localhost:5000/update/${questionToEdit._id}`
-          : "http://localhost:5000/create",
+          ? `http://localhost:5003/update/${questionToEdit._id}`
+          : "http://localhost:5003/create",
         {
           method: questionToEdit ? "PATCH" : "POST",
           headers: {
