@@ -2,26 +2,28 @@ export type SessionDetails = {
   questionId: number;
   user1Id: string;
   user2Id: string;
-  attemptCode: string;
+  code: string;
   language: string;
 };
 
-export type QuestionAttemptEntry = {
+// History table row without auto-generated id
+export type HistoryEntry = {
   questionId: number;
   user1Id: string;
   user2Id: string;
   attemptDateTime: Date;
-  attemptCode: string;
+  code: string;
   language: string;
 };
 
 export type Attempt = {
+  id: string;
   attemptDateTime: Date;
-  attemptCode: string;
+  code: string;
   language: string;
 };
 
-export type QuestionAttemptsAll = {
+export type QuestionAllAttempts = {
   questionId: number;
   attempts: Attempt[];
 };

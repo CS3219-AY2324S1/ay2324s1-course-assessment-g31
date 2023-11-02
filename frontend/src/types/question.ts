@@ -1,16 +1,16 @@
 export enum ComplexityMap {
-  Easy = "EASY",
-  Medium = "MEDIUM",
-  Hard = "HARD",
+  Easy = "Easy",
+  Medium = "Medium",
+  Hard = "Hard",
 }
 
 export type Complexity = `${ComplexityMap}`;
 
 export enum CategoryMap {
   Strings = "Strings",
-  DataStructures = "Data Structures",
+  DataStructures = "DataStructures",
   Algorithms = "Algorithms",
-  BitManipulation = "Bit Manipulation",
+  BitManipulation = "BitManipulation",
   Databases = "Databases",
   Arrays = "Arrays",
   Brainteaser = "Brainteaser",
@@ -24,5 +24,5 @@ export interface Question {
   complexity: Complexity;
   category: Category[];
   description: string;
-  _id: string;
+  id: number;
 }

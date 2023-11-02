@@ -10,12 +10,12 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model QuestionAttempt {
-    id               Int      @id @default(autoincrement())
+model History {
+    id               String      @id @default(uuid())
     questionId      Int
     user1Id          String
     user2Id          String
     attemptDateTime DateTime
-    attemptCode     String
+    code     String
     language        String
 }

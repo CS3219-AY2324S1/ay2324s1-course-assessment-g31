@@ -1,20 +1,18 @@
 import { Request, Response } from "express";
 import prisma from "../model/prismaClient";
-import { QuestionAttempt } from "@prisma/client";
-import { Attempt, QuestionAttemptsAll } from "../types/types";
-/*
-Consider splitting queries, instead of all attempts of all question, 
-first get number of attempts for each question. 
-Then individual query for each question to get all its attempts.
-Or only send metadata for each attempt(date, language).
-Then individual query for attempt code of a question when user selects to view it.
-*/
+import { History } from "@prisma/client";
+import {
+  Attempt,
+  HistoryEntry,
+  QuestionAllAttempts,
+  SessionDetails,
+} from "../types/types";
 
 // get all attempts of all questions by a user
 export const getUserAttempts = async (req: Request, res: Response) => {
   const userId: string = req.params.id;
   try {
-    const attempts: QuestionAttempt[] = await prisma.questionAttempt.findMany({
+    const userHistory: History[] = await prisma.history.findMany({
       where: {
         OR: [{ user1Id: userId }, { user2Id: userId }],
       },
@@ -23,21 +21,22 @@ export const getUserAttempts = async (req: Request, res: Response) => {
     const questionIdToAttemptsMap = new Map<number, Attempt[]>();
 
     // process data into type QuestionAttemptsAll[]
-    attempts.map((questionAttempt: QuestionAttempt) => {
+    userHistory.map((history: History) => {
       const attempt: Attempt = {
-        attemptDateTime: questionAttempt.attemptDateTime,
-        attemptCode: questionAttempt.attemptCode,
-        language: questionAttempt.language,
+        id: history.id,
+        attemptDateTime: history.attemptDateTime,
+        code: history.code,
+        language: history.language,
       };
 
-      if (questionIdToAttemptsMap.has(questionAttempt.questionId)) {
-        questionIdToAttemptsMap.get(questionAttempt.questionId)!.push(attempt);
+      if (questionIdToAttemptsMap.has(history.questionId)) {
+        questionIdToAttemptsMap.get(history.questionId)!.push(attempt);
       } else {
-        questionIdToAttemptsMap.set(questionAttempt.questionId, [attempt]);
+        questionIdToAttemptsMap.set(history.questionId, [attempt]);
       }
     });
 
-    const questionAttemptsAll: QuestionAttemptsAll[] = [];
+    const questionAttemptsAll: QuestionAllAttempts[] = [];
 
     // add each questions-attempts pair to array
     questionIdToAttemptsMap.forEach((value: Attempt[], key: number) => {
@@ -47,8 +46,46 @@ export const getUserAttempts = async (req: Request, res: Response) => {
       });
     });
 
-    res.status(200).json(questionAttemptsAll);
+    res.status(200).json({ history: questionAttemptsAll });
   } catch (error) {
     res.status(500).json({ error });
+  }
+};
+
+export const deleteAttempt = async (req: Request, res: Response) => {
+  try {
+    const attemptId = req.params.id;
+
+    const deletedAttempt = await prisma.history.delete({
+      where: { id: attemptId },
+    });
+
+    res.status(200).json({ deletedAttempt });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
+export const testAddAttempt = async (req: Request, res: Response) => {
+  try {
+    console.log(req);
+    const historyEntry: HistoryEntry = {
+      questionId: parseInt(req.body.questionId),
+      user1Id: req.body.user1Id,
+      user2Id: req.body.user2Id,
+      code: req.body.code,
+      language: req.body.language,
+      attemptDateTime: new Date(),
+    };
+
+    console.log(historyEntry);
+
+    const history: History = await prisma.history.create({
+      data: historyEntry,
+    });
+
+    res.status(200).json({ history });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };

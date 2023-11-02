@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Question {
-    id String @id @default(uuid())
+    id      Int     @id @default(autoincrement())
     title   String
     category Category[]
     complexity Complexity

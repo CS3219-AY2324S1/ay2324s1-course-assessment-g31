@@ -3,10 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/src/app.js",
-    "dev": "concurrently \"tsc --watch\" \"nodemon -q dist/app.js\"",
-    "start:migrate": "prisma db push && yarn run start"
+    "build": "tsc --project tsconfig.build.json",
+    "start": "node dist/server.js",
+    "dev": "concurrently \"tsc --watch\" \"nodemon -q dist/src/server.js\"",
+    "start:migrate": "prisma db push && yarn run start",
+    "dev:migrate": "prisma db push && yarn run dev",
+    "lint": "eslint ./src",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "format": "prettier --write ./src"
   },
   "dependencies": {
     "@prisma/client": "5.1.1",

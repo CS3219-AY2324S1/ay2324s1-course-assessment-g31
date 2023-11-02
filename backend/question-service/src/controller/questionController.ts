@@ -10,6 +10,21 @@ type Question = {
   description: string;
 };
 
+export const getQuestion = async (req: Request, res: Response) => {
+  try {
+    const questionId = parseInt(req.params.id);
+    if (isNaN(questionId)) {
+      throw Error("invalid question id");
+    }
+    const question = await prisma.question.findUnique({
+      where: { id: questionId },
+    });
+    res.status(200).json(question);
+  } catch (err: any) {
+    res.status(500).json({ error: "Error getting question" });
+  }
+};
+
 export const getAllQuestions = async (req: Request, res: Response) => {
   try {
     const questions = await prisma.question.findMany();
@@ -32,13 +47,18 @@ export const createQuestion = async (req: Request, res: Response) => {
 };
 
 export const updateQuestion = async (req: Request, res: Response) => {
-  const { id: questionId } = req.params;
-  const question: Question = req.body;
   try {
+    const questionId = parseInt(req.params.id);
+    const question: Question = req.body;
+    if (isNaN(questionId)) {
+      throw Error("invalid question id");
+    }
+
     const questionOriginal = await prisma.question.update({
       where: { id: questionId },
       data: question,
     });
+
     res.status(201).json({ questionOriginal });
   } catch (err: any) {
     res.status(500).json({ error: "Error updating question" });
@@ -46,11 +66,16 @@ export const updateQuestion = async (req: Request, res: Response) => {
 };
 
 export const deleteQuestion = async (req: Request, res: Response) => {
-  const { id: questionId } = req.params;
   try {
+    const questionId = parseInt(req.params.id);
+    if (isNaN(questionId)) {
+      throw Error("invalid question id");
+    }
+
     const question = await prisma.question.delete({
       where: { id: questionId },
     });
+
     if (!question) {
       res.status(404).json({ error: "Question Not Found" });
     }

@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useSearchParams } from "react-router-dom";
 import {
   Category,
   CategoryMap,
@@ -8,25 +9,25 @@ import {
   Question,
 } from "../../../types/question";
 import styles from "./QuestionForm.module.css";
-import { useAuth } from "../../../context/AuthContext";
 
-interface QuestionFormProps {
-  questionToEdit: Question | undefined;
-  setQuestionToEdit: React.Dispatch<React.SetStateAction<Question | undefined>>;
-}
+export default function QuestionForm() {
+  const [searchParams] = useSearchParams();
+  const questionId = searchParams.get("id");
+  const [questionToEdit, setQuestionToEdit] = useState<Question>();
+  const [fetchError, setFetchError] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
-export default function QuestionForm({
-  questionToEdit,
-  setQuestionToEdit,
-}: QuestionFormProps) {
+  // Form parameters
   const [title, setTitle] = useState<string>("");
-  const [selectedComplexity, setSelectedComplexity] =
-    useState<Complexity>("EASY");
+  const [selectedComplexity, setSelectedComplexity] = useState<Complexity>(
+    ComplexityMap.Easy,
+  );
   const [description, setDescription] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<Category[]>([]);
-  const [error, setError] = useState<string>("");
+
+  const [submitError, setSubmitError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { currentUser, currentRole } = useAuth();
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedValue = event.target.value as Category;
@@ -41,11 +42,12 @@ export default function QuestionForm({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
+    setSubmitError("");
+    setIsSubmitting(true);
     try {
       const response = await fetch(
         questionToEdit
-          ? `http://localhost:5003/update/${questionToEdit._id}`
+          ? `http://localhost:5003/update/${questionToEdit.id}`
           : "http://localhost:5003/create",
         {
           method: questionToEdit ? "PATCH" : "POST",
@@ -65,11 +67,48 @@ export default function QuestionForm({
       if (!response.ok) {
         throw Error(data.error);
       }
-      window.location.reload();
+      setIsSubmitting(false);
+      // Success
+      navigate("/questions");
     } catch (err: any) {
-      setError(err.message);
+      setSubmitError(err.message);
+      setIsSubmitting(false);
     }
   };
+
+  const fetchQuestion = async (id: number) => {
+    setFetchError(false);
+    setIsFetching(true);
+    try {
+      const response = await fetch(`http://localhost:5003/get/${id}`, {
+        method: "GET",
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw Error(data.error);
+      } else {
+        setQuestionToEdit(data);
+        setIsFetching(false);
+      }
+    } catch (err: any) {
+      setFetchError(true);
+      setIsFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    // fetch question from id in search params to edit
+    if (questionId) {
+      const id = parseInt(questionId, 10);
+      if (Number.isNaN(id)) {
+        setQuestionToEdit(undefined);
+      }
+      fetchQuestion(id);
+    } else {
+      setQuestionToEdit(undefined);
+    }
+  }, [questionId]);
 
   useEffect(() => {
     if (questionToEdit) {
@@ -81,90 +120,80 @@ export default function QuestionForm({
     } else {
       // return to default
       setTitle("");
-      setSelectedComplexity("EASY");
+      setSelectedComplexity(ComplexityMap.Easy);
       setSelectedCategory([]);
       setDescription("");
     }
   }, [questionToEdit]);
 
+  // TODO add admin check
+
+  if (isFetching) {
+    return <h2>Loading</h2>;
+  }
+
+  if (fetchError) {
+    return <h2>Error fetching question details</h2>;
+  }
+
   return (
     <div>
-      <button
-        type="button"
-        className={styles.logoutButton}
-        onClick={() => {
-          navigate(`/user/profile?userId=${currentUser?.uid}`);
-        }}
-      >
-        View Profile
-      </button>
-      <br />
-      <br />
-      {currentRole === "Admin" && (
-        <form onSubmit={handleSubmit} className={styles.formContainer}>
-          <label htmlFor="title">
-            Question Title:
-            <input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </label>
-          <div className={styles.complexityContainer}>
-            <span>Complexity:</span>
-            {Object.values(ComplexityMap).map((complexity) => (
-              <div key={complexity}>
-                <input
-                  type="radio"
-                  id={complexity}
-                  name="complexity"
-                  value={complexity}
-                  onChange={() => setSelectedComplexity(complexity)}
-                  checked={selectedComplexity === complexity}
-                />
-                <label htmlFor={complexity}>{complexity}</label>
-              </div>
-            ))}
-          </div>
-          <span>Category:</span>
-          <div className={styles.categoryContainer}>
-            {Object.values(CategoryMap).map((category) => (
-              <div key={category}>
-                <input
-                  type="checkbox"
-                  id={category}
-                  value={category}
-                  onChange={handleCheckboxChange}
-                  checked={selectedCategory.includes(category)}
-                />
-                <label htmlFor={category}>{category}</label>
-              </div>
-            ))}
-          </div>
-          <label htmlFor="description">
-            Question Description:
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </label>
-          <div>
-            <button type="submit">
-              {questionToEdit ? "save changes" : "create"}
-            </button>
-            {questionToEdit && (
-              <button
-                type="button"
-                onClick={() => setQuestionToEdit(undefined)}
-              >
-                cancel
-              </button>
-            )}
-          </div>
-        </form>
-      )}
-      {error && <span>{error}</span>}
+      <h2>Editing: {!!questionToEdit}</h2>
+      <form onSubmit={handleSubmit} className={styles.formContainer}>
+        <label htmlFor="title">
+          Question Title:
+          <input
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </label>
+        <div className={styles.complexityContainer}>
+          <span>Complexity:</span>
+          {Object.values(ComplexityMap).map((complexity) => (
+            <div key={complexity}>
+              <input
+                type="radio"
+                id={complexity}
+                name="complexity"
+                value={complexity}
+                onChange={() => setSelectedComplexity(complexity)}
+                checked={selectedComplexity === complexity}
+              />
+              <label htmlFor={complexity}>{complexity}</label>
+            </div>
+          ))}
+        </div>
+        <span>Category:</span>
+        <div className={styles.categoryContainer}>
+          {Object.values(CategoryMap).map((category) => (
+            <div key={category}>
+              <input
+                type="checkbox"
+                id={category}
+                value={category}
+                onChange={handleCheckboxChange}
+                checked={selectedCategory.includes(category)}
+              />
+              <label htmlFor={category}>{category}</label>
+            </div>
+          ))}
+        </div>
+        <label htmlFor="description">
+          Question Description:
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </label>
+        <div>
+          <button type="submit" disabled={isSubmitting}>
+            {questionToEdit ? "save changes" : "create"}
+          </button>
+        </div>
+      </form>
+      {submitError && <span>{submitError}</span>}
     </div>
   );
 }
