@@ -87,7 +87,11 @@ export default function DeleteProfileModal({
       className={styles.modalContent}
       overlayClassName={styles.modalOverlay}
     >
-      <form onSubmit={handleDeleteAccount}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
         <div className={styles.deleteModalCard}>
           <h2>Confirm Account Deletion</h2>
           <p>Enter password to confirm account deletion</p>
@@ -106,9 +110,10 @@ export default function DeleteProfileModal({
           <br />
           <div className={styles.modalButtons}>
             <button
-              type="submit"
+              type="button"
               disabled={isLoading}
               className={styles.deleteAccountButton}
+              onClick={handleDeleteAccount}
             >
               Delete Account
             </button>

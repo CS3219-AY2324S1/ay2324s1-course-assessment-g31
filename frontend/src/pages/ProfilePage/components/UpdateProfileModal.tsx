@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { FirebaseError } from "@firebase/app";
 import { useNavigate } from "react-router";
@@ -33,13 +33,9 @@ export default function UpdateProfileModal({
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isUsernameChangeFormOpen, setUsernameChangeFormOpen] = useState(false);
-  const [isEmailChangeFormOpen, setEmailChangeFormOpen] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [passwordNewEmail, setPasswordNewEmail] = useState("");
 
-  const { updateThePassword, verifyBeforeTheEmailUpdate, currentUser, logout } =
-    useAuth();
+  const { updateThePassword, currentUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,18 +49,6 @@ export default function UpdateProfileModal({
       setMessage("");
     }
   }, [emailProp, usernameProp, isOpen]);
-
-  const handleLogout = () => {
-    logout()
-      .then(() => {
-        // Sign-out successful.
-        navigate("/");
-        console.log("Signed out successfully");
-      })
-      .catch((error) => {
-        setMessage(`Error, ${error}`);
-      });
-  };
 
   const handlePasswordChange = async () => {
     try {
@@ -112,7 +96,8 @@ export default function UpdateProfileModal({
     }
   };
 
-  const handleUsernameChange = async () => {
+  const handleUsernameChange = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       setMessage("");
       setIsLoading(true);
@@ -161,70 +146,10 @@ export default function UpdateProfileModal({
     }
   };
 
-  const handleEmailChange = async () => {
-    try {
-      setMessage("");
-      setIsLoading(true);
-
-      if (newEmail === email) {
-        setMessage("The email is the same");
-        return;
-      }
-
-      const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-
-      if (newEmail.trim() === "" || !emailRegex.test(newEmail)) {
-        setMessage("The new email is invalid");
-        return;
-      }
-
-      if (passwordNewEmail.trim() === "") {
-        setMessage("The email is the same");
-        return;
-      }
-
-      const credential = EmailAuthProvider.credential(email, passwordNewEmail);
-
-      console.log(currentUser);
-
-      if (currentUser) {
-        await reauthenticateWithCredential(currentUser, credential);
-        await verifyBeforeTheEmailUpdate(newEmail);
-        setTimeout(handleLogout, 3000);
-      }
-
-      setEmailChangeFormOpen(false);
-      setMessage("");
-      setEmail(newEmail);
-      setNewEmail("");
-      setPasswordNewEmail("");
-      setMessage(
-        "If new email is not already registered, you will receive a verification link in your new email. Click on it and login with new email.",
-      );
-      setTimeout(handleLogout, 8500);
-    } catch (error: any) {
-      console.error("Error changing email:", error);
-      if (error instanceof FirebaseError) {
-        if (error.code === "auth/invalid-login-credentials") {
-          setMessage("Wrong password provided");
-        } else {
-          setMessage(error.code);
-        }
-      } else if (error.message === "Current user is not defined") {
-        navigate(`/`);
-      } else {
-        setMessage(error.message);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={() => {
-        setEmailChangeFormOpen(false);
         setPasswordChangeFormOpen(false);
         setUsernameChangeFormOpen(false);
         onClose(username, email);
@@ -264,20 +189,7 @@ export default function UpdateProfileModal({
               type="button"
               onClick={() => {
                 setPasswordChangeFormOpen(false);
-                setUsernameChangeFormOpen(false);
-                setEmailChangeFormOpen(true);
-                setMessage("");
-              }}
-              className="btn btn-primary"
-            >
-              Update Email
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setPasswordChangeFormOpen(false);
                 setUsernameChangeFormOpen(true);
-                setEmailChangeFormOpen(false);
                 setMessage("");
               }}
               className="btn btn-primary"
@@ -289,7 +201,6 @@ export default function UpdateProfileModal({
               onClick={() => {
                 setPasswordChangeFormOpen(true);
                 setUsernameChangeFormOpen(false);
-                setEmailChangeFormOpen(false);
                 setMessage("");
               }}
               className="btn btn-secondary"
@@ -301,7 +212,6 @@ export default function UpdateProfileModal({
               onClick={() => {
                 setUsernameChangeFormOpen(false);
                 setPasswordChangeFormOpen(false);
-                setEmailChangeFormOpen(false);
                 onClose(username, email);
               }}
               className="btn btn-secondary"
@@ -371,58 +281,12 @@ export default function UpdateProfileModal({
             </div>
           </form>
         )}
-        {isEmailChangeFormOpen && (
-          <form>
-            <br />
-            <div className="mb-3">
-              <label htmlFor="newEmail" className={styles.formLabel}>
-                New Email
-                <input
-                  type="email"
-                  className="form-control"
-                  id="newEmail"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                />
-              </label>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="passwordNewEmail" className={styles.formLabel}>
-                Password for Confirmation
-                <input
-                  type="password"
-                  className="form-control"
-                  id="passwordNewEmail"
-                  value={passwordNewEmail}
-                  onChange={(e) => setPasswordNewEmail(e.target.value)}
-                />
-              </label>
-            </div>
-            <div>
-              <button
-                type="button"
-                onClick={handleEmailChange}
-                className="btn btn-primary"
-                disabled={isLoading}
-              >
-                Confirm Change Email
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmailChangeFormOpen(false);
-                  setMessage("");
-                }}
-                className="btn btn-secondary"
-                disabled={isLoading}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
         {isUsernameChangeFormOpen && (
-          <form>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
             <br />
             <div className="mb-3">
               <label htmlFor="newUsername" className={styles.formLabel}>
@@ -439,9 +303,9 @@ export default function UpdateProfileModal({
             <div>
               <button
                 type="button"
-                onClick={handleUsernameChange}
                 className="btn btn-primary"
                 disabled={isLoading}
+                onClick={handleUsernameChange}
               >
                 Confirm Change Username
               </button>
