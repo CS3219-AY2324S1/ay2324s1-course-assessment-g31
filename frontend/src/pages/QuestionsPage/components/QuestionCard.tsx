@@ -19,17 +19,22 @@ export default function QuestionCard({
   const handleShowDescription = () => setShowDescription(!showDescription);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const { currentRole } = useAuth();
+  const { currentRole, currentUser } = useAuth();
 
   const handleDeleteQuestion = async () => {
     if (window.confirm("Are you sure you want to delete this question")) {
       setError("");
       setIsLoading(true);
       try {
+        const idToken = await currentUser?.getIdToken();
         const response = await fetch(
           `http://localhost:5000/delete/${question._id}`,
           {
             method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${idToken}`,
+              role: currentRole || "User",
+            },
           },
         );
 

@@ -43,6 +43,7 @@ export default function QuestionForm({
     e.preventDefault();
     setError("");
     try {
+      const idToken = await currentUser?.getIdToken();
       const response = await fetch(
         questionToEdit
           ? `http://localhost:5000/update/${questionToEdit._id}`
@@ -51,6 +52,8 @@ export default function QuestionForm({
           method: questionToEdit ? "PATCH" : "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+            role: currentRole || "User",
           },
           body: JSON.stringify({
             title,
