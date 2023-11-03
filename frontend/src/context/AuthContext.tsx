@@ -24,7 +24,6 @@ interface AuthContextType {
   deleteTheUser: () => Promise<void | Error>;
 }
 
-// ES removed unused variables
 const AuthContext = React.createContext<AuthContextType>({
   currentUser: {} as User | null,
   currentRole: {} as string | null,

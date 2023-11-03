@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Question } from "../../../types/question";
 import QuestionCard from "./QuestionCard";
 import styles from "./QuestionsList.module.css";
+import { useAuth } from "../../../context/AuthContext";
 
 interface QuestionsListProps {
   setQuestionToEdit: React.Dispatch<React.SetStateAction<Question | undefined>>;
@@ -13,13 +14,20 @@ export default function QuestionsList({
   const [questions, setQuestions] = useState<Question[]>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const { currentUser } = useAuth();
 
   const fetchQuestions = async () => {
     setError("");
     setIsLoading(true);
+    const idToken = await currentUser?.getIdToken();
+    console.log(currentUser);
+    console.log(idToken);
     try {
       const response = await fetch("http://localhost:5000/all", {
         method: "GET",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
       });
 
       const data = await response.json();
@@ -30,6 +38,7 @@ export default function QuestionsList({
         setIsLoading(false);
       }
     } catch (err: any) {
+      console.log(err.message);
       setError(err.message);
       setIsLoading(false);
     }

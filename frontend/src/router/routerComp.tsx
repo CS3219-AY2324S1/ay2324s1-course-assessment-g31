@@ -2,8 +2,6 @@ import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { User } from "@firebase/auth";
 import QuestionsPage from "../pages/QuestionsPage/QuestionsPage";
-// import RegisterPage from "./pages/RegisterPage/RegisterPage";
-// import LoginPage from "./pages/LoginPage/LoginPage";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import Layout from "../pages/Layout/Layout";
