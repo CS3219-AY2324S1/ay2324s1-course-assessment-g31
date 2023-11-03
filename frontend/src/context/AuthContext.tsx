@@ -82,6 +82,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   async function getUserRole(user: User): Promise<string> {
+    const idToken = await user?.getIdToken();
+    console.log(user);
     try {
       const response = await fetch(
         `http://localhost:3000/user-services/userRole/${user.uid}`,
@@ -89,6 +91,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
           },
         },
       );

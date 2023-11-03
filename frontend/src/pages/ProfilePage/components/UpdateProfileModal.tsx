@@ -98,6 +98,7 @@ export default function UpdateProfileModal({
 
   const handleUsernameChange = async (e: React.FormEvent) => {
     e.preventDefault();
+    const idToken = await currentUser?.getIdToken();
     try {
       setMessage("");
       setIsLoading(true);
@@ -118,6 +119,7 @@ export default function UpdateProfileModal({
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
           },
           body: JSON.stringify({
             newUsername,

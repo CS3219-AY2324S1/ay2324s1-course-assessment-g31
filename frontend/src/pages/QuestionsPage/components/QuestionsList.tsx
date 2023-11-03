@@ -20,8 +20,6 @@ export default function QuestionsList({
     setError("");
     setIsLoading(true);
     const idToken = await currentUser?.getIdToken();
-    console.log(currentUser);
-    console.log(idToken);
     try {
       const response = await fetch("http://localhost:5000/all", {
         method: "GET",

@@ -58,6 +58,7 @@ export default function ProfileCard() {
 
   useEffect(() => {
     async function fetchProfileData() {
+      const idToken = await currentUser?.getIdToken();
       try {
         // Check if firebase has this user
         if (currentUser !== null) {
@@ -67,6 +68,7 @@ export default function ProfileCard() {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${idToken}`,
               },
             },
           );

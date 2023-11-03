@@ -39,6 +39,7 @@ export default function DeleteProfileModal({
   };
 
   const handleDeleteAccount = async (e: React.FormEvent) => {
+    const idToken = await currentUser?.getIdToken();
     try {
       e.preventDefault();
       setIsLoading(true);
@@ -56,6 +57,9 @@ export default function DeleteProfileModal({
           `http://localhost:3000/user-services/delete/${userId}`,
           {
             method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${idToken}`,
+            },
           },
         );
 
