@@ -1,7 +1,7 @@
 import { MatchingRequestCreateDTO } from "../../interfaces/matchingRequest/createDTO";
 import { MatchingRequest } from "../../interfaces/matchingRequest/object";
 import { MatchingRequestUpdateDTO } from "../../interfaces/matchingRequest/updateDTO";
-import { Partial } from "../../util/partial";
+
 import { StringInterface } from "../../util/stringInterface";
 import Parser from "../parser.interface";
 
@@ -13,7 +13,7 @@ class MatchingRequestParser
     input: StringInterface<MatchingRequestCreateDTO>,
   ): MatchingRequestCreateDTO {
     if (!input.userId || !input.difficulty) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid Input");
     }
     if (input.questionId) {
       return {
@@ -30,7 +30,7 @@ class MatchingRequestParser
 
   public parseFindByIdInput(id: string | undefined): number {
     if (!id) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid Input");
     }
     return parseInt(id, 10);
   }
@@ -38,8 +38,8 @@ class MatchingRequestParser
   public parseFindOneInput(
     input: Partial<StringInterface<MatchingRequest>>,
   ): Partial<MatchingRequest> {
-    if (!input) {
-      throw new Error("Invalid input");
+    if (!input || Object.keys(input).length == 0) {
+      throw new Error("Invalid Input");
     }
     const result: Partial<MatchingRequest> = {};
     if (input.id) {
@@ -54,6 +54,9 @@ class MatchingRequestParser
     if (input.difficulty) {
       result.difficulty = input.difficulty;
     }
+    if (input.dateRequested) {
+      result.dateRequested = new Date(input.dateRequested);
+    }
     return result;
   }
 
@@ -61,7 +64,7 @@ class MatchingRequestParser
     input: StringInterface<MatchingRequestUpdateDTO>,
   ): MatchingRequestUpdateDTO {
     if (!input.userId || !input.difficulty) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid Input");
     }
     if (input.questionId) {
       return {
@@ -81,7 +84,7 @@ class MatchingRequestParser
 
   public parseDeleteInput(id: string | undefined): number {
     if (!id) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid Input");
     }
 
     return parseInt(id, 10);

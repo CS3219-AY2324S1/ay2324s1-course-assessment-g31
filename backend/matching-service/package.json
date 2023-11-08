@@ -4,12 +4,15 @@
     "private": true,
     "scripts": {
         "build": "tsc --project tsconfig.build.json",
-        "start": "node dist/src/server.js",
+        "start": "node dist/server.js",
         "dev": "concurrently \"tsc --watch\" \"nodemon -q dist/server.js\"",
         "start:migrate": "prisma db push && yarn run start",
         "dev:migrate": "prisma db push && yarn run dev",
         "lint": "eslint ./src",
         "test": "jest",
+        "test:unit": "jest -c jest.unit.config.js",
+        "test:e2e": "dotenv -e .env.test -- prisma db push && jest -c jest.e2e.config.js",
+        "test:coverage": "jest --coverage",
         "format": "prettier --write ./src"
     },
     "dependencies": {

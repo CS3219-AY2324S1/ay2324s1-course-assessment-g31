@@ -1,5 +1,3 @@
-import { Partial } from "../util/partial";
-
 type ObjWithId = {
   id: unknown;
 };

@@ -3,5 +3,6 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testMatch: ['**/*.test.ts'],
+  testMatch: ['<rootDir>/src/tests/unit/**/*.test.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/util/prisma/singleton.ts'],
 };
