@@ -2,6 +2,7 @@ import { MatchingRequestCreateDTO } from "../../interfaces/matchingRequest/creat
 import { MatchingRequest } from "../../interfaces/matchingRequest/object";
 import { MatchingRequestUpdateDTO } from "../../interfaces/matchingRequest/updateDTO";
 
+
 import { StringInterface } from "../../util/stringInterface";
 import Parser from "../parser.interface";
 
@@ -53,6 +54,9 @@ class MatchingRequestParser
     }
     if (input.difficulty) {
       result.difficulty = input.difficulty;
+    }
+    if (input.dateRequested) {
+      result.dateRequested = new Date(input.dateRequested);
     }
     if (input.dateRequested) {
       result.dateRequested = new Date(input.dateRequested);

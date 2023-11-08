@@ -22,3 +22,17 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.firebase/
+.env
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+playwright/.auth
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/playwright/.cache/

@@ -24,20 +24,6 @@ abstract class Controller {
     });
   }
 
-  protected static handleNotFound(res: Response, message: string) {
-    return res.status(httpStatus.NOT_FOUND).json({
-      success: false,
-      errors: message,
-    });
-  }
-
-  protected static handleInternalServerError(res: Response, message: string) {
-    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      errors: message,
-    });
-  }
-
   public healthCheck(_req: Request, res: Response) {
     return Controller.handleSuccess(res, { message: "OK" });
   }
