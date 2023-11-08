@@ -13,7 +13,9 @@ import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import SingleQuestionPage from "../pages/SingleQuestionPage";
 import MatchingControlPanelPage from "../pages/MatchingControlPanelPage/MatchingControlPanelPage";
 import ForbiddenPage from "../pages/ForbiddenPage/ForbiddenPage";
-import QuestionForm from "../pages/QuestionsPage/components/QuestionForm";
+import QuestionForm from "../pages/QuestionForm/QuestionForm";
+import QuestionsList from "../pages/QuestionsList/QuestionsList";
+import SolutionForm from "../pages/SolutionForm/SolutionForm";
 
 // import RegisterPage from "./pages/RegisterPage/RegisterPage";
 // import LoginPage from "./pages/LoginPage/LoginPage";
@@ -76,6 +78,15 @@ export default function MainRouter() {
           path="/questions"
           element={
             <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+              <QuestionsList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/questions/view/:id"
+          element={
+            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
               <QuestionsPage />
             </ProtectedRoute>
           }
@@ -86,6 +97,15 @@ export default function MainRouter() {
           element={
             <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
               <QuestionForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/questions/solution/form"
+          element={
+            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+              <SolutionForm />
             </ProtectedRoute>
           }
         />

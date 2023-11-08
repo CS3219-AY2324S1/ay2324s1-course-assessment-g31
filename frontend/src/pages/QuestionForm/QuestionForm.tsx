@@ -4,27 +4,30 @@ import { useSearchParams } from "react-router-dom";
 import {
   Category,
   CategoryMap,
-  Complexity,
-  ComplexityMap,
+  Difficulties,
+  Difficulty,
   Question,
-} from "../../../types/question";
+} from "../../types/question";
 import styles from "./QuestionForm.module.css";
 
 export default function QuestionForm() {
+  // fetching questionToEdit
   const [searchParams] = useSearchParams();
   const questionId = searchParams.get("id");
   const [questionToEdit, setQuestionToEdit] = useState<Question>();
   const [fetchError, setFetchError] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
-  // Form parameters
+  // Form fields
   const [title, setTitle] = useState<string>("");
-  const [selectedComplexity, setSelectedComplexity] = useState<Complexity>(
-    ComplexityMap.Easy,
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>(
+    Difficulties[0],
   );
   const [description, setDescription] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<Category[]>([]);
+  const [example, setExample] = useState<string>("");
 
+  // submitting
   const [submitError, setSubmitError] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -47,8 +50,8 @@ export default function QuestionForm() {
     try {
       const response = await fetch(
         questionToEdit
-          ? `http://localhost:5003/update/${questionToEdit.id}`
-          : "http://localhost:5003/create",
+          ? `http://localhost:5003/question/${questionToEdit.id}`
+          : "http://localhost:5003/question",
         {
           method: questionToEdit ? "PATCH" : "POST",
           headers: {
@@ -56,9 +59,10 @@ export default function QuestionForm() {
           },
           body: JSON.stringify({
             title,
-            complexity: selectedComplexity,
+            difficulty: selectedDifficulty,
             category: selectedCategory,
             description,
+            example,
           }),
         },
       );
@@ -80,7 +84,7 @@ export default function QuestionForm() {
     setFetchError(false);
     setIsFetching(true);
     try {
-      const response = await fetch(`http://localhost:5003/get/${id}`, {
+      const response = await fetch(`http://localhost:5003/question/${id}`, {
         method: "GET",
       });
 
@@ -114,19 +118,19 @@ export default function QuestionForm() {
     if (questionToEdit) {
       // prefill form with question to edit
       setTitle(questionToEdit.title);
-      setSelectedComplexity(questionToEdit.complexity);
+      setSelectedDifficulty(questionToEdit.difficulty);
       setSelectedCategory([...questionToEdit.category]);
       setDescription(questionToEdit.description);
+      setExample(questionToEdit.example);
     } else {
       // return to default
       setTitle("");
-      setSelectedComplexity(ComplexityMap.Easy);
+      setSelectedDifficulty(Difficulties[0]);
       setSelectedCategory([]);
       setDescription("");
+      setExample("");
     }
   }, [questionToEdit]);
-
-  // TODO add admin check
 
   if (isFetching) {
     return <h2>Loading</h2>;
@@ -149,18 +153,18 @@ export default function QuestionForm() {
           />
         </label>
         <div className={styles.complexityContainer}>
-          <span>Complexity:</span>
-          {Object.values(ComplexityMap).map((complexity) => (
-            <div key={complexity}>
+          <span>Difficulty:</span>
+          {Difficulties.map((difficulty) => (
+            <div key={difficulty}>
               <input
                 type="radio"
-                id={complexity}
-                name="complexity"
-                value={complexity}
-                onChange={() => setSelectedComplexity(complexity)}
-                checked={selectedComplexity === complexity}
+                id={difficulty}
+                name="difficulty"
+                value={difficulty}
+                onChange={() => setSelectedDifficulty(difficulty)}
+                checked={selectedDifficulty === difficulty}
               />
-              <label htmlFor={complexity}>{complexity}</label>
+              <label htmlFor={difficulty}>{difficulty}</label>
             </div>
           ))}
         </div>
@@ -185,6 +189,14 @@ export default function QuestionForm() {
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+          />
+        </label>
+        <label htmlFor="example">
+          Question Example:
+          <textarea
+            id="example"
+            value={example}
+            onChange={(e) => setExample(e.target.value)}
           />
         </label>
         <div>

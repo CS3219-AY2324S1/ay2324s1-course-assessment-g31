@@ -7,12 +7,12 @@ import {
   updateQuestion,
 } from "../controller/questionController";
 
-const router = Router();
+const questionRouter = Router();
 
-router.get("/get/:id", getQuestion);
-router.get("/all", getAllQuestions);
-router.post("/create", createQuestion);
-router.patch("/update/:id", updateQuestion);
-router.delete("/delete/:id", deleteQuestion);
+questionRouter.get("/", getAllQuestions);
+questionRouter.get("/:id", getQuestion);
+questionRouter.post("/", createQuestion);
+questionRouter.patch("/:id", updateQuestion);
+questionRouter.delete("/:id", deleteQuestion);
 
-export default router;
+export default questionRouter;

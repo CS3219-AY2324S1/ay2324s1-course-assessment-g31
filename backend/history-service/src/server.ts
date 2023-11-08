@@ -7,7 +7,7 @@ import EventConsumer from "./events/consumer/main";
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT;
+const port = process.env.SERVER_PORT;
 
 const corsOptions = {
   origin: "*",
@@ -21,7 +21,7 @@ app.use("/", router);
 
 app.listen(port, () => {
   console.log(
-    `⚡️[server]: Video Call Service is running at http://localhost:${port}`
+    `⚡️[server]: History Service is running at http://localhost:${port}`
   );
 
   if (process.env.NODE_ENV !== "test") {

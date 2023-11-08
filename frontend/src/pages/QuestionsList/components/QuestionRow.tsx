@@ -1,42 +1,44 @@
-// import { Disclosure } from "@headlessui/react";
-// import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router";
 import { Question } from "../../../types/question";
 
-interface IQuestionCardProps {
+interface IQuestionRowProps {
   question: Question;
   index: number;
-  onSelect: () => void;
-  selected: boolean;
   numAttempts: number;
 }
 
-export default function QuestionCard({
+export default function QuestionRow({
   question,
   index,
-  onSelect,
-  selected,
   numAttempts,
-}: IQuestionCardProps) {
+}: IQuestionRowProps) {
+  const navigate = useNavigate();
+
+  const handleSelect = () => {
+    navigate(`/questions/view/${question.id}`);
+  };
+
   return (
-    <tr className={`${selected ? "bg-cyan-400" : ""}`}>
+    <tr>
       <td>{question.id}</td>
       <td>
         <span
           role="button"
           tabIndex={index}
-          onKeyDown={onSelect}
-          onClick={onSelect}
+          onKeyDown={handleSelect}
+          onClick={handleSelect}
           className="underline text-blue-700 font-bold"
         >
           {question.title}
         </span>
       </td>
-      <td>{question.complexity}</td>
+      <td>{question.difficulty}</td>
       <td>
         {question.category.map((cat) => (
           <span key={cat}>{cat}</span>
         ))}
       </td>
+      <td>{question.popularity}</td>
       <td>{numAttempts}</td>
     </tr>
   );

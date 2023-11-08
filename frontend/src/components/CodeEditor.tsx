@@ -4,17 +4,18 @@ import { useCallback, useContext, useEffect, useState } from "react";
 
 import { MatchingContext } from "../context/MatchingContext";
 import CodeResult from "./CodeResult";
+import CodeContext from "../context/CodeContext";
 
 interface ICodeEditorProps {
   selectedLanguage: string;
 }
 
 function CodeEditor({ selectedLanguage }: ICodeEditorProps) {
-  const [currentCode, setCurrentCode] = useState("");
   const [codeSubmitted, setCodeSubmitted] = useState<boolean>(false);
   const [codeResult, setCodeResult] = useState<string>("");
   const [extensions, setExtensions] = useState<Extension[]>();
   const { socketCode, changeCode } = useContext(MatchingContext);
+  const { currentCode, setCurrentCode } = useContext(CodeContext);
 
   const onChange = useCallback((value: string) => {
     setCurrentCode(value);

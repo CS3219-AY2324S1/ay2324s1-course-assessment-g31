@@ -1527,6 +1527,11 @@
   dependencies:
     "minimist" "^1.2.0"
 
+"kafkajs@^2.2.4":
+  "integrity" "sha512-j/YeapB1vfPT2iOIUn/vxdyKEuhuY2PxMBvf5JWux6iSaukAccrMtXEY/Lb7OvavDhOWME589bpLrEdnVHjfjA=="
+  "resolved" "https://registry.npmjs.org/kafkajs/-/kafkajs-2.2.4.tgz"
+  "version" "2.2.4"
+
 "keyv@^4.5.3":
   "integrity" "sha512-QCiSav9WaX1PgETJ+SpNnx2PRRapJ/oRSXM4VO5OGYGSjrxbKPVFVhB3l2OCbLCk329N8qyAtsJjSjvVBWzEug=="
   "resolved" "https://registry.npmjs.org/keyv/-/keyv-4.5.3.tgz"

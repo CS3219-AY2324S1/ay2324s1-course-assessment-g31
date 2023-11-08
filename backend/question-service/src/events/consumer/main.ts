@@ -2,19 +2,16 @@ import { EachMessagePayload } from "kafkajs";
 import kafka from "../kafka";
 import { ConsumerFunction } from "./main.interface";
 import { sessionEndConsumer } from "./sessionEnd";
-import { questionDeletedConsumer } from "./questionDeleted";
 
 export enum ConsumerTopics {
   COLLABORATION_ENDED = "collaboration-ended",
-  QUESTION_DELETED = "question-deleted",
 }
 
 const TOPIC_MAPPER: Map<string, ConsumerFunction> = new Map([
   [ConsumerTopics.COLLABORATION_ENDED, sessionEndConsumer],
-  [ConsumerTopics.QUESTION_DELETED, questionDeletedConsumer],
 ]);
 
-const consumer = kafka.consumer({ groupId: "history-service" });
+const consumer = kafka.consumer({ groupId: "question-service" });
 
 const EventConsumer = async () => {
   await consumer.connect();

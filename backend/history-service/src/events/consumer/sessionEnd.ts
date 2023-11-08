@@ -12,8 +12,11 @@ export const sessionEndConsumer: ConsumerFunction = (message) => {
     };
 
     // add to db
-    prisma.history.create({
-      data: questionAttempt,
-    });
+    prisma.history
+      .create({
+        data: questionAttempt,
+      })
+      .then(() => console.log("attempt created"))
+      .catch((err) => console.log(`Error creating attempt ${err.message}`));
   }
 };

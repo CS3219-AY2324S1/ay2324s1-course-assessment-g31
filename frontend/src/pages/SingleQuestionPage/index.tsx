@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import Chat from "../../components/Chat";
@@ -8,6 +8,7 @@ import Question, { IQuestion } from "../../components/Question";
 import { MatchingContext } from "../../context/MatchingContext";
 import QuestionLanguageContext from "../../context/QuestionLanguageContext";
 import { useAuth } from "../../context/AuthContext";
+import CodeContext from "../../context/CodeContext";
 
 export default function SingleQuestionPage() {
   const { matchedUserId, matchingId, cancelCollaboration } =
@@ -17,6 +18,11 @@ export default function SingleQuestionPage() {
   const [searchParams] = useSearchParams();
   const selectedLanguage = searchParams.get("lang");
   const navigate = useNavigate();
+
+  const [currentCode, setCurrentCode] = useState<string>("");
+  const codeContextValue = useMemo(() => {
+    return { currentCode, setCurrentCode };
+  }, [currentCode, setCurrentCode]);
 
   const question: IQuestion = {
     name: "Two Sum",
@@ -56,7 +62,7 @@ export default function SingleQuestionPage() {
 
   const handleCancelCollaboration = () => {
     if (!currentUser) return;
-    cancelCollaboration();
+    cancelCollaboration(currentCode, selectedLanguage!);
     navigate("/match");
   };
 
@@ -68,7 +74,9 @@ export default function SingleQuestionPage() {
           {currentUser && (
             <QuestionLanguageContext.Provider value={selectedLanguage}>
               <Question question={question} />
-              <CodingSpace />
+              <CodeContext.Provider value={codeContextValue}>
+                <CodingSpace />
+              </CodeContext.Provider>
             </QuestionLanguageContext.Provider>
           )}
         </div>

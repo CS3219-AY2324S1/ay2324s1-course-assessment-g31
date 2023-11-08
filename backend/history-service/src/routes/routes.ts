@@ -2,10 +2,13 @@ import { Router } from "express";
 import {
   deleteAttempt,
   getUserAttempts,
+  getUserQuestionAttempts,
   testAddAttempt,
 } from "../controllers/controllers";
 
 const router = Router();
+
+router.get("/:uid/:qid", getUserQuestionAttempts);
 
 router.post("/add", testAddAttempt);
 

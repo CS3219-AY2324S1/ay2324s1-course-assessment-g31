@@ -8,6 +8,29 @@ import {
   SessionDetails,
 } from "../types/types";
 
+export const getUserQuestionAttempts = async (req: Request, res: Response) => {
+  const { uid, qid } = req.params;
+
+  try {
+    const questionId = parseInt(qid);
+    if (isNaN(questionId)) {
+      throw new Error("Invalid Question Id");
+    }
+    const history = await prisma.history.findMany({
+      where: {
+        AND: [
+          { OR: [{ user1Id: uid }, { user2Id: uid }] },
+          { questionId: questionId },
+        ],
+      },
+    });
+
+    res.status(200).json(history);
+  } catch (err: any) {
+    res.status(500).json({ error: `Error fetching history: ${err.message}` });
+  }
+};
+
 // get all attempts of all questions by a user
 export const getUserAttempts = async (req: Request, res: Response) => {
   const userId: string = req.params.id;
@@ -47,8 +70,8 @@ export const getUserAttempts = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({ history: questionAttemptsAll });
-  } catch (error) {
-    res.status(500).json({ error });
+  } catch (err: any) {
+    res.status(500).json({ error: `Error fetching history: ${err.message}` });
   }
 };
 
@@ -61,8 +84,8 @@ export const deleteAttempt = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({ deletedAttempt });
-  } catch (error) {
-    res.status(500).json({ error });
+  } catch (err: any) {
+    res.status(500).json({ error: `Error deleting history: ${err.message}` });
   }
 };
 
@@ -85,7 +108,7 @@ export const testAddAttempt = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({ history });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  } catch (err: any) {
+    res.status(500).json({ error: `Error adding history: ${err.message}` });
   }
 };

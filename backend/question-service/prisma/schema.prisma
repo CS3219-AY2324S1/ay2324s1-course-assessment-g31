@@ -14,11 +14,24 @@ model Question {
     id      Int     @id @default(autoincrement())
     title   String
     category Category[]
-    complexity Complexity
+    difficulty Difficulty
     description String
+    example String
+    popularity Int @default(0)
+    solutions Solution[]
 }
 
-enum Complexity {
+model Solution {
+  id String @id @default(uuid())
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId Int
+  title String
+  description String
+  code String
+  language String
+}
+
+enum Difficulty {
   Easy
   Medium
   Hard

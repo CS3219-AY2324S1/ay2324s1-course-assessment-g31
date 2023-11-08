@@ -1,20 +1,55 @@
-import React, { useContext } from "react";
-import { QuestionViewContext } from "../../../context/QuestionViewContext";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router";
 import { Attempt } from "../../../types/history";
 
-export default function History() {
-  const { selectedAttempt, selectedQuestion, selectAttempt, questionHistory } =
-    useContext(QuestionViewContext);
+import { useAuth } from "../../../context/AuthContext";
 
-  const handleClick = (attempt: Attempt) => {
-    selectAttempt(attempt);
+export default function History() {
+  const { id: questionId } = useParams();
+
+  const [history, setHistory] = useState<Attempt[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  const [selectedAttempt, setSelectedAttempt] = useState<Attempt>();
+
+  const { currentUser } = useAuth();
+
+  const fetchHistory = async () => {
+    if (currentUser) {
+      setHistory([]);
+      setError("");
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `http://localhost:5007/${currentUser.uid}/${questionId}`,
+          {
+            method: "GET",
+          },
+        );
+        const data = await response.json();
+        if (!response.ok) {
+          throw Error(data.error);
+        } else {
+          setHistory(data);
+          setIsLoading(false);
+        }
+      } catch (err: any) {
+        setError(err.message);
+        setIsLoading(false);
+      }
+    }
   };
 
-  if (!selectedQuestion) {
-    return null;
-  }
+  useEffect(() => {
+    fetchHistory();
+  }, [currentUser, questionId]);
 
-  if (questionHistory.length === 0) {
+  if (error) return <div>Error loading history: {error}</div>;
+
+  if (isLoading) return <div>Loading history</div>;
+
+  if (history.length === 0) {
     return <h2 className="font-bold text-2xl">No attempts</h2>;
   }
 
@@ -30,7 +65,7 @@ export default function History() {
           </tr>
         </thead>
         <tbody>
-          {questionHistory.map((attempt, index) => {
+          {history.map((attempt, index) => {
             const selected: boolean = !!(selectedAttempt?.id === attempt.id);
             console.log(selectedAttempt?.id, attempt);
             return (
@@ -40,8 +75,8 @@ export default function History() {
                   <span
                     role="button"
                     tabIndex={index}
-                    onClick={() => handleClick(attempt)}
-                    onKeyDown={() => handleClick(attempt)}
+                    onClick={() => setSelectedAttempt(attempt)}
+                    onKeyDown={() => setSelectedAttempt(attempt)}
                     className="underline text-blue-700"
                   >
                     {attempt.language}
@@ -53,6 +88,7 @@ export default function History() {
           })}
         </tbody>
       </table>
+      <p>{selectedAttempt?.code}</p>
     </div>
   );
 }
