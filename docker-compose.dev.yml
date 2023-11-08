@@ -155,7 +155,7 @@ services:
       context: ./backend/socket-service
       dockerfile: Dockerfile.dev
     ports:
-      - "5006:5000"
+      - "5004:5000"
     environment:
       - PORT=5000
     env_file:

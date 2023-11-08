@@ -19,16 +19,6 @@ COPY tsconfig.build.json ./tsconfig.build.json
 # Build dist
 RUN yarn build
 
-# Start production image build
-FROM node:20-alpine
-
-# Copy node modules and build directory
-COPY --from=base ./node_modules ./node_modules
-COPY --from=base /dist /dist
-COPY --from=base /prisma /prisma
-COPY package.json ./
-
-# Expose port 5000
 EXPOSE 5000
 
 CMD yarn run dev:migrate
