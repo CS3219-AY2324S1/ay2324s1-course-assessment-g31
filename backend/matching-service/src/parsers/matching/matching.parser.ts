@@ -2,6 +2,7 @@ import { MatchingCreateDTO } from "../../interfaces/matching/createDTO";
 import { Matching } from "../../interfaces/matching/object";
 import { MatchingUpdateDTO } from "../../interfaces/matching/updateDTO";
 
+
 import { StringInterface } from "../../util/stringInterface";
 import Parser from "../parser.interface";
 
@@ -12,7 +13,7 @@ class MatchingParser
     input: StringInterface<MatchingCreateDTO>,
   ): MatchingCreateDTO {
     if (!input.user1Id || !input.user2Id || !input.requestId) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid Input");
     }
     return {
       user1Id: input.user1Id,
@@ -23,7 +24,7 @@ class MatchingParser
 
   public parseFindByIdInput(id: string | undefined): number {
     if (!id) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid Input");
     }
     return parseInt(id, 10);
   }
@@ -32,7 +33,7 @@ class MatchingParser
     input: Partial<StringInterface<Matching>>,
   ): Partial<Matching> {
     if (!input || Object.keys(input).length == 0) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid Input");
     }
     const parsedInput: Partial<Matching> = {};
     if (input.id) {
@@ -57,7 +58,7 @@ class MatchingParser
     input: StringInterface<MatchingUpdateDTO>,
   ): MatchingUpdateDTO {
     if (!input.user1Id || !input.user2Id || !input.requestId) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid Input");
     }
     return {
       user1Id: input.user1Id,
@@ -68,7 +69,7 @@ class MatchingParser
 
   public parseDeleteInput(id: string | undefined): number {
     if (!id) {
-      throw new Error("Invalid input");
+      throw new Error("Invalid Input");
     }
     return parseInt(id, 10);
   }
