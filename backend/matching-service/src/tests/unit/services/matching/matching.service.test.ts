@@ -1,11 +1,11 @@
 import { describe, expect, jest, test } from "@jest/globals";
 
-import { MatchingCreateDTO } from "../../interfaces/matching/createDTO";
-import { Matching } from "../../interfaces/matching/object";
-import MatchingService from "./matching.service";
-import { prismaMock } from "../../util/prisma/singleton";
-import { MatchingUpdateDTO } from "../../interfaces/matching/updateDTO";
-import { MatchingRequest } from "../../interfaces/matchingRequest/object";
+import { MatchingCreateDTO } from "../../../../interfaces/matching/createDTO";
+import { Matching } from "../../../../interfaces/matching/object";
+import { MatchingUpdateDTO } from "../../../../interfaces/matching/updateDTO";
+import { MatchingRequest } from "../../../../interfaces/matchingRequest/object";
+import MatchingService from "../../../../services/matching/matching.service";
+import { prismaMock } from "../../../../util/prisma/singleton";
 
 jest.mock("kafkajs");
 jest.mock("@prisma/client");
@@ -170,4 +170,3 @@ describe("Test matching service", () => {
     expect(result).toEqual(expectedMatching);
   });
 });
-

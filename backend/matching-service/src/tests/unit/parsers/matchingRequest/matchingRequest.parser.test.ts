@@ -1,10 +1,10 @@
 import { describe } from "@jest/globals";
 
-import { StringInterface } from "../../util/stringInterface";
-import MatchingRequestParser from "./matchingRequest.parser";
-import { MatchingRequestCreateDTO } from "../../interfaces/matchingRequest/createDTO";
-import { MatchingRequestUpdateDTO } from "../../interfaces/matchingRequest/updateDTO";
-import { MatchingRequest } from "../../interfaces/matchingRequest/object";
+import { MatchingRequestCreateDTO } from "../../../../interfaces/matchingRequest/createDTO";
+import { MatchingRequest } from "../../../../interfaces/matchingRequest/object";
+import { MatchingRequestUpdateDTO } from "../../../../interfaces/matchingRequest/updateDTO";
+import MatchingRequestParser from "../../../../parsers/matchingRequest/matchingRequest.parser";
+import { StringInterface } from "../../../../util/stringInterface";
 
 describe("Test Matching Request parser", () => {
   it("Parser - Parse Create Input: Valid Input -> Parsed Create Input", () => {
@@ -53,7 +53,7 @@ describe("Test Matching Request parser", () => {
       parser.parseCreateInput(
         input as StringInterface<MatchingRequestCreateDTO>,
       ),
-    ).toThrow("Invalid input");
+    ).toThrow("Invalid Input");
   });
 
   it("Parser - Parse Create Input: Missing difficulty Input -> Throw Error", () => {
@@ -68,7 +68,7 @@ describe("Test Matching Request parser", () => {
       parser.parseCreateInput(
         input as StringInterface<MatchingRequestCreateDTO>,
       ),
-    ).toThrow("Invalid input");
+    ).toThrow("Invalid Input");
   });
 
   it("Parser - Parse Find By Id Input: Valid Input -> Parsed Create Input", () => {
@@ -86,7 +86,7 @@ describe("Test Matching Request parser", () => {
 
     const input = undefined;
 
-    expect(() => parser.parseFindByIdInput(input)).toThrow("Invalid input");
+    expect(() => parser.parseFindByIdInput(input)).toThrow("Invalid Input");
   });
 
   it("Parser - Parse Find One Input: No Input -> Parser Error", () => {
@@ -94,7 +94,7 @@ describe("Test Matching Request parser", () => {
 
     const input: Partial<StringInterface<MatchingRequest>> = {};
 
-    expect(() => parser.parseFindOneInput(input)).toThrow("Invalid input");
+    expect(() => parser.parseFindOneInput(input)).toThrow("Invalid Input");
   });
 
   it("Parser - Parse Find One Input: Valid Id Input -> Parsed Id Input", () => {
@@ -226,7 +226,7 @@ describe("Test Matching Request parser", () => {
       parser.parseUpdateInput(
         input as StringInterface<MatchingRequestUpdateDTO>,
       ),
-    ).toThrow("Invalid input");
+    ).toThrow("Invalid Input");
   });
 
   it("Parser - Parse Update Input: Missing difficulty Input -> Throw Error", () => {
@@ -241,7 +241,7 @@ describe("Test Matching Request parser", () => {
       parser.parseUpdateInput(
         input as StringInterface<MatchingRequestUpdateDTO>,
       ),
-    ).toThrow("Invalid input");
+    ).toThrow("Invalid Input");
   });
 
   it("Parser - Parse Delete Input: Valid Input -> Parsed Create Input", () => {
@@ -259,7 +259,6 @@ describe("Test Matching Request parser", () => {
 
     const input = undefined;
 
-    expect(() => parser.parseDeleteInput(input)).toThrow("Invalid input");
+    expect(() => parser.parseDeleteInput(input)).toThrow("Invalid Input");
   });
 });
-

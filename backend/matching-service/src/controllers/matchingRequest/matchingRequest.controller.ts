@@ -122,6 +122,30 @@ class MatchingRequestController extends Controller implements CRUDController {
       return MatchingRequestController.handleBadRequest(res, e.message);
     }
   };
+
+  public cancel = async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return MatchingRequestController.handleValidationError(res, errors);
+    }
+
+    try {
+      const parsedFindOneInput = this.parser.parseFindOneInput(req.body);
+      const matchingRequest = await this.service.findOne(parsedFindOneInput);
+      if (!matchingRequest)
+        return MatchingRequestController.handleBadRequest(res, "Not Found");
+      const cancelledMatchingRequest = await this.service.delete(
+        matchingRequest.id,
+      );
+      return MatchingRequestController.handleSuccess(
+        res,
+        cancelledMatchingRequest,
+      );
+    } catch (e: any) {
+      return MatchingRequestController.handleBadRequest(res, e.message);
+    }
+  };
 }
 
 export default MatchingRequestController;

@@ -9,7 +9,7 @@ const MatchingRequestFailure: ConsumerFunction = (message) => {
       message.value.toString(),
     );
 
-    logger.info(`YOU HAVE NO FRIENDS User: ${matchingRequest.userId}`);
+    logger.info(`THERE IS CURRENTLY NO COUNTERPART FOR YOU: ${matchingRequest.userId}`);
   }
 };
 
