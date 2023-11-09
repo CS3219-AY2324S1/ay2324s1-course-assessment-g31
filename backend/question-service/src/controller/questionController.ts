@@ -132,7 +132,7 @@ export const getRandomQuestion = async (
     if (questionIds.length === 0) {
       throw new Error(`No questions found ${difficulty}`);
     }
-    const idToGet = getRandomInt(0, questionIds.length);
+    const idToGet = questionIds.at(getRandomInt(0, questionIds.length))?.id;
 
     const question = await prisma.question.findUnique({
       where: { id: idToGet },

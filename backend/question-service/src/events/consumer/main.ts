@@ -2,13 +2,16 @@ import { EachMessagePayload } from "kafkajs";
 import kafka from "../kafka";
 import { ConsumerFunction } from "./main.interface";
 import { sessionEndConsumer } from "./sessionEnd";
+import { matchingCreatedConsumer } from "./matchingCreated";
 
 export enum ConsumerTopics {
   COLLABORATION_ENDED = "collaboration-ended",
+  MATCHING_CREATED = "matching-created",
 }
 
 const TOPIC_MAPPER: Map<string, ConsumerFunction> = new Map([
   [ConsumerTopics.COLLABORATION_ENDED, sessionEndConsumer],
+  [ConsumerTopics.MATCHING_CREATED, matchingCreatedConsumer],
 ]);
 
 const consumer = kafka.consumer({ groupId: "question-service" });

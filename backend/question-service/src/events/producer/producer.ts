@@ -3,6 +3,7 @@ import kafka from "../kafka";
 
 export enum ProducerTopics {
   QUESTION_DELETED = "question-deleted",
+  MATCHING_FULFILLED = "matching-fulfilled",
 }
 
 const producer = kafka.producer();
