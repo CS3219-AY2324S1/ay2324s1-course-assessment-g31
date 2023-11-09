@@ -12,11 +12,12 @@ datasource db {
 
 model Question {
     id      Int     @id @default(autoincrement())
-    title   String
+    title   String 
     category Category[]
     difficulty Difficulty
     description String
     example String
+    constraint String
     popularity Int @default(0)
     solutions Solution[]
 }

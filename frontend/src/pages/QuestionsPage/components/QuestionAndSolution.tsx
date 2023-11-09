@@ -107,8 +107,9 @@ export default function QuestionAndSolution() {
           >
             Delete Question
           </button>
-          <p>{question.description}</p>
-          <p>{question.example}</p>
+          <p className="whitespace-pre">{question.description}</p>
+          <p className="whitespace-pre">{question.example}</p>
+          <p className="whitespace-pre">{question.constraint}</p>
         </div>
       )}
       {question && isViewSolution && (

@@ -10,8 +10,8 @@ export default function Solution({ solution }: ISolutionProps) {
     <div>
       <h2>{solution.title}</h2>
       <span>{solution.language}</span>
-      <p>{solution.description}</p>
-      <p>{solution.code}</p>
+      <p className="whitespace-pre">{solution.description}</p>
+      <p className="whitespace-pre">{solution.code}</p>
     </div>
   );
 }
