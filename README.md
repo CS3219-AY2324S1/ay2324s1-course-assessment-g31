@@ -1,2 +1,12 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/6BOvYMwN)
-# AssignmentTemplate
+# Deploying to Docker Hub
+## 1. Build the service image
+`cd services/<service_name>`
+
+## 2. Tag the service image
+`docker build -t <service_name> .`
+
+## 3. Tag to Docker Hub image
+`docker tag <service_name> <dockerhub_username>/cs3219-<service_name>-service`
+
+## 4. Push image to Docker Hub
+`docker push <dockerhub_username>/cs3219-<service_name>-service`

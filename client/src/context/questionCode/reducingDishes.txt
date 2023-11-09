@@ -1,0 +1,27 @@
+import java.util.*;
+import java.util.stream.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Main main = new Main();
+        main.execute();
+    }
+    private void execute() {
+        Solution instance = new Solution();
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int[] numbers = new int[n];
+        for (int i = 0; i < n; i++) {
+            numbers[i] = scanner.nextInt();
+        }
+        scanner.close();
+        int result = instance.maxSatisfaction(numbers);
+        System.out.print(result);
+    }
+
+    class Solution {
+        public int maxSatisfaction(int[] satisfaction) {
+            return IntStream.of(satisfaction).sum();
+        }
+    }
+}

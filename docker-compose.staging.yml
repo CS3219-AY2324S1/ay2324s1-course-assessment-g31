@@ -14,18 +14,15 @@ services:
       - "5001:5000"
     environment:
       - PORT=5000
-      - NODE_ENV=development
+      - NODE_ENV=production
     env_file:
       - ./services/user-service/.env
     depends_on:
       postgres_user_service:
         condition: service_healthy
-      broker:
-        condition: service_healthy
     networks:
       - user-service-network
       - api-network
-      - kafka-network
 
   postgres_user_service:
     image: postgres:latest
@@ -51,18 +48,15 @@ services:
       - "5002:5000"
     environment:
       - PORT=5000
-      - NODE_ENV=development
+      - NODE_ENV=production
     env_file:
       - ./services/matching-service/.env
     depends_on:
       postgres_matching_service:
         condition: service_healthy
-      broker:
-        condition: service_healthy
     networks:
       - matching-service-network
       - api-network
-      - kafka-network
 
   postgres_matching_service:
     image: postgres:latest
@@ -88,18 +82,15 @@ services:
       - "5003:5000"
     environment:
       - PORT=5000
-      - NODE_ENV=development
+      - NODE_ENV=production
     env_file:
       - ./services/question-service/.env
     depends_on:
       postgres_question_service:
         condition: service_healthy
-      broker:
-        condition: service_healthy
     networks:
       - question-service-network
       - api-network
-      - kafka-network
 
   postgres_question_service:
     image: postgres:latest
@@ -125,64 +116,20 @@ services:
       - "5004:5000"
     environment:
       - PORT=5000
+      - NODE_ENV=production
     env_file:
       - ./services/socket-service/.env
-    depends_on:
-      broker:
-        condition: service_healthy
     networks:
       - socket-service-network
       - api-network
-      - kafka-network
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
-    environment:
-      - ZOOKEEPER_CLIENT_PORT=2181
-      - ZOOKEEPER_TICK_TIME=2000
-    volumes:
-      - zookeeper-data:/var/lib/zookeeper/data
-      - zookeeper-logs:/var/lib/zookeeper/log
+  client:
+    container_name: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
     ports:
-      - "2181:2181"
-    networks:
-      - kafka-network
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "2181"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  broker:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,PLAINTEXT_INTERNAL://broker:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 3000
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
-
-    volumes:
-      - kafka-data:/var/lib/kafka/data
-    ports:
-      - "9092:9092"
-    networks:
-      - kafka-network
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "9092"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - "3000:3000"
 
 networks:
   user-service-network:
@@ -197,14 +144,11 @@ networks:
   socket-service-network:
     driver: bridge
 
-  api-network:
+  client-network:
     driver: bridge
 
-  kafka-network:
+  api-network:
     driver: bridge
 
 volumes:
   progresDB:
-  zookeeper-data:
-  zookeeper-logs:
-  kafka-data:
