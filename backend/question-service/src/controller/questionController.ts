@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Category, Difficulty } from "@prisma/client";
 import { getRandomInt } from "../util/util";
 import prisma from "../model/prismaClient";
+import produceEvent, { ProducerTopics } from "../events/producer/producer";
 
 type QuestionInput = {
   title: string;
@@ -9,6 +10,7 @@ type QuestionInput = {
   category: Category[];
   description: string;
   example: string;
+  constraint: string;
 };
 
 export const getQuestion = async (req: Request, res: Response) => {
@@ -25,6 +27,7 @@ export const getQuestion = async (req: Request, res: Response) => {
         difficulty: true,
         description: true,
         example: true,
+        constraint: true,
         popularity: true,
         solutions: true,
       },
@@ -147,12 +150,72 @@ export const getRandomQuestion = async (
 export const createQuestion = async (req: Request, res: Response) => {
   const question: QuestionInput = req.body;
   try {
+    if (!question.title) {
+      throw new Error("Title must not be empty");
+    }
+    if (question.category.length === 0) {
+      throw new Error("must select at least 1 Category");
+    }
+    if (!question.description) {
+      throw new Error("Description must not be empty");
+    }
+
     const questionResult = await prisma.question.create({
       data: question,
     });
     res.status(201).json({ questionResult });
   } catch (err: any) {
     res.status(500).json({ error: `Error creating question: ${err.message}` });
+  }
+};
+
+interface ISolutionInput {
+  title: string;
+  description: string;
+  code: string;
+  language: string;
+}
+
+interface IQuestionSolutions {
+  title: string;
+  difficulty: Difficulty;
+  category: Category[];
+  description: string;
+  example: string;
+  constraint: string;
+  solutions: ISolutionInput[];
+}
+
+export const uploadManyQuestions = async (
+  req: Request<{}, {}, { questions: IQuestionSolutions[] }, {}>,
+  res: Response
+) => {
+  const { questions } = req.body;
+  console.log(questions);
+  var count = 0;
+  try {
+    await Promise.all(
+      questions.map(async (questionInput) => {
+        await prisma.question.create({
+          data: {
+            title: questionInput.title,
+            difficulty: questionInput.difficulty,
+            category: questionInput.category,
+            description: questionInput.description,
+            example: questionInput.example,
+            constraint: questionInput.constraint,
+            solutions: {
+              create: questionInput.solutions,
+            },
+          },
+        });
+        count += 1;
+      })
+    );
+
+    res.status(201).json({ results: `${count} questions added successfully` });
+  } catch (err: any) {
+    res.status(500).json({ error: `Error creating questions: ${err.message}` });
   }
 };
 
@@ -190,7 +253,6 @@ export const deleteQuestion = async (req: Request, res: Response) => {
       res.status(404).json({ error: "Question Not Found" });
     }
 
-    /*
     // produce deleted event
     produceEvent(ProducerTopics.QUESTION_DELETED, [
       {
@@ -199,7 +261,7 @@ export const deleteQuestion = async (req: Request, res: Response) => {
           questionId,
         }),
       },
-    ]);*/
+    ]);
 
     res.status(201).json({ question });
   } catch (err: any) {

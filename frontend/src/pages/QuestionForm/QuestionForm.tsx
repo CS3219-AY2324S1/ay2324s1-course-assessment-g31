@@ -26,6 +26,7 @@ export default function QuestionForm() {
   const [description, setDescription] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<Category[]>([]);
   const [example, setExample] = useState<string>("");
+  const [constraint, setConstraint] = useState<string>("");
 
   // submitting
   const [submitError, setSubmitError] = useState<string>("");
@@ -63,6 +64,7 @@ export default function QuestionForm() {
             category: selectedCategory,
             description,
             example,
+            constraint,
           }),
         },
       );
@@ -122,6 +124,7 @@ export default function QuestionForm() {
       setSelectedCategory([...questionToEdit.category]);
       setDescription(questionToEdit.description);
       setExample(questionToEdit.example);
+      setConstraint(questionToEdit.constraint);
     } else {
       // return to default
       setTitle("");
@@ -129,6 +132,7 @@ export default function QuestionForm() {
       setSelectedCategory([]);
       setDescription("");
       setExample("");
+      setConstraint("");
     }
   }, [questionToEdit]);
 
@@ -197,6 +201,14 @@ export default function QuestionForm() {
             id="example"
             value={example}
             onChange={(e) => setExample(e.target.value)}
+          />
+        </label>
+        <label htmlFor="constraint">
+          Question Constraint:
+          <textarea
+            id="constraint"
+            value={constraint}
+            onChange={(e) => setConstraint(e.target.value)}
           />
         </label>
         <div>
