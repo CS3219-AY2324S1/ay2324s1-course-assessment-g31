@@ -33,15 +33,14 @@ describe("Test Find Match Functionality", () => {
       .post(createMatchingRequestUrl)
       .send(matchingRequestEasy2);
 
-      console.log(createMatchReq1.body)
+    console.log(createMatchReq1.body);
 
     // await new Promise(resolve => setTimeout(resolve, 1000));
 
     // const findMatchReq1 = await request(app).get(`${getMatchingRequestUrl}/${res1.body}`)
 
-
     // expect(res.statusCode).toEqual(200);
-    expect(true).toBeTruthy()
+    expect(true).toBeTruthy();
   });
 
   test("Unsuccessful Matching", async () => {

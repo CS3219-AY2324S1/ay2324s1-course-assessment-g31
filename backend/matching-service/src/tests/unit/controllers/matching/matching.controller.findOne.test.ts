@@ -62,6 +62,8 @@ describe("Test matching request controller", () => {
       user2Id: "qwe",
       requestId: "123a",
       dateTimeMatched: "",
+      difficulty: "easy",
+      questionIdRequested: "1",
     };
 
     const expectedMatching: Matching = {
@@ -69,7 +71,9 @@ describe("Test matching request controller", () => {
       dateTimeMatched: new Date(),
       user1Id: input.user1Id,
       user2Id: input.user2Id,
-      requestId: parseInt(input.requestId),
+      requestId: parseInt(input.requestId, 10),
+      difficulty: input.difficulty,
+      questionIdRequested: parseInt(input.questionIdRequested, 10),
     };
 
     const serviceFindOneMethod = jest.spyOn(

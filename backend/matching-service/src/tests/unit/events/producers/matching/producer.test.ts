@@ -14,6 +14,8 @@ const obj: Matching = {
   user2Id: "zxc",
   requestId: 1,
   dateTimeMatched: new Date(),
+  difficulty: "easy",
+  questionIdRequested: 1,
 };
 
 describe("Test Matching Event Producer", () => {

@@ -17,11 +17,13 @@ describe("Test matching service", () => {
       user1Id: "abc",
       user2Id: "qwe",
       requestId: 123,
+      difficulty: "easy",
     };
 
     const expectedMatching: Matching = {
       ...input,
       id: 1,
+      questionIdRequested: null,
       dateTimeMatched: new Date(),
     };
 
@@ -42,6 +44,8 @@ describe("Test matching service", () => {
       user2Id: "qwe",
       requestId: 1,
       dateTimeMatched: new Date(),
+      difficulty: "easy",
+      questionIdRequested: 1,
     };
 
     prismaMock.matching.findUnique.mockResolvedValue(expectedMatching);
@@ -60,6 +64,8 @@ describe("Test matching service", () => {
       user2Id: "qwe",
       requestId: 1,
       dateTimeMatched: new Date(),
+      difficulty: "easy",
+      questionIdRequested: 1,
     };
 
     prismaMock.matching.findFirst.mockResolvedValue(expectedMatching);
@@ -78,6 +84,8 @@ describe("Test matching service", () => {
       user2Id: "qwe",
       requestId: 1,
       dateTimeMatched: new Date(),
+      difficulty: "easy",
+      questionIdRequested: 1,
     };
 
     const expectedMatching2: Matching = {
@@ -86,6 +94,8 @@ describe("Test matching service", () => {
       user2Id: "asd",
       requestId: 2,
       dateTimeMatched: new Date(),
+      difficulty: "easy",
+      questionIdRequested: 1,
     };
 
     const expectedMatchings = [expectedMatching1, expectedMatching2];
@@ -106,10 +116,12 @@ describe("Test matching service", () => {
       user1Id: "abc",
       user2Id: "qwe",
       requestId: 123,
+      difficulty: "easy",
     };
 
     const expectedMatching: Matching = {
       ...input,
+      questionIdRequested: null,
       id: testId,
       dateTimeMatched: new Date(),
     };
@@ -132,6 +144,8 @@ describe("Test matching service", () => {
       user2Id: "qwe",
       requestId: 123,
       dateTimeMatched: new Date(),
+      difficulty: "easy",
+      questionIdRequested: 1,
     };
 
     prismaMock.matching.delete.mockResolvedValue(expectedMatching);

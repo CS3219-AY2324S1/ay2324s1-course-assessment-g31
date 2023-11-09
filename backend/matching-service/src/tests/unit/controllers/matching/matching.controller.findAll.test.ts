@@ -61,6 +61,8 @@ describe("Test matching request controller", () => {
       user2Id: "qwe",
       requestId: 1,
       dateTimeMatched: new Date(),
+      difficulty: "easy",
+      questionIdRequested: null,
     };
 
     const expectedMatching2: Matching = {
@@ -69,6 +71,8 @@ describe("Test matching request controller", () => {
       user2Id: "cvb",
       requestId: 2,
       dateTimeMatched: new Date(),
+      difficulty: "easy",
+      questionIdRequested: null,
     };
 
     const expectedMatchings = [expectedMatching1, expectedMatching2];
