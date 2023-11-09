@@ -165,4 +165,3 @@ describe("Test matching request service", () => {
     expect(result).toEqual(expectedMatchingRequest);
   });
 });
-

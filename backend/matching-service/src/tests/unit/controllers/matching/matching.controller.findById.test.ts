@@ -63,6 +63,8 @@ describe("Test matching request controller", () => {
       user1Id: "abc",
       user2Id: "qwe",
       requestId: 123,
+      difficulty: "easy",
+      questionIdRequested: null,
     };
 
     const serviceFindByIdMethod = jest.spyOn(

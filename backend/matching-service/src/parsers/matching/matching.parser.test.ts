@@ -14,12 +14,14 @@ describe("Test matching parser", () => {
       user1Id: "123",
       user2Id: "456",
       requestId: "1",
+      difficulty: "easy",
     };
 
     const expectedOutput: MatchingCreateDTO = {
       user1Id: "123",
       user2Id: "456",
       requestId: 1,
+      difficulty: "easy",
     };
 
     expect(parser.parseCreateInput(input)).toEqual(expectedOutput);
@@ -171,12 +173,14 @@ describe("Test matching parser", () => {
       user1Id: "123",
       user2Id: "456",
       requestId: "1",
+      difficulty: "",
     };
 
     const expectedOutput: MatchingUpdateDTO = {
       user1Id: "123",
       user2Id: "456",
       requestId: 1,
+      difficulty: "",
     };
 
     expect(parser.parseUpdateInput(input)).toEqual(expectedOutput);
@@ -239,4 +243,3 @@ describe("Test matching parser", () => {
     expect(() => parser.parseDeleteInput(input)).toThrow("Invalid input");
   });
 });
-

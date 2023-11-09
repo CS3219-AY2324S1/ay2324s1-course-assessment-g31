@@ -9,7 +9,9 @@ const MatchingRequestFailure: ConsumerFunction = (message) => {
       message.value.toString(),
     );
 
-    logger.info(`THERE IS CURRENTLY NO COUNTERPART FOR YOU: ${matchingRequest.userId}`);
+    logger.info(
+      `THERE IS CURRENTLY NO COUNTERPART FOR YOU: ${matchingRequest.userId}`,
+    );
   }
 };
 

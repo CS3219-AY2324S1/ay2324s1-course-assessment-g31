@@ -61,10 +61,15 @@ describe("Test matching request controller", () => {
       user1Id: "abc",
       user2Id: "qwe",
       requestId: 123,
+      difficulty: "easy",
     };
 
     const expectedMatching: Matching = {
-      ...input,
+      user1Id: input.user1Id,
+      user2Id: input.user2Id,
+      requestId: input.requestId,
+      difficulty: input.difficulty,
+      questionIdRequested: null,
       id: testId,
       dateTimeMatched: new Date(),
     };
@@ -143,6 +148,7 @@ describe("Test matching request controller", () => {
       user1Id: "abc",
       user2Id: "qwe",
       requestId: 123,
+      difficulty: "easy",
     };
     const { res } = getMockRes({});
     const req = getMockReq({

@@ -11,11 +11,13 @@ datasource db {
 }
 
 model Matching {
-    id              Int      @id @default(autoincrement())
-    user1Id         String
-    user2Id         String
-    requestId       Int
-    dateTimeMatched DateTime @default(now())
+    id                  Int      @id @default(autoincrement())
+    user1Id             String
+    user2Id             String
+    requestId           Int
+    difficulty          String
+    questionIdRequested Int?
+    dateTimeMatched     DateTime @default(now())
 }
 
 model MatchingRequest {

@@ -2,7 +2,6 @@ import { MatchingCreateDTO } from "../../interfaces/matching/createDTO";
 import { Matching } from "../../interfaces/matching/object";
 import { MatchingUpdateDTO } from "../../interfaces/matching/updateDTO";
 
-
 import { StringInterface } from "../../util/stringInterface";
 import Parser from "../parser.interface";
 
@@ -15,11 +14,16 @@ class MatchingParser
     if (!input.user1Id || !input.user2Id || !input.requestId) {
       throw new Error("Invalid Input");
     }
-    return {
+    let parsedData: MatchingUpdateDTO = {
       user1Id: input.user1Id,
       user2Id: input.user2Id,
       requestId: parseInt(input.requestId, 10),
+      difficulty: input.difficulty,
     };
+    if (input.questionIdRequested) {
+      parsedData.questionIdRequested = parseInt(input.questionIdRequested, 10);
+    }
+    return parsedData;
   }
 
   public parseFindByIdInput(id: string | undefined): number {
@@ -60,11 +64,16 @@ class MatchingParser
     if (!input.user1Id || !input.user2Id || !input.requestId) {
       throw new Error("Invalid Input");
     }
-    return {
+    let parsedData: MatchingUpdateDTO = {
       user1Id: input.user1Id,
       user2Id: input.user2Id,
       requestId: parseInt(input.requestId, 10),
+      difficulty: input.difficulty,
     };
+    if (input.questionIdRequested) {
+      parsedData.questionIdRequested = parseInt(input.questionIdRequested, 10);
+    }
+    return parsedData;
   }
 
   public parseDeleteInput(id: string | undefined): number {
