@@ -27,6 +27,7 @@ import ProfilePage from "./pages/users/ProfilePage";
 import RegistrationPage from "./pages/users/RegistrationPage";
 import SignInPage from "./pages/users/SignInPage";
 import SignOutPage from "./pages/users/SignOutPage";
+import MatchingControlPanelPage from "./pages/MatchingControlPanelPage/MatchingControlPanelPage";
 
 Sentry.init({
   dsn: "https://e21ba66ad7a580aa7874699b6d737245@o1071968.ingest.sentry.io/4505986992832512",
@@ -78,14 +79,14 @@ function App() {
             }
           />
 
-        <Route
-          path="/matching/admin"
-          element={
-            <ProtectedRoute permissionRole="user">
-              <MatchingControlPanelPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/matching/admin"
+            element={
+              <ProtectedRoute permissionRole="user">
+                <MatchingControlPanelPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="dashboard"
@@ -114,7 +115,6 @@ function App() {
             // </ProtectedRoute>
           }
         >
-
           <Route path="" element={<AdminPage />} />
           <Route path="question/:id/update" element={<QuestionUpdatePage />} />
           <Route path="*" element={<NotFoundPage />} />

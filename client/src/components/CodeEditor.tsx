@@ -66,10 +66,10 @@ function CodeEditor() {
   };
 
   const themes = new Map();
-  themes.set('duotone', {
+  themes.set("duotone", {
     light: duotoneLight,
     dark: duotoneDark,
-  })
+  });
 
   return (
     <div className="h-144 border rounded-lg shadow">
@@ -79,7 +79,7 @@ function CodeEditor() {
         extensions={extensions}
         onChange={onChange}
         theme={
-          isDarkMode ? themes.get('duotone').dark : themes.get('duotone').light
+          isDarkMode ? themes.get("duotone").dark : themes.get("duotone").light
         }
         basicSetup={codeMirrorOptions}
       />

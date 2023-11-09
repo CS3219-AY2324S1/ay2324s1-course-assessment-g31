@@ -107,13 +107,17 @@ function MatchingControlPanelPage() {
 
   useEffect(() => {
     matchingController.getMatchingRequests().then((res) => {
-      setRequests(res);
+      if (res && res.data) {
+        setRequests(res.data as unknown as MatchingRequest[]);
+      }
     });
   }, [matchingController]);
 
   useEffect(() => {
     matchingController.getMatchings().then((res) => {
-      setMatchings(res);
+      if (res && res.data) {
+        setMatchings(res.data as Matching[]);
+      }
     });
   }, [matchingController]);
 
