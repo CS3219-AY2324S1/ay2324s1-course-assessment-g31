@@ -3,5 +3,5 @@ export type MatchingCreateDTO = {
   user2Id: string;
   requestId: number;
   difficulty: string;
-  questionIdRequested?: number;
+  questionIdRequested: number | null;
 };

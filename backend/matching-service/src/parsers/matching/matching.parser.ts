@@ -19,6 +19,7 @@ class MatchingParser
       user2Id: input.user2Id,
       requestId: parseInt(input.requestId, 10),
       difficulty: input.difficulty,
+      questionIdRequested: null,
     };
     if (input.questionIdRequested) {
       parsedData.questionIdRequested = parseInt(input.questionIdRequested, 10);
@@ -69,6 +70,7 @@ class MatchingParser
       user2Id: input.user2Id,
       requestId: parseInt(input.requestId, 10),
       difficulty: input.difficulty,
+      questionIdRequested: null,
     };
     if (input.questionIdRequested) {
       parsedData.questionIdRequested = parseInt(input.questionIdRequested, 10);
