@@ -122,7 +122,10 @@ export const getRandomQuestion = async (
   req: Request<{}, {}, {}, IReqQueryRandomQuestion>,
   res: Response
 ) => {
+  // default to Easy difficulty
   const { difficulty = "Easy" } = req.query;
+
+  console.log(difficulty);
   try {
     const questionIds = await prisma.question.findMany({
       select: { id: true },
@@ -132,7 +135,10 @@ export const getRandomQuestion = async (
     if (questionIds.length === 0) {
       throw new Error(`No questions found ${difficulty}`);
     }
-    const idToGet = questionIds.at(getRandomInt(0, questionIds.length))?.id;
+
+    const randomInt = getRandomInt(0, questionIds.length - 1);
+    const idToGet = questionIds.at(randomInt)?.id;
+    console.log(questionIds, randomInt);
 
     const question = await prisma.question.findUnique({
       where: { id: idToGet },

@@ -39,7 +39,9 @@ export const matchingCreatedConsumer: ConsumerFunction = async (message) => {
       if (questionIds.length === 0) {
         throw new Error(`No questions found at ${difficulty}`);
       }
-      const idToGet = questionIds.at(getRandomInt(0, questionIds.length))?.id;
+      const idToGet = questionIds.at(
+        getRandomInt(0, questionIds.length - 1)
+      )?.id;
       produceEvent(ProducerTopics.MATCHING_FULFILLED, [
         {
           key: requestId,
