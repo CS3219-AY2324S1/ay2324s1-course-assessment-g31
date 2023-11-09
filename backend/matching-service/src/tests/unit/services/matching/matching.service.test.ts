@@ -18,6 +18,7 @@ describe("Test matching service", () => {
       user2Id: "qwe",
       requestId: 123,
       difficulty: "easy",
+      questionIdRequested: null,
     };
 
     const expectedMatching: Matching = {
@@ -117,6 +118,7 @@ describe("Test matching service", () => {
       user2Id: "qwe",
       requestId: 123,
       difficulty: "easy",
+      questionIdRequested: null,
     };
 
     const expectedMatching: Matching = {

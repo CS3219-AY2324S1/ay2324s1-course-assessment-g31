@@ -62,6 +62,7 @@ describe("Test matching request controller", () => {
       user2Id: "qwe",
       requestId: 123,
       difficulty: "easy",
+      questionIdRequested: null,
     };
 
     const expectedMatching: Matching = {
@@ -149,6 +150,7 @@ describe("Test matching request controller", () => {
       user2Id: "qwe",
       requestId: 123,
       difficulty: "easy",
+      questionIdRequested: null,
     };
     const { res } = getMockRes({});
     const req = getMockReq({

@@ -46,6 +46,8 @@ const createMatchingRequestConsumer: ConsumerFunction = async (message) => {
       user1Id: counterPartyMatchReq.userId,
       user2Id: matchReqFromDB.userId,
       requestId: matchReqFromDB.id,
+      difficulty: matchReqFromDB.difficulty,
+      questionIdRequested: matchReqFromDB.questionId,
     });
 
     // Update matching request
