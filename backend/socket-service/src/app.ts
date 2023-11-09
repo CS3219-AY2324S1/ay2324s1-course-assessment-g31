@@ -3,9 +3,8 @@ import express, { Express, Request, Response } from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 
+import consume from "./kafka/consumer";
 import logger from "./util/logger";
-import questionEventConsumer from "./kafka/consumer";
-import produceEvent, { ProducerTopics } from "./kafka/producer";
 
 dotenv.config();
 
@@ -41,41 +40,29 @@ io.on("connection", (socket) => {
     logger.info(`User:${data.userId} joined Room:${roomId}`);
     io.to(roomId).emit(
       events.get("begin-collaboration")!,
-      `User:${data.userId} joined Room:${roomId}`
+      `User:${data.userId} joined Room:${roomId}`,
     );
   });
 
   socket.on("change-code", (data) => {
     logger.info(
-      `Editing Code Matching: ${data.requestId} \t User Id: ${data.userId} \t Code: ${data.code}`
+      `Editing Code Matching: ${data.requestId} \t User Id: ${data.userId} \t Code: ${data.code}`,
     );
     io.to(data.requestId).emit(events.get("change-code")!, data);
   });
 
   socket.on("change-language", (data) => {
     logger.info(
-      `Change Language: ${data.requestId} \t User Id: ${data.userId} \t to Language: ${data.language}`
+      `Change Language: ${data.requestId} \t User Id: ${data.userId} \t to Language: ${data.language}`,
     );
     io.to(data.requestId).emit(events.get("change-language")!, data);
   });
 
   socket.on("cancel-collaboration", (data) => {
     logger.info(
-      `Cancelling Matching: ${data.requestId} \t User Id: ${data.userId}`
+      `Cancelling Matching: ${data.requestId} \t User Id: ${data.userId}`,
     );
     io.to(data.requestId).emit(events.get("cancel-collaboration")!, data);
-    produceEvent(ProducerTopics.COLLABORATION_END, [
-      {
-        key: data.requestId.toString(),
-        value: JSON.stringify({
-          questionId: data.questionId,
-          user1Id: data.userId,
-          user2Id: data.matchedUserId,
-          code: data.code,
-          language: data.language,
-        }),
-      },
-    ]);
   });
 });
 
@@ -85,10 +72,10 @@ app.get("/", (_req: Request, res: Response) => {
 
 server.listen(port, () => {
   logger.info(
-    `⚡️[server]: Question Service is running at http://localhost:${port}`
+    `⚡️[server]: Question Service is running at http://localhost:${port}`,
   );
 
-  questionEventConsumer(io).catch((err: any) => {
+  consume(io).catch((err: any) => {
     logger.error("Error in Question Service Consumer: ", err);
   });
 });

@@ -1,59 +1,30 @@
-import { ConsumerSubscribeTopics, EachMessagePayload } from "kafkajs";
+import { EachMessagePayload } from "kafkajs";
 import { Server } from "socket.io";
 
-import logger from "../util/logger";
 import kafka from "./kafka";
+import logger from "../util/logger";
 
-const SubscribedTopics: ConsumerSubscribeTopics = {
-  topics: ["matching-created"],
-  fromBeginning: false,
-};
+const SOCKET_SUBSCRIBED_TOPICS: string[] = ["matching-created"];
 
 const consumer = kafka.consumer({ groupId: "socket-service" });
 
 const questionEventConsumer = async (io: Server) => {
   logger.info("Question Service Starting to Listen");
   // first, we wait for the client to connect and subscribe to the given topic
+  await consumer.connect();
 
-  try {
-    await consumer.connect();
-    await consumer.subscribe(SubscribedTopics);
+  SOCKET_SUBSCRIBED_TOPICS.forEach(async (topic) => {
+    await consumer.subscribe({ topic });
+  });
 
-    await consumer.run({
-      eachMessage: async ({ topic, message }: EachMessagePayload) => {
-        // here, we just log the message to the standard output
-        io.emit(topic, message.value ? message.value.toString() : "");
-      },
-    });
-  } catch (error) {
-    logger.error("Error: ", error);
-  }
+  await consumer.run({
+    // this function is called every time the consumer gets a new message
+    eachMessage: ({ topic, message }: EachMessagePayload) => {
+      // here, we just log the message to the standard output
+      io.emit(topic, message.value ? message.value.toString() : "");
+      return Promise.resolve();
+    },
+  });
 };
-
-const errorTypes = ["unhandledRejection", "uncaughtException"];
-const signalTraps = ["SIGTERM", "SIGINT", "SIGUSR2"];
-
-errorTypes.forEach((type) => {
-  process.on(type, async (e) => {
-    try {
-      console.log(`process.on ${type}`);
-      console.error(e);
-      await consumer.disconnect();
-      process.exit(0);
-    } catch (_) {
-      process.exit(1);
-    }
-  });
-});
-
-signalTraps.forEach((type) => {
-  process.once(type, async () => {
-    try {
-      await consumer.disconnect();
-    } finally {
-      process.kill(process.pid, type);
-    }
-  });
-});
 
 export default questionEventConsumer;

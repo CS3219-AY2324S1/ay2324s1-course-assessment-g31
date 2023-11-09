@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "build": "tsc --project tsconfig.build.json",
-        "start": "node dist/src/app.js",
+        "start": "node dist/app.js",
         "dev": "concurrently \"tsc --watch\" \"nodemon -q dist/app.js\"",
         "lint": "eslint ./src",
         "format": "prettier --write ./src"
