@@ -62,7 +62,7 @@ export default function ProfileCard() {
         // Check if firebase has this user
         if (currentUser !== null) {
           const response = await fetch(
-            `http://localhost:3000/user-services/profile/${userId}`,
+            `http://localhost:5001/user-services/profile/${userId}`,
             {
               method: "GET",
               headers: {
