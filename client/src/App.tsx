@@ -78,6 +78,15 @@ function App() {
             }
           />
 
+        <Route
+          path="/matching/admin"
+          element={
+            <ProtectedRoute permissionRole="user">
+              <MatchingControlPanelPage />
+            </ProtectedRoute>
+          }
+        />
+
           <Route
             path="dashboard"
             element={
@@ -105,6 +114,7 @@ function App() {
             // </ProtectedRoute>
           }
         >
+
           <Route path="" element={<AdminPage />} />
           <Route path="question/:id/update" element={<QuestionUpdatePage />} />
           <Route path="*" element={<NotFoundPage />} />
