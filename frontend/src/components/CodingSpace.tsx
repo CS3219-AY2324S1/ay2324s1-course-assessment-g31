@@ -8,7 +8,7 @@ function CodingSpace() {
   const languageOptions = useMemo(() => ["javascript", "python"], []);
 
   const selectedLanguage = useContext(QuestionLanguageContext);
-  const { socketLanguage, changeLanguage } = useContext(MatchingContext);
+  const { matchedQuestionId, socketLanguage, changeLanguage } = useContext(MatchingContext);
   const [language, setLanguage] = useState(
     selectedLanguage || languageOptions[0],
   );
@@ -16,9 +16,9 @@ function CodingSpace() {
 
   const handleLanguageChange = useCallback(
     (lang: string) => {
-      navigate(`/questions/1?lang=${lang}`);
+      navigate(`/questions/${matchedQuestionId}/?lang=${lang}`);
     },
-    [navigate],
+    [navigate, matchedQuestionId],
   );
 
   useEffect(() => {

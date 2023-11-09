@@ -24,6 +24,7 @@ interface MatchingContextType {
   foundMatch: boolean;
   connectionLoading: boolean;
   matchLoading: boolean;
+  matchedQuestionId: number;
   setMatchedUserId: React.Dispatch<React.SetStateAction<string>>;
   setMatchingId: React.Dispatch<React.SetStateAction<string>>;
   beginCollaboration: () => void;
@@ -41,6 +42,7 @@ export const MatchingContext = createContext<MatchingContextType>({
   foundMatch: false,
   connectionLoading: true,
   matchLoading: true,
+  matchedQuestionId: 0,
   setMatchedUserId: () => {},
   setMatchingId: () => {},
   beginCollaboration: () => {},
@@ -64,6 +66,8 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
 
   const [socketCode, setSocketCode] = useState<string>("");
   const [socketLanguage, setSocketLanguage] = useState<string>("");
+
+  const [matchedQuestionId, setMatchedQuestionId] = useState<number>(0);
 
   const navigate = useNavigate();
 
@@ -90,7 +94,7 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
         requestId: matchingId,
         matchedUserId,
         // placeholder
-        questionId: 1,
+        questionId: matchedQuestionId,
         // add collaboration details
         code,
         language,
@@ -136,14 +140,19 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     setMatchLoading(true);
   }, []);
 
-  const onMatchingCreated = useCallback(
+  const onMatchingFulfilled = useCallback(
     (value: any) => {
       if (!currentUser) return;
       const obj = JSON.parse(value);
-      const { user1Id, user2Id, requestId } = obj;
+      const { matchingId,
+        user1Id,
+        user2Id,
+        questionId, } = obj;
+
       const newMatchedUserId = user1Id === currentUser.uid ? user2Id : user1Id;
       setMatchedUserId(() => newMatchedUserId);
-      setMatchingId(() => requestId);
+      setMatchingId(() => matchingId);
+      setMatchedQuestionId(questionId);
       setMatchLoading(false);
       setFoundMatch(true);
     },
@@ -194,14 +203,14 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     }
 
     socket.on("joined", onJoined);
-    socket.on("matching-created", onMatchingCreated);
+    socket.on("matching-fulfilled", onMatchingFulfilled);
 
     return () => {
       socket.off("joined", onJoined);
-      socket.off("matching-created", onMatchingCreated);
+      socket.off("matching-fulfilled", onMatchingFulfilled);
       socket.disconnect();
     };
-  }, [currentUser, join, onJoined, onMatchingCreated]);
+  }, [currentUser, join, onJoined, onMatchingFulfilled]);
 
   useEffect(() => {
     setConnectionLoading(true);
@@ -241,6 +250,7 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       foundMatch,
       connectionLoading,
       matchLoading,
+      matchedQuestionId,
       setMatchedUserId,
       setMatchingId,
       beginCollaboration,
@@ -263,6 +273,7 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     setMatchingId,
     socketCode,
     socketLanguage,
+    matchedQuestionId
   ]);
 
   return (

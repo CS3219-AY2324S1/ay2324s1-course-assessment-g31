@@ -17,6 +17,7 @@ function MatchPage() {
     matchedUserId,
     matchingId,
     beginCollaboration,
+    matchedQuestionId
   } = useContext(MatchingContext);
 
   const [difficulty, setDifficulty] = useState<string>("");
@@ -57,7 +58,7 @@ function MatchPage() {
     ) {
       setOpen(false);
       beginCollaboration();
-      navigate("/questions/1?lang=javascript");
+      navigate(`/questions/${matchedQuestionId}/?lang=javascript`);
     }
   }, [
     foundMatch,
@@ -66,6 +67,7 @@ function MatchPage() {
     currentUser,
     beginCollaboration,
     navigate,
+    matchedQuestionId
   ]);
 
   return (
