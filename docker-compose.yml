@@ -1,6 +1,5 @@
 version: "3"
 services:
-
   socket:
     container_name: socket-service
     build:
@@ -64,6 +63,56 @@ services:
     networks:
       - user_service_network
 
+  question:
+    container_name: question-service
+    build:
+      context: ./backend/question-service
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5003:5000"
+    env_file:
+      - ./backend/question-service/.env
+    links:
+      - postgres_question_service
+    networks:
+      - question_service_network
+      - api_network
+
+  postgres_question_service:
+    image: postgres:latest
+    container_name: postgres-question-service
+    volumes:
+      - progresDB:/data/postgres/question-service
+    env_file:
+      - ./backend/question-service/.env
+    networks:
+      - question_service_network
+
+  history:
+    container_name: history-service
+    build:
+      context: ./backend/history-service
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5007:5000"
+    env_file:
+      - ./backend/history-service/.env
+    links:
+      - postgres_history_service
+    networks:
+      - history_service_network
+      - api_network
+
+  postgres_history_service:
+    image: postgres:latest
+    container_name: postgres-history-service
+    volumes:
+      - progresDB:/data/postgres/history-service
+    env_file:
+      - ./backend/history-service/.env
+    networks:
+      - history_service_network
+
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
@@ -89,4 +138,7 @@ networks:
     driver: bridge
   user_service_network:
     driver: bridge
-
+  question_service_network:
+    driver: bridge
+  history_service_network:
+    driver: bridge

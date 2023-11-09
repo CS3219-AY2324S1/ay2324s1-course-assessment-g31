@@ -1,16 +1,25 @@
+/**
+ * @deprecated Use Difficulties
+ */
 export enum ComplexityMap {
-  Easy = "EASY",
-  Medium = "MEDIUM",
-  Hard = "HARD",
+  Easy = "Easy",
+  Medium = "Medium",
+  Hard = "Hard",
 }
 
+export const Difficulties = ["Easy", "Medium", "Hard"] as const;
+export type Difficulty = (typeof Difficulties)[number];
+
+/**
+ * @deprecated Use Difficulty
+ */
 export type Complexity = `${ComplexityMap}`;
 
 export enum CategoryMap {
   Strings = "Strings",
-  DataStructures = "Data Structures",
+  DataStructures = "DataStructures",
   Algorithms = "Algorithms",
-  BitManipulation = "Bit Manipulation",
+  BitManipulation = "BitManipulation",
   Databases = "Databases",
   Arrays = "Arrays",
   Brainteaser = "Brainteaser",
@@ -21,8 +30,20 @@ export type Category = `${CategoryMap}`;
 
 export interface Question {
   title: string;
-  complexity: Complexity;
+  difficulty: Difficulty;
   category: Category[];
   description: string;
-  _id: string;
+  example: string;
+  popularity: number;
+  id: number;
+  solutions: TSolution[];
 }
+
+export type TSolution = {
+  id: string;
+  questionId: number;
+  title: string;
+  description: string;
+  code: string;
+  language: string;
+};

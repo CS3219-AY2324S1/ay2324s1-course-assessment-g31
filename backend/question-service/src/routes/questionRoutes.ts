@@ -1,11 +1,18 @@
 import { Router } from "express";
-import { createQuestion, deleteQuestion, getAllQuestions, updateQuestion } from "../controller/questionController";
+import {
+  createQuestion,
+  deleteQuestion,
+  getAllQuestions,
+  getQuestion,
+  updateQuestion,
+} from "../controller/questionController";
 
-const router = Router();
+const questionRouter = Router();
 
-router.get("/all", getAllQuestions);
-router.post("/create", createQuestion);
-router.patch("/update/:id", updateQuestion);
-router.delete("/delete/:id", deleteQuestion);
+questionRouter.get("/", getAllQuestions);
+questionRouter.get("/:id", getQuestion);
+questionRouter.post("/", createQuestion);
+questionRouter.patch("/:id", updateQuestion);
+questionRouter.delete("/:id", deleteQuestion);
 
-export default router;
+export default questionRouter;

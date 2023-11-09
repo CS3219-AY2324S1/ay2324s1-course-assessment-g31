@@ -16,6 +16,7 @@ module.exports = {
   },
   plugins: ["react-refresh", "@typescript-eslint", "prettier", "jsx-a11y"],
   rules: {
+    "no-console": "off",
     "react/react-in-jsx-scope": "off",
     "import/no-absolute-path": "off",
     "@typescript-eslint/no-explicit-any": "off",

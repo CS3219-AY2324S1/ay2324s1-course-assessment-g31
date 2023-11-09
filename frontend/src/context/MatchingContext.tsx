@@ -27,7 +27,7 @@ interface MatchingContextType {
   setMatchedUserId: React.Dispatch<React.SetStateAction<string>>;
   setMatchingId: React.Dispatch<React.SetStateAction<string>>;
   beginCollaboration: () => void;
-  cancelCollaboration: () => void;
+  cancelCollaboration: (code: string, language: string) => void;
   changeCode: (code: string) => void;
   changeLanguage: (language: string) => void;
 }
@@ -83,14 +83,23 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     emitSocketEvent("join");
   }, [emitSocketEvent, currentUser]);
 
-  const cancelCollaboration = useCallback(() => {
-    if (!matchingId) return;
-    emitSocketEvent("cancel-collaboration", {
-      requestId: matchingId,
-    });
-    setMatchedUserId("");
-    setMatchingId("");
-  }, [emitSocketEvent, matchingId]);
+  const cancelCollaboration = useCallback(
+    (code: string, language: string) => {
+      if (!matchingId) return;
+      emitSocketEvent("cancel-collaboration", {
+        requestId: matchingId,
+        matchedUserId,
+        // placeholder
+        questionId: 1,
+        // add collaboration details
+        code,
+        language,
+      });
+      setMatchedUserId("");
+      setMatchingId("");
+    },
+    [emitSocketEvent, matchingId, matchedUserId],
+  );
 
   const beginCollaboration = useCallback(() => {
     if (!currentUser) return;
