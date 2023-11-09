@@ -198,7 +198,7 @@ export default function UpdateProfileModal({
       }
 
       const res = await fetch(
-        `http://localhost:3000/user-services/change-username/${userId}`,
+        `http://localhost:5001/user-services/change-username/${userId}`,
         {
           method: "PUT",
           headers: {
