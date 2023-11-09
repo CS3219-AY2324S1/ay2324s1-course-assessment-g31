@@ -14,13 +14,15 @@ describe("Test matching service", () => {
   // Create
   test("Create Matching, Valid Input To Prisma -> Return Object", async () => {
     const input: MatchingCreateDTO = {
-      user1Id: "abc",
-      user2Id: "qwe",
-      requestId: 123,
+        user1Id: "abc",
+        user2Id: "qwe",
+        requestId: 123,
+        difficulty: "easy"
     };
 
     const expectedMatching: Matching = {
       ...input,
+      questionIdRequested: null,
       id: 1,
       dateTimeMatched: new Date(),
     };
@@ -37,11 +39,13 @@ describe("Test matching service", () => {
   test("Find By Id Matching, Valid Input To Prisma -> Return Object", async () => {
     const testId: number = 1;
     const expectedMatching: Matching = {
-      id: testId,
-      user1Id: "asd",
-      user2Id: "qwe",
-      requestId: 1,
-      dateTimeMatched: new Date(),
+        id: testId,
+        user1Id: "asd",
+        user2Id: "qwe",
+        requestId: 1,
+        dateTimeMatched: new Date(),
+        difficulty: "easy",
+        questionIdRequested: null
     };
 
     prismaMock.matching.findUnique.mockResolvedValue(expectedMatching);
@@ -55,11 +59,13 @@ describe("Test matching service", () => {
   // Find One
   test("Find One Matching, Valid Input To Prisma -> Return Object", async () => {
     const expectedMatching: Matching = {
-      id: 1,
-      user1Id: "asd",
-      user2Id: "qwe",
-      requestId: 1,
-      dateTimeMatched: new Date(),
+        id: 1,
+        user1Id: "asd",
+        user2Id: "qwe",
+        requestId: 1,
+        dateTimeMatched: new Date(),
+        difficulty: "easy",
+        questionIdRequested: null
     };
 
     prismaMock.matching.findFirst.mockResolvedValue(expectedMatching);
@@ -73,19 +79,23 @@ describe("Test matching service", () => {
   // Find All
   test("Find All Matching, Valid Input To Prisma -> Return Object", async () => {
     const expectedMatching1: Matching = {
-      id: 1,
-      user1Id: "asd",
-      user2Id: "qwe",
-      requestId: 1,
-      dateTimeMatched: new Date(),
+        id: 1,
+        user1Id: "asd",
+        user2Id: "qwe",
+        requestId: 1,
+        dateTimeMatched: new Date(),
+        difficulty: "easy",
+        questionIdRequested: null
     };
 
     const expectedMatching2: Matching = {
-      id: 2,
-      user1Id: "zxc",
-      user2Id: "asd",
-      requestId: 2,
-      dateTimeMatched: new Date(),
+        id: 2,
+        user1Id: "zxc",
+        user2Id: "asd",
+        requestId: 2,
+        dateTimeMatched: new Date(),
+        difficulty: "easy",
+        questionIdRequested: null
     };
 
     const expectedMatchings = [expectedMatching1, expectedMatching2];
@@ -103,13 +113,15 @@ describe("Test matching service", () => {
     const testId: number = 1;
 
     const input: MatchingUpdateDTO = {
-      user1Id: "abc",
-      user2Id: "qwe",
-      requestId: 123,
+        user1Id: "abc",
+        user2Id: "qwe",
+        requestId: 123,
+        difficulty: ""
     };
 
     const expectedMatching: Matching = {
       ...input,
+      questionIdRequested: null,
       id: testId,
       dateTimeMatched: new Date(),
     };
@@ -127,11 +139,13 @@ describe("Test matching service", () => {
     const testId: number = 1;
 
     const expectedMatching: Matching = {
-      id: testId,
-      user1Id: "abc",
-      user2Id: "qwe",
-      requestId: 123,
-      dateTimeMatched: new Date(),
+        id: testId,
+        user1Id: "abc",
+        user2Id: "qwe",
+        requestId: 123,
+        dateTimeMatched: new Date(),
+        difficulty: "easy",
+        questionIdRequested: null
     };
 
     prismaMock.matching.delete.mockResolvedValue(expectedMatching);
