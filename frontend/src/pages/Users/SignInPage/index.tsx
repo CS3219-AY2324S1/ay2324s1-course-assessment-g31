@@ -1,12 +1,14 @@
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import { FirebaseError } from "firebase/app";
-import { useContext, useState } from "react";
+// import { FirebaseError } from "firebase/app";
+// remove useContext from react
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import UserController from "../../../controllers/user/user.controller";
-import { signInUser } from "../../../util/auth";
+import { useAuth } from "../../../context/AuthContext";
+// import UserController from "../../../controllers/user/user.controller";
+// import { signInUser } from "../../../util/auth";
 import classNames from "../../../util/ClassNames";
-import { NotificationContext } from "../../../context/NotificationContext";
+// import { NotificationContext } from "../../../context/NotificationContext";
 
 function SignInPage() {
   const [email, setEmail] = useState<string>("");
@@ -16,32 +18,24 @@ function SignInPage() {
 
   const [wrongPasswordFlag, setWrongPasswordFlag] = useState<boolean>(false);
   const [noUserFlag, setNoUserFlag] = useState<boolean>(false);
-  const userController = new UserController();
-  const { addNotification } = useContext(NotificationContext);
+  // const userController = new UserController();
+  // const { addNotification } = useContext(NotificationContext);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted with data");
     setLoading(true);
-    setWrongPasswordFlag(false);
-    setNoUserFlag(false);
-    try {
-      // Send the email and password to firebase
-      const userCredential = await signInUser(email, password);
-      if (userCredential) {
-        userController
-          .getUser(userCredential.user.uid)
-          .then(() => navigate("/"))
-          .catch(() => {
-            addNotification({
-              type: "error",
-              message: "There was an error in connecting to the user service",
-            });
-          });
-      }
-      setLoading(false);
-    } catch (err: unknown) {
-      if (err instanceof FirebaseError) {
+    await login(email, password)
+      .then((data) => {
+        if (data) {
+          console.log(data, "authData");
+          console.log("Successfully logged in");
+          navigate(`/questions`);
+        }
+      })
+      .catch((err) => {
         console.error(err.code);
         switch (err.code) {
           case "auth/wrong-password":
@@ -55,10 +49,49 @@ function SignInPage() {
           default:
             break;
         }
-        setLoading(false);
-      }
-    }
+      });
+    setLoading(false);
   };
+
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setWrongPasswordFlag(false);
+  //   setNoUserFlag(false);
+  //   try {
+  //     // Send the email and password to firebase
+  //     const userCredential = await signInUser(email, password);
+  //     if (userCredential) {
+  //       userController
+  //         .getUser(userCredential.user.uid)
+  //         .then(() => navigate("/"))
+  //         .catch(() => {
+  //           addNotification({
+  //             type: "error",
+  //             message: "There was an error in connecting to the user service",
+  //           });
+  //         });
+  //     }
+  //     setLoading(false);
+  //   } catch (err: unknown) {
+  //     if (err instanceof FirebaseError) {
+  //       console.error(err.code);
+  //       switch (err.code) {
+  //         case "auth/wrong-password":
+  //           setWrongPasswordFlag(true);
+  //           break;
+
+  //         case "auth/user-not-found":
+  //           setNoUserFlag(true);
+  //           break;
+
+  //         default:
+  //           break;
+  //       }
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
 
   return (
     <div className="flex min-h-full flex-1">

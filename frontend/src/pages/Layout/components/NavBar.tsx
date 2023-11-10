@@ -6,7 +6,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Fragment, useEffect, useRef } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import DarkModeToggle from "../../../components/toggle/darkModeToggle/DarkModeToggle";
 import { useAuth } from "../../../context/AuthContext";
@@ -20,15 +20,32 @@ const user = {
 };
 
 function Navbar() {
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout()
+      .then(() => {
+        navigate("/");
+        console.log("Signed out successfully");
+      })
+      .catch((error) => {
+        console.error(`Error, ${error.message}`);
+      });
+  };
+
+  const navProfile = () => {
+    navigate(`/profile?userId=${currentUser?.uid}`);
+  };
+
   const navigation = useRef([
     // { name: "Dashboard", href: "/dashboard", current: false },
     { name: "Questions", href: "/questions", current: false },
     { name: "Match", href: "/match", current: false },
   ]);
   const userNavigationLoggedIn = [
-    { name: "Your Profile", href: "/profile" },
-    { name: "Settings", href: "/settings" },
-    { name: "Sign out", href: "/sign-out" },
+    { name: "Your Profile", function: navProfile },
+    { name: "Sign out", function: handleLogout },
   ];
   const userNavigationLoggedOut = [{ name: "Sign in", href: "/sign-in" }];
 
@@ -44,8 +61,6 @@ function Navbar() {
       return curr;
     });
   }, []);
-
-  const { currentUser } = useAuth();
 
   return (
     <Disclosure as="nav" className="bg-gray-100 dark:bg-slate-800 shadow-sm">
@@ -144,8 +159,9 @@ function Navbar() {
                         ? userNavigationLoggedIn.map((item) => (
                             <Menu.Item key={item.name}>
                               {({ active }) => (
-                                <NavLink
-                                  to={item.href}
+                                <button
+                                  type="button"
+                                  onClick={item.function}
                                   className={classNames(
                                     active
                                       ? "bg-gray-100 dark:bg-gray-800"
@@ -154,7 +170,7 @@ function Navbar() {
                                   )}
                                 >
                                   {item.name}
-                                </NavLink>
+                                </button>
                               )}
                             </Menu.Item>
                           ))
@@ -253,15 +269,14 @@ function Navbar() {
               <div className="mt-3 space-y-1">
                 {currentUser
                   ? userNavigationLoggedIn.map((item) => (
-                      <Link to={item.href}>
-                        <Disclosure.Button
-                          key={item.name}
-                          as="button"
-                          className="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-800 dark:hover:text-gray-200"
-                        >
-                          {item.name}
-                        </Disclosure.Button>
-                      </Link>
+                      <Disclosure.Button
+                        key={item.name}
+                        as="button"
+                        onClick={item.function}
+                        className="block px-4 py-2 text-base font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-800 dark:hover:text-gray-200"
+                      >
+                        {item.name}
+                      </Disclosure.Button>
                     ))
                   : userNavigationLoggedOut.map((item) => (
                       <Link to={item.href}>
