@@ -48,6 +48,14 @@ export default function QuestionForm() {
     e.preventDefault();
     setSubmitError("");
     setIsSubmitting(true);
+    console.log(JSON.stringify({
+        title,
+        difficulty: selectedDifficulty,
+        category: selectedCategory,
+        description,
+        example,
+        constraint,
+      }))
     try {
       const response = await fetch(
         questionToEdit

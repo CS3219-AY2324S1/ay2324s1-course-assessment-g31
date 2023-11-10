@@ -11,18 +11,15 @@ datasource db {
 }
 
 model Question {
-    id           Int                   @id @default(autoincrement())
-    title        String
-    category     Category[]
-    difficulty   Difficulty
-    description  String
-    example      String
-    constraint   String
-    popularity   Int                   @default(0)
-    solutions    Solution[]
-    initialCodes QuestionInitialCode[]
-    runnerCodes  QuestionRunnerCode[]
-    testCases    QuestionTestCase[]
+    id          Int        @id @default(autoincrement())
+    title       String
+    category    Category[]
+    difficulty  Difficulty
+    description String
+    example     String
+    constraint  String
+    popularity  Int        @default(0)
+    solutions   Solution[]
 }
 
 model Solution {
@@ -52,10 +49,24 @@ enum Category {
     Recursion
 }
 
+model NewQuestion {
+    id           Int                   @id @default(autoincrement())
+    title        String
+    category     Category[]
+    difficulty   Difficulty
+    description  String
+    example      String[]
+    constraint   String[]
+    popularity   Int                   @default(0)
+    initialCodes QuestionInitialCode[]
+    runnerCodes  QuestionRunnerCode[]
+    testCases    QuestionTestCase[]
+}
+
 model QuestionInitialCode {
     language   String
     code       String
-    Question   Question @relation(fields: [questionId], references: [id])
+    Question   NewQuestion @relation(fields: [questionId], references: [id])
     questionId Int
 
     @@unique([language, questionId])
@@ -64,7 +75,7 @@ model QuestionInitialCode {
 model QuestionRunnerCode {
     language   String
     code       String
-    Question   Question @relation(fields: [questionId], references: [id])
+    Question   NewQuestion @relation(fields: [questionId], references: [id])
     questionId Int
 
     @@unique([language, questionId])
@@ -74,7 +85,7 @@ model QuestionTestCase {
     testCaseNumber Int
     input          String
     expectedOutput String[]
-    Question       Question @relation(fields: [questionId], references: [id])
+    Question       NewQuestion @relation(fields: [questionId], references: [id])
     questionId     Int
 
     @@unique([testCaseNumber, questionId])

@@ -3,10 +3,10 @@ import { FirebaseError } from "firebase/app";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import UserController from "../../../controllers/user/user.controller";
-import { signInUser } from "../../../util/auth";
-import classNames from "../../../util/ClassNames";
+import { useAuth } from "../../../context/AuthContext";
 import { NotificationContext } from "../../../context/NotificationContext";
+import UserController from "../../../controllers/user/user.controller";
+import classNames from "../../../util/ClassNames";
 
 function SignInPage() {
   const [email, setEmail] = useState<string>("");
@@ -20,6 +20,8 @@ function SignInPage() {
   const { addNotification } = useContext(NotificationContext);
   const navigate = useNavigate();
 
+  const { login } = useAuth();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -27,7 +29,7 @@ function SignInPage() {
     setNoUserFlag(false);
     try {
       // Send the email and password to firebase
-      const userCredential = await signInUser(email, password);
+      const userCredential = await login(email, password);
       if (userCredential) {
         userController
           .getUser(userCredential.user.uid)

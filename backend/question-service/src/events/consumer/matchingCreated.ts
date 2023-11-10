@@ -1,5 +1,5 @@
 import prisma from "../../model/prismaClient";
-import { getRandomInt } from "../../util/util";
+import { getRandomInt } from "../../util/randomInt";
 import produceEvent, { ProducerTopics } from "../producer/producer";
 import { ConsumerFunction } from "./main.interface";
 
