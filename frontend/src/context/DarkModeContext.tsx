@@ -11,7 +11,7 @@ interface DarkModeContextType {
 
 export const DarkModeContext = createContext<DarkModeContextType>({
   isDarkMode: false,
-  setIsDarkMode: (newState: boolean) => {},
+  setIsDarkMode: (_newState: boolean) => {},
 });
 
 export function DarkModeProvider({ children }: DarkModeProviderProps) {
