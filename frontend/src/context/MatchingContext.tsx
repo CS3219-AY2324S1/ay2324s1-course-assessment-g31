@@ -9,6 +9,7 @@ import React, {
 import { useNavigate } from "react-router-dom";
 
 import socket from "../util/socket";
+import { CodingLanguage } from "./QuestionContext";
 import { useAuth } from "./AuthContext";
 
 interface MatchingProviderProps {
@@ -19,7 +20,7 @@ interface MatchingContextType {
   matchingId: string;
   matchedUserId: string;
   socketCode: string;
-  socketLanguage: string;
+  socketLanguage: CodingLanguage;
   establishedConnection: boolean;
   foundMatch: boolean;
   connectionLoading: boolean;
@@ -27,7 +28,7 @@ interface MatchingContextType {
   setMatchedUserId: React.Dispatch<React.SetStateAction<string>>;
   setMatchingId: React.Dispatch<React.SetStateAction<string>>;
   beginCollaboration: () => void;
-  cancelCollaboration: (code: string, language: string) => void;
+  cancelCollaboration: () => void;
   changeCode: (code: string) => void;
   changeLanguage: (language: string) => void;
 }
@@ -36,7 +37,7 @@ export const MatchingContext = createContext<MatchingContextType>({
   matchingId: "",
   matchedUserId: "",
   socketCode: "",
-  socketLanguage: "",
+  socketLanguage: "java",
   establishedConnection: false,
   foundMatch: false,
   connectionLoading: true,
@@ -63,7 +64,7 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
   const [matchingId, setMatchingId] = useState<string>("");
 
   const [socketCode, setSocketCode] = useState<string>("");
-  const [socketLanguage, setSocketLanguage] = useState<string>("");
+  const [socketLanguage, setSocketLanguage] = useState<CodingLanguage>("java");
 
   const navigate = useNavigate();
 
@@ -83,23 +84,14 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     emitSocketEvent("join");
   }, [emitSocketEvent, currentUser]);
 
-  const cancelCollaboration = useCallback(
-    (code: string, language: string) => {
-      if (!matchingId) return;
-      emitSocketEvent("cancel-collaboration", {
-        requestId: matchingId,
-        matchedUserId,
-        // placeholder
-        questionId: 1,
-        // add collaboration details
-        code,
-        language,
-      });
-      setMatchedUserId("");
-      setMatchingId("");
-    },
-    [emitSocketEvent, matchingId, matchedUserId],
-  );
+  const cancelCollaboration = useCallback(() => {
+    if (!matchingId) return;
+    emitSocketEvent("cancel-collaboration", {
+      requestId: matchingId,
+    });
+    setMatchedUserId("");
+    setMatchingId("");
+  }, [emitSocketEvent, matchingId]);
 
   const beginCollaboration = useCallback(() => {
     if (!currentUser) return;
@@ -155,7 +147,8 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       const valString = JSON.stringify(value);
       const obj = JSON.parse(valString);
       const { userId, requestId, code } = obj;
-      if (userId === currentUser!.uid || requestId !== matchingId) return;
+      if (!currentUser || !matchingId) return;
+      if (userId === currentUser.uid || requestId !== matchingId) return;
       setSocketCode(code);
     },
     [currentUser, matchingId],
@@ -166,7 +159,8 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       const valString = JSON.stringify(value);
       const obj = JSON.parse(valString);
       const { userId, requestId, language } = obj;
-      if (userId === currentUser!.uid || requestId !== matchingId) return;
+      if (!currentUser || !matchingId) return;
+      if (userId === currentUser.uid || requestId !== matchingId) return;
       setSocketLanguage(language);
     },
     [currentUser, matchingId],
@@ -177,7 +171,8 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       const valString = JSON.stringify(value);
       const obj = JSON.parse(valString);
       const { userId, requestId } = obj;
-      if (userId === currentUser!.uid || requestId !== matchingId) return;
+      if (!currentUser || !matchingId) return;
+      if (userId === currentUser.uid || requestId !== matchingId) return;
       setMatchedUserId("");
       setMatchingId("");
       navigate("/match");
@@ -231,8 +226,8 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     onCollaborationCancelled,
   ]);
 
-  const value = useMemo(() => {
-    return {
+  const value = useMemo(
+    () => ({
       matchingId,
       matchedUserId,
       socketCode,
@@ -247,23 +242,24 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       cancelCollaboration,
       changeCode,
       changeLanguage,
-    };
-  }, [
-    beginCollaboration,
-    cancelCollaboration,
-    changeCode,
-    changeLanguage,
-    connectionLoading,
-    establishedConnection,
-    foundMatch,
-    matchLoading,
-    matchedUserId,
-    matchingId,
-    setMatchedUserId,
-    setMatchingId,
-    socketCode,
-    socketLanguage,
-  ]);
+    }),
+    [
+      matchingId,
+      matchedUserId,
+      socketCode,
+      socketLanguage,
+      establishedConnection,
+      foundMatch,
+      connectionLoading,
+      matchLoading,
+      setMatchedUserId,
+      setMatchingId,
+      beginCollaboration,
+      cancelCollaboration,
+      changeCode,
+      changeLanguage,
+    ],
+  );
 
   return (
     <MatchingContext.Provider value={value}>
