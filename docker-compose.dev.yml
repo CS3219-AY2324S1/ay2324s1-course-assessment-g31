@@ -8,14 +8,14 @@ services:
   user:
     container_name: user-service
     build:
-      context: ./backend/user-service
+      context: ./backend/user-service2
       dockerfile: Dockerfile.dev
     ports:
       - "5001:5000"
     environment:
       - PORT=5000
     env_file:
-      - ./backend/user-service/.env
+      - ./backend/user-service2/.env
     depends_on:
       postgres_user_service:
         condition: service_healthy
