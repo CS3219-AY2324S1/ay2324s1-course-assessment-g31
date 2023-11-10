@@ -6,7 +6,7 @@ import { useAuth } from "../../../context/AuthContext";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
-    userid: "",
+    userId: "",
     email: "",
     username: "",
     password: "",
@@ -14,7 +14,7 @@ export default function RegisterForm() {
     user_role: "User",
   });
 
-  const { signup } = useAuth();
+  const { signUp } = useAuth();
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -39,26 +39,26 @@ export default function RegisterForm() {
 
     try {
       let dataUID = "";
-      await signup(formData.email, formData.password).then((data) => {
+      await signUp(formData.email, formData.password).then((data) => {
         if (data) {
           console.log(data, "authData");
           setFormData({
             ...formData,
-            userid: data.user.uid,
+            userId: data.user.uid,
           });
           dataUID = data.user.uid;
         }
       });
 
       const response = await fetch(
-        `http://localhost:3000/user-services/register`,
+        `http://localhost:5001/user-services/register`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            userid: dataUID,
+            userId: dataUID,
             username: formData.username,
             user_role: formData.user_role,
           }),

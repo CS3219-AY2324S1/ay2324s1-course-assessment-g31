@@ -99,7 +99,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   async function getUserRole(user: User): Promise<string> {
     try {
       const response = await fetch(
-        `http://localhost:3000/user-services/userRole/${user.uid}`,
+        `http://localhost:5001/user-services/userRole/${user.uid}`,
         {
           method: "GET",
           headers: {
