@@ -57,7 +57,7 @@ export default function DeleteProfileModal({
         // If reauthentication is successful, delete user from firebase
         await deleteTheUser();
         const response = await fetch(
-          `http://localhost:3000/user-services/delete/${userId}`,
+          `http://localhost:5001/user-services/delete/${userId}`,
           {
             method: "DELETE",
           },

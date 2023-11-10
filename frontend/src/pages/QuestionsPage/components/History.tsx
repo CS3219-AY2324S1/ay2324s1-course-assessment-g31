@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router";
 import { Attempt } from "../../../types/history";
 import { useAuth } from "../../../context/AuthContext";
@@ -14,7 +14,7 @@ export default function History() {
 
   const { currentUser } = useAuth();
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     if (currentUser) {
       setHistory([]);
       setError("");
@@ -38,7 +38,7 @@ export default function History() {
         setIsLoading(false);
       }
     }
-  };
+  }, [currentUser, questionId]);
 
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const handleDeleteAttempt = async (id: string) => {
@@ -67,7 +67,7 @@ export default function History() {
 
   useEffect(() => {
     fetchHistory();
-  }, [currentUser, questionId]);
+  }, [fetchHistory]);
 
   return (
     <div className="flex flex-col border border-2 rounded-xl border-indigo-700 p-2 w-[calc(50%-2px)] bg-white">

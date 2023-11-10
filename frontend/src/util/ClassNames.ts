@@ -1,3 +1,5 @@
-export default function classNames(...classes: string[]) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
+
+export default classNames;

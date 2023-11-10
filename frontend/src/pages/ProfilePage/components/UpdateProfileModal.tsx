@@ -153,11 +153,11 @@ export default function UpdateProfileModal({
 
       const credential = EmailAuthProvider.credential(email, oldPassword);
 
+      // If reauthentication is successful, update the password
       if (currentUser) {
-        await reauthenticateWithCredential(currentUser, credential).then(() => {
-          // If reauthentication is successful, update the password
-          return updateThePassword(newPassword);
-        });
+        await reauthenticateWithCredential(currentUser, credential).then(() =>
+          updateThePassword(newPassword),
+        );
       }
 
       setPasswordChangeFormOpen(false);
@@ -198,7 +198,7 @@ export default function UpdateProfileModal({
       }
 
       const res = await fetch(
-        `http://localhost:3000/user-services/change-username/${userId}`,
+        `http://localhost:5001/user-services/change-username/${userId}`,
         {
           method: "PUT",
           headers: {

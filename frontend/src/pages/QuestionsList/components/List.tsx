@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import { useNavigate } from "react-router";
 import { Question } from "../../../types/question";
 import QuestionRow from "./QuestionRow";
@@ -24,7 +24,7 @@ export default function List() {
     navigate("/questions/form");
   };
 
-  const fetchQuestions = async () => {
+  const fetchQuestions = useCallback(async () => {
     setQuestions(undefined);
     setError("");
     setIsLoading(true);
@@ -51,11 +51,11 @@ export default function List() {
       setError(err.message);
       setIsLoading(false);
     }
-  };
+  }, [sortBy, sortOrder, searchFilter, difficultyFilter, categoryFilter]);
 
   useEffect(() => {
     fetchQuestions();
-  }, [sortBy, sortOrder, currentPage]);
+  }, [fetchQuestions]);
 
   if (error) return <div>Error loading questions: {error}</div>;
 

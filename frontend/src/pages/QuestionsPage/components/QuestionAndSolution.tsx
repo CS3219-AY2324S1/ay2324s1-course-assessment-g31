@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Question } from "../../../types/question";
 import Solutions from "./Solutions";
@@ -44,7 +44,7 @@ export default function QuestionAndSolution() {
     setIsDeleting(false);
   };
 
-  const fetchQuestion = async () => {
+  const fetchQuestion = useCallback(async () => {
     setQuestion(undefined);
     setError("");
     setIsLoading(true);
@@ -66,11 +66,11 @@ export default function QuestionAndSolution() {
       setError(err.message);
       setIsLoading(false);
     }
-  };
+  }, [questionId]);
 
   useEffect(() => {
     fetchQuestion();
-  }, [questionId]);
+  }, [questionId, fetchQuestion]);
 
   if (error) return <div>Error loading question: {error}</div>;
 
