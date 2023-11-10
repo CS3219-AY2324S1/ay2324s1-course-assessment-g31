@@ -5,42 +5,6 @@
 
 version: "3"
 services:
-  user:
-    container_name: user-service
-    build:
-      context: ./backend/user-service
-      dockerfile: Dockerfile.dev
-    ports:
-      - "5001:5000"
-    environment:
-      - PORT=5000
-    env_file:
-      - ./backend/user-service/.env
-    depends_on:
-      postgres_user_service:
-        condition: service_healthy
-      broker:
-        condition: service_healthy
-    networks:
-      - user-service-network
-      - api-network
-      - kafka-network
-
-  postgres_user_service:
-    image: postgres:latest
-    container_name: postgres-user-service
-    volumes:
-      - progresDB:/data/postgres/user-service
-    env_file:
-      - ./backend/user-service/.env
-    networks:
-      - user-service-network
-    healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U admin -d postgres'"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-
   matching:
     container_name: matching-service
     build:
@@ -148,9 +112,6 @@ services:
       retries: 3
 
 networks:
-  user-service-network:
-    driver: bridge
-
   matching-service-network:
     driver: bridge
 

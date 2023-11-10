@@ -1,7 +1,6 @@
-import React from "react";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import ComponentContainer from "./Container/Component";
 import titleCase from "../../../util/titleCase";
+import ComponentContainer from "./Container/Component";
 
 const tiers = [
   {
@@ -35,21 +34,21 @@ const tiers = [
 ];
 
 interface IThreeTierProps {
-  setDifficulty: React.Dispatch<React.SetStateAction<string>>;
+  startMatching: (difficulty: string) => void;
 }
 
-function ThreeTier({ setDifficulty }: IThreeTierProps) {
+function ThreeTier({ startMatching }: IThreeTierProps) {
   return (
     <ComponentContainer>
       <div className="mx-auto max-w-4xl sm:text-center">
-        <h2 className="text-base font-semibold leading-7 text-indigo-600">
+        <h2 className="text-base font-semibold leading-7 text-indigo-600 dark:text-indigo-400">
           Matching
         </h2>
-        <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+        <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl">
           Choose the right question for&nbsp;you
         </p>
       </div>
-      <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-600 sm:text-center">
+      <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-600 dark:text-gray-400 sm:text-center">
         Match and attempt a random question from the selected difficulty with a
         friend.
       </p>
@@ -59,36 +58,36 @@ function ThreeTier({ setDifficulty }: IThreeTierProps) {
             <div key={tier.id} className="pt-16 lg:px-8 lg:pt-0 xl:px-14">
               <h3
                 id={tier.id}
-                className="text-base font-semibold leading-7 text-gray-900"
+                className="text-base font-semibold leading-7 text-gray-900 dark:text-gray-100"
               >
                 {titleCase(tier.name)}
               </h3>
               <p className="mt-6 flex items-baseline gap-x-1">
-                <span className="text-5xl font-bold tracking-tight text-gray-900">
+                <span className="text-5xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
                   {tier.number}
                 </span>
-                <span className="text-sm font-semibold leading-6 text-gray-600">
+                <span className="text-sm font-semibold leading-6 text-gray-600 dark:text-gray-400">
                   questions
                 </span>
               </p>
               <button
                 type="button"
                 aria-describedby={tier.id}
-                className="mt-10 block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="mt-10 block rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-2 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 onClick={() => {
-                  setDifficulty(tier.name);
+                  startMatching(tier.name);
                 }}
               >
                 Match and Attempt
               </button>
-              <p className="mt-10 text-sm font-semibold leading-6 text-gray-900">
+              <p className="mt-10 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100">
                 {tier.description}
               </p>
-              <ul className="mt-6 space-y-3 text-sm leading-6 text-gray-600">
+              <ul className="mt-6 space-y-3 text-sm leading-6 text-gray-600 dark:text-gray-400">
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex gap-x-3">
                     <CheckCircleIcon
-                      className="h-6 w-5 flex-none text-indigo-600"
+                      className="h-6 w-5 flex-none text-indigo-600 dark:text-indigo-400"
                       aria-hidden="true"
                     />
                     {titleCase(feature)}
