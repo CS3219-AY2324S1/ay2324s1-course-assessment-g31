@@ -27,14 +27,14 @@ export default function QuestionRow({
           tabIndex={index}
           onKeyDown={handleSelect}
           onClick={handleSelect}
-          className="underline text-blue-700 font-bold"
+          className="underline text-indigo-700 font-semibold"
         >
           {question.title}
         </span>
       </td>
       <td>{question.difficulty}</td>
-      <td>
-        {question.category.map((cat) => (
+      <td className="flex flex-row gap-2">
+        {question.category.sort().map((cat) => (
           <span key={cat}>{cat}</span>
         ))}
       </td>
