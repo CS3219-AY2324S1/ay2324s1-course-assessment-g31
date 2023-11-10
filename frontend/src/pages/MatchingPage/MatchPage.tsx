@@ -22,6 +22,7 @@ function MatchPage() {
 
   const [difficulty, setDifficulty] = useState<string>("");
   const [open, setOpen] = useState(false);
+  const [currentMatchingRequestId, setCurrentMatchingRequestId] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -32,18 +33,16 @@ function MatchPage() {
   const { time, startTimer, stopTimer, resetTimer, isActive, percent } =
     useTimer(10);
 
-  const cancelMatch = useCallback(() => {
+  const cancelMatch = useCallback(async () => {
     if (!currentUser) return;
     setOpen(false);
     setDifficulty("");
     stopTimer();
-    matchingController.current.cancelMatchingRequest({
-      userId: currentUser.uid,
-    });
-  }, [currentUser, stopTimer]);
+    await matchingController.current.cancelMatchingRequest(currentMatchingRequestId);
+  }, [currentUser, stopTimer, currentMatchingRequestId]);
 
   const startMatching = useCallback(
-    (newDifficulty: string) => {
+    async (newDifficulty: string) => {
       if (newDifficulty === "") return;
       setDifficulty(newDifficulty);
       if (foundMatch || !currentUser) {
@@ -60,7 +59,10 @@ function MatchPage() {
         difficulty: newDifficulty,
       };
       console.log(obj);
-      matchingController.current.createMatchingRequest(obj);
+      const res = await matchingController.current.createMatchingRequest(obj);
+      if(res && res.data) {
+        setCurrentMatchingRequestId(res.data.id.toString());
+      }
     },
     [currentUser, establishedConnection, foundMatch, startTimer, resetTimer],
   );
