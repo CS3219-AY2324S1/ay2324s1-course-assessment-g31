@@ -3,19 +3,20 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import ForbiddenPage from "../pages/ForbiddenPage/ForbiddenPage";
+import LandingPage from "../pages/LandingPage";
 import Layout from "../pages/Layout/Layout";
-import LoginPage from "../pages/LoginPage/LoginPage";
+import MatchingControlPanelPage from "../pages/MatchingControlPanelPage/MatchingControlPanelPage";
 import MatchPage from "../pages/MatchingPage/MatchPage";
 import PageNotFoundPage from "../pages/PageNotFoundPage/PageNotFoundPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
-import QuestionsPage from "../pages/QuestionsPage/QuestionsPage";
-import RegisterPage from "../pages/RegisterPage/RegisterPage";
-import SingleQuestionPage from "../pages/SingleQuestionPage";
-import MatchingControlPanelPage from "../pages/MatchingControlPanelPage/MatchingControlPanelPage";
-import ForbiddenPage from "../pages/ForbiddenPage/ForbiddenPage";
 import QuestionForm from "../pages/QuestionForm/QuestionForm";
 import QuestionsList from "../pages/QuestionsList/QuestionsList";
+import QuestionsPage from "../pages/QuestionsPage/QuestionsPage";
+import SingleQuestionPage from "../pages/SingleQuestionPage";
 import SolutionForm from "../pages/SolutionForm/SolutionForm";
+import RegistrationPage from "../pages/Users/RegistrationPage";
+import SignInPage from "../pages/Users/SignInPage";
 
 // import RegisterPage from "./pages/RegisterPage/RegisterPage";
 // import LoginPage from "./pages/LoginPage/LoginPage";
@@ -58,11 +59,12 @@ export default function MainRouter() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
+        <Route path="" element={<LandingPage />} />
         <Route
-          path="/"
+          path="sign-in"
           element={
             <PostLoginNoAccessRoute user={currentUser}>
-              <LoginPage />
+              <SignInPage />
             </PostLoginNoAccessRoute>
           }
         />
@@ -70,7 +72,7 @@ export default function MainRouter() {
           path="/register"
           element={
             <PostLoginNoAccessRoute user={currentUser}>
-              <RegisterPage />
+              <RegistrationPage />
             </PostLoginNoAccessRoute>
           }
         />

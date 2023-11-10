@@ -1,4 +1,4 @@
-import { initializeApp } from "@firebase/app";
+import { initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -6,8 +6,11 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  updateEmail,
+  updatePassword,
+  deleteUser,
   User,
-} from "@firebase/auth";
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBIcUU17g1xZeCta6MPArw34pVhgo72qpY",
@@ -22,19 +25,26 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 export const signInUser = async (email: string, password: string) => {
-  if (!email && !password) return;
-  await signInWithEmailAndPassword(auth, email, password);
+  if (!email && !password) throw new Error("No Email or Password");
+
+  return signInWithEmailAndPassword(auth, email, password);
 };
 
 export const registerUser = async (email: string, password: string) => {
-  if (!email && !password) return;
-  await createUserWithEmailAndPassword(auth, email, password);
+  if (!email && !password) return {};
+
+  return createUserWithEmailAndPassword(auth, email, password);
 };
 
-export const userStateListener = (callback: NextOrObserver<User>) => {
-  return onAuthStateChanged(auth, callback);
-};
+export const userStateListener = (callback: NextOrObserver<User>) =>
+  onAuthStateChanged(auth, callback);
 
-export const SignOutUser = async () => {
-  await signOut(auth);
-};
+export const SignOutUser = async () => signOut(auth);
+
+export const changePassword = async (user: User, newPassword: string) =>
+  updatePassword(user, newPassword);
+
+export const changeEmail = async (user: User, newEmail: string) =>
+  updateEmail(user, newEmail);
+
+export const removeUser = async (user: User) => deleteUser(user);

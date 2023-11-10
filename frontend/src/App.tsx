@@ -1,3 +1,5 @@
+import "./App.css";
+
 import { AuthProvider } from "./context/AuthContext";
 import { CollaborationProvider } from "./context/CollaborationContext";
 import { DarkModeProvider } from "./context/DarkModeContext";
@@ -15,7 +17,9 @@ export default function App() {
           <DarkModeProvider>
             <QuestionProvider>
               <CollaborationProvider>
-                <MainRouter />
+                <div className="App bg-gray-100 dark:bg-gray-800">
+                  <MainRouter />
+                </div>
               </CollaborationProvider>
             </QuestionProvider>
           </DarkModeProvider>
