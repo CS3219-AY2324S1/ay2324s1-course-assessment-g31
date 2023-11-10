@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DeleteProfileModal from "./DeleteProfileModal";
 import UpdateProfileModal from "./UpdateProfileModal";
@@ -56,49 +56,49 @@ export default function ProfileCard() {
   //     setIsDeleteProfileModalOpen(false);
   //   };
 
-  useEffect(() => {
-    async function fetchProfileData() {
-      try {
-        // Check if firebase has this user
-        if (currentUser !== null) {
-          const response = await fetch(
-            `http://localhost:5001/user-services/profile/${userId}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
+  const fetchProfileData = useCallback(async () => {
+    try {
+      // Check if firebase has this user
+      if (currentUser !== null) {
+        const response = await fetch(
+          `http://localhost:5001/user-services/profile/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
             },
-          );
+          },
+        );
 
-          const data = await response.json();
+        const data = await response.json();
 
-          if (!response.ok) {
-            console.error("Failed to fetch profile:", data.message);
+        if (!response.ok) {
+          console.error("Failed to fetch profile:", data.message);
 
-            setMessage(`Error fetching profile data: ${data.message}`);
-          } else {
-            console.log("Successfully fetched username: ", data);
-            setProfileData({
-              ...profileData,
-              username: data.username,
-              email: currentUser.email ? currentUser.email : "",
-            });
-            setMessage("Profile fetched successfully");
-            setDisableUpdateProfileModal(false);
-          }
+          setMessage(`Error fetching profile data: ${data.message}`);
         } else {
-          console.log("Unauthenticated access");
-          setMessage("Unauthenticated user access");
+          console.log("Successfully fetched username: ", data);
+          setProfileData({
+            ...profileData,
+            username: data.username,
+            email: currentUser.email ? currentUser.email : "",
+          });
+          setMessage("Profile fetched successfully");
+          setDisableUpdateProfileModal(false);
         }
-      } catch (error: any) {
-        console.log("Error fetching profile data:", error.message);
-        setMessage(`Error fetching profile data ${error.message}`);
+      } else {
+        console.log("Unauthenticated access");
+        setMessage("Unauthenticated user access");
       }
+    } catch (error: any) {
+      console.log("Error fetching profile data:", error.message);
+      setMessage(`Error fetching profile data ${error.message}`);
     }
+  }, [currentUser, userId, profileData]);
 
+  useEffect(() => {
     fetchProfileData();
-  }, [userId, currentUser]);
+  }, [fetchProfileData]);
 
   return (
     <div className="bg-gray-400/5 m-5 rounded">

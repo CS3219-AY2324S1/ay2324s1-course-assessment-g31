@@ -15,6 +15,7 @@ import { QuestionTestCase } from "../interfaces/questionService/questionTestCase
 import { QuestionUpdateDTO } from "../interfaces/questionService/question/updateDTO";
 import { NotificationContext } from "./NotificationContext";
 import QuestionController from "../controllers/question/question.controller";
+import { encode64, decode64 } from "../util/base64";
 
 export type CodingLanguage = keyof typeof langs;
 
@@ -65,13 +66,13 @@ export const QuestionContext = createContext<QuestionContextType>({
   initialCode: defaultInitialCode,
   runnerCode: defaultRunnerCode,
   controller: null as unknown as QuestionController,
-  setSelectedLanguage: (selectedLanguage: CodingLanguage) => {},
-  setSelectedTheme: (selectedTheme: CodingTheme) => {},
-  setQuestionId: (id: number) => {},
-  saveNewInitialCode: (lang: string, newCode: string) => {},
-  saveNewRunnerCode: (lang: string, newCode: string) => {},
-  saveNewTestCases: (testCases: QuestionTestCase[]) => {},
-  updateQuestionData: (questionData: QuestionUpdateDTO) => {},
+  setSelectedLanguage: (_selectedLanguage: CodingLanguage) => {},
+  setSelectedTheme: (_selectedTheme: CodingTheme) => {},
+  setQuestionId: (_id: number) => {},
+  saveNewInitialCode: (_lang: string, _newCode: string) => {},
+  saveNewRunnerCode: (_lang: string, _newCode: string) => {},
+  saveNewTestCases: (_testCases: QuestionTestCase[]) => {},
+  updateQuestionData: (_questionData: QuestionUpdateDTO) => {},
 });
 
 export function QuestionProvider({ children }: QuestionProviderProps) {

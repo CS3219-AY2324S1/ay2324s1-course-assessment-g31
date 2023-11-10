@@ -1,4 +1,10 @@
-import React, { useContext, useState, useEffect, useMemo } from "react";
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -17,7 +23,7 @@ interface AuthContextType {
   currentUser: User | null;
   currentRole: string;
   login: (email: string, password: string) => Promise<UserCredential | void>;
-  signup: (email: string, password: string) => Promise<UserCredential | void>;
+  signUp: (email: string, password: string) => Promise<UserCredential | void>;
   logout: () => Promise<void>;
   updateThePassword: (password: string) => Promise<void | Error>;
   verifyBeforeTheEmailUpdate: (email: string) => Promise<void | Error>;
@@ -29,7 +35,7 @@ const AuthContext = React.createContext<AuthContextType>({
   currentUser: {} as User | null,
   currentRole: "user",
   login: () => Promise.resolve(),
-  signup: () => Promise.resolve(),
+  signUp: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   updateThePassword: () => Promise.resolve(),
   verifyBeforeTheEmailUpdate: () => Promise.resolve(),
@@ -49,38 +55,46 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
   const [currentRole, setCurrentRole] = useState<string>("user");
 
-  function signup(email: string, password: string) {
-    return createUserWithEmailAndPassword(database, email, password);
-  }
+  const signUp = useCallback(
+    (email: string, password: string) =>
+      createUserWithEmailAndPassword(database, email, password),
+    [],
+  );
 
-  function login(email: string, password: string) {
-    return signInWithEmailAndPassword(database, email, password);
-  }
+  const login = useCallback(
+    (email: string, password: string) =>
+      signInWithEmailAndPassword(database, email, password),
+    [],
+  );
 
-  function logout() {
-    return signOut(database);
-  }
+  const logout = useCallback(() => signOut(database), []);
 
-  function deleteTheUser() {
+  const deleteTheUser = useCallback(() => {
     if (currentUser) {
       return deleteUser(currentUser);
     }
     return Promise.resolve(new Error("Current user is not defined"));
-  }
+  }, [currentUser]);
 
-  function updateThePassword(password: string) {
-    if (currentUser) {
-      return updatePassword(currentUser, password);
-    }
-    return Promise.resolve(new Error("Current user is not defined"));
-  }
+  const updateThePassword = useCallback(
+    (password: string) => {
+      if (currentUser) {
+        return updatePassword(currentUser, password);
+      }
+      return Promise.resolve(new Error("Current user is not defined"));
+    },
+    [currentUser],
+  );
 
-  function verifyBeforeTheEmailUpdate(email: string) {
-    if (currentUser) {
-      return verifyBeforeUpdateEmail(currentUser, email);
-    }
-    return Promise.resolve(new Error("Current user is not defined"));
-  }
+  const verifyBeforeTheEmailUpdate = useCallback(
+    (email: string) => {
+      if (currentUser) {
+        return verifyBeforeUpdateEmail(currentUser, email);
+      }
+      return Promise.resolve(new Error("Current user is not defined"));
+    },
+    [currentUser],
+  );
 
   async function getUserRole(user: User): Promise<string> {
     try {
@@ -123,27 +137,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return unsubscribe;
   }, []);
 
-  const value = useMemo(() => {
-    return {
+  const value = useMemo(
+    () => ({
       currentUser,
       currentRole,
       login,
-      signup,
+      signUp,
       logout,
       updateThePassword,
       deleteTheUser,
       verifyBeforeTheEmailUpdate,
-    };
-  }, [
-    currentUser,
-    currentRole,
-    login,
-    signup,
-    logout,
-    updateThePassword,
-    deleteTheUser,
-    verifyBeforeTheEmailUpdate,
-  ]);
+    }),
+    [
+      currentUser,
+      currentRole,
+      login,
+      signUp,
+      logout,
+      updateThePassword,
+      deleteTheUser,
+      verifyBeforeTheEmailUpdate,
+    ],
+  );
 
   return (
     <AuthContext.Provider value={value}>
