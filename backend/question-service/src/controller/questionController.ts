@@ -37,8 +37,8 @@ interface IReqQueryGetAllQuestions {
   title: string;
   difficulty: Difficulty;
   category: Category[];
-  limit: number;
-  offset: number;
+  limit: string;
+  offset: string;
 }
 
 export const getAllQuestions = async (
@@ -51,15 +51,22 @@ export const getAllQuestions = async (
     title: titleFilter,
     difficulty: difficultyFilter,
     category: categoryFilter = [],
-    limit = 50,
-    offset = 0,
+    limit = "50",
+    offset = "0",
   } = req.query;
+
+  const limitNum = parseInt(limit, 10);
+  const offsetNum = parseInt(offset, 10);
 
   if (!Array.isArray(categoryFilter)) {
     categoryFilter = [categoryFilter];
   }
 
   try {
+    if (Number.isNaN(limitNum) || Number.isNaN(offsetNum)) {
+      throw new Error("Invalid offset or limit");
+    }
+
     const count = await prisma.question.count({
       where: {
         AND: [
@@ -95,8 +102,8 @@ export const getAllQuestions = async (
           : sortBy === "popularity"
           ? { popularity: order }
           : {},
-      skip: offset,
-      take: limit,
+      skip: offsetNum,
+      take: limitNum,
     });
 
     const result = {
