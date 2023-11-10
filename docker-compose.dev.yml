@@ -81,7 +81,7 @@ services:
     container_name: question-service
     build:
       context: ./backend/question-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - "5003:5000"
     environment:
@@ -145,8 +145,9 @@ services:
       - history-service-network
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready'"]
-      interval: 10s
-      timeout: 3s
+      interval: 15s
+      timeout: 15s
+      start_period: 90s
       retries: 3
 
   socket:
@@ -183,8 +184,9 @@ services:
       - kafka-network
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "2181"]
-      interval: 10s
-      timeout: 5s
+      interval: 15s
+      timeout: 15s
+      start_period: 90s
       retries: 3
 
   broker:
@@ -213,8 +215,9 @@ services:
       - kafka-network
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "9092"]
-      interval: 10s
-      timeout: 5s
+      interval: 15s
+      timeout: 15s
+      start_period: 90s
       retries: 3
 
 networks:
