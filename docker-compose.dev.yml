@@ -240,6 +240,9 @@ services:
       retries: 3
 
 networks:
+  chat-service-network:
+    driver: bridge
+  
   user-service-network:
     driver: bridge
 
