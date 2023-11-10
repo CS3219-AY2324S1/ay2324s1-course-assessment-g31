@@ -7,6 +7,7 @@ import UserController from "../../../controllers/user/user.controller";
 import { signInUser } from "../../../util/auth";
 import classNames from "../../../util/ClassNames";
 import { NotificationContext } from "../../../context/NotificationContext";
+import { useAuth } from "../../../context/AuthContext";
 
 function SignInPage() {
   const [email, setEmail] = useState<string>("");
@@ -19,6 +20,7 @@ function SignInPage() {
   const userController = new UserController();
   const { addNotification } = useContext(NotificationContext);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,18 +29,28 @@ function SignInPage() {
     setNoUserFlag(false);
     try {
       // Send the email and password to firebase
-      const userCredential = await signInUser(email, password);
-      if (userCredential) {
-        userController
-          .getUser(userCredential.user.uid)
-          .then(() => navigate("/"))
-          .catch(() => {
-            addNotification({
-              type: "error",
-              message: "There was an error in connecting to the user service",
-            });
-          });
-      }
+      //   const userCredential = await signInUser(email, password);
+      //   if (userCredential) {
+      //     userController
+      //       .getUser(userCredential.user.uid)
+      //       .then(() => navigate("/"))
+      //       .catch(() => {
+      //         addNotification({
+      //           type: "error",
+      //           message: "There was an error in connecting to the user service",
+      //         });
+      //       });
+      //   }
+      // login(email, password);
+      await login(email, password)
+        .then((data) => {
+          if (data) {
+            navigate(`/`);
+          }
+        })
+        .catch((err) => {
+          console.log(err.code);
+        });
       setLoading(false);
     } catch (err: unknown) {
       if (err instanceof FirebaseError) {

@@ -1,11 +1,11 @@
-import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
-import Chat from '../../components/Chat';
-import CodingSpace from '../../components/CodingSpace';
-import PageContainer from '../../components/container/Page';
-import { useAuth } from '../../context/AuthContext';
-import { MatchingContext } from '../../context/MatchingContext';
+import Chat from "../../components/Chat";
+import CodingSpace from "../../components/CodingSpace";
+import PageContainer from "../../components/container/Page";
+import { useAuth } from "../../context/AuthContext";
+import { MatchingContext } from "../../context/MatchingContext";
 
 export default function SingleQuestionPage() {
   const navigate = useNavigate();
