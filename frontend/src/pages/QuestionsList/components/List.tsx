@@ -1,9 +1,12 @@
-import { useEffect, useState, ChangeEvent, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import { useNavigate } from "react-router";
-import { CategoryMap, Difficulties, Question } from "../../../types/question";
+import { Question } from "../../../types/question";
 import QuestionRow from "./QuestionRow";
-import { Attempt } from "../../../types/history";
+import { FilterSortContext } from "../../../context/FilterSortContext";
+import FilterSort from "./FilterSort";
+import PageSelector from "./PageSelector";
 import { useAuth } from "../../../context/AuthContext";
+import { Attempt } from "../../../types/history";
 
 interface IQuestionAttempts {
   questionId: number;
@@ -11,38 +14,17 @@ interface IQuestionAttempts {
 }
 
 export default function List() {
+  const MAX_PER_PAGE = 15;
   const [questions, setQuestions] = useState<Question[]>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  // Filtering
-  const [search, setSearch] = useState<string>("");
-  const [difficultyFilter, setDifficultyFilter] = useState<string>("");
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+  const { sortBy, searchFilter, sortOrder, difficultyFilter, categoryFilter } =
+    useContext(FilterSortContext);
 
-  // Sorting
-  const sortingFields = ["title", "popularity"];
-  const sortingOptions = ["asc", "desc"];
-  const [sortBy, setSortBy] = useState<string>(sortingFields[0]);
-  const [sortOrder, setSortOrder] = useState<string>(sortingOptions[0]);
-
-  const handleDifficultyFilter = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    if (difficultyFilter === value) {
-      setDifficultyFilter("");
-    } else {
-      setDifficultyFilter(value);
-    }
-  };
-
-  const handleCategoryFilter = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    if (categoryFilter.includes(value)) {
-      setCategoryFilter(categoryFilter.filter((cat) => cat !== value));
-    } else {
-      setCategoryFilter([...categoryFilter, value]);
-    }
-  };
+  // Pagination
+  const [questionCounter, setQuestionCount] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1); // 1 indexed pages
 
   const navigate = useNavigate();
   const handleAddQuestion = () => {
@@ -55,9 +37,11 @@ export default function List() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:5003/question?sortBy=${sortBy}&order=${sortOrder}&title=${search}&difficulty=${difficultyFilter}&${categoryFilter.map(
-          (category) => `category=${category}&`,
-        )}`,
+        `http://localhost:5003/question?offset=${
+          (currentPage - 1) * MAX_PER_PAGE
+        }&limit=${MAX_PER_PAGE}&sortBy=${sortBy}&order=${sortOrder}&title=${searchFilter}&difficulty=${difficultyFilter}&${categoryFilter
+          .map((category) => `category=${category}&`)
+          .join("")}`,
         {
           method: "GET",
         },
@@ -67,15 +51,22 @@ export default function List() {
         throw Error(data.error);
       } else {
         setQuestions(data.results);
+        setQuestionCount(data.count);
         setIsLoading(false);
       }
     } catch (err: any) {
       setError(err.message);
       setIsLoading(false);
     }
-  }, [sortBy, sortOrder, search, difficultyFilter, categoryFilter]);
+  }, [
+    sortBy,
+    sortOrder,
+    searchFilter,
+    difficultyFilter,
+    categoryFilter,
+    currentPage,
+  ]);
 
-  // fetching user attempts
   const { currentUser } = useAuth();
   const [historyMap, setHistoryMap] = useState<Map<number, Attempt[]>>();
 
@@ -107,83 +98,11 @@ export default function List() {
   if (isLoading) return <div>Loading questions</div>;
 
   return (
-    <div>
-      <button type="button" onClick={handleAddQuestion}>
-        Add Question
-      </button>
-      <div className="flex flex-row">
-        <input
-          placeholder="Search..."
-          id="search-field"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <button
-          className="border border-solid border-black border-1"
-          type="button"
-          onClick={fetchQuestions}
-        >
-          Search
-        </button>
-      </div>
-      <div className="flex flex-row">
-        <div className="flex flex-col">
-          {Difficulties.map((difficulty) => (
-            <div key={difficulty}>
-              <input
-                type="checkbox"
-                id={difficulty}
-                value={difficulty}
-                onChange={handleDifficultyFilter}
-                checked={difficultyFilter === difficulty}
-              />
-              <label htmlFor={difficulty}>{difficulty}</label>
-            </div>
-          ))}
-        </div>
-        <div>
-          {Object.values(CategoryMap).map((category) => (
-            <div key={category}>
-              <input
-                type="checkbox"
-                id={category}
-                value={category}
-                onChange={handleCategoryFilter}
-                checked={categoryFilter.includes(category)}
-              />
-              <label htmlFor={category}>{category}</label>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="flex flex-row">
-        {sortingFields.map((field) => (
-          <div key={field}>
-            <input
-              type="checkbox"
-              id={field}
-              value={field}
-              onChange={() => setSortBy(field)}
-              checked={sortBy === field}
-            />
-            <label htmlFor={field}>{field}</label>
-          </div>
-        ))}
-        {sortingOptions.map((option) => (
-          <div key={option}>
-            <input
-              type="checkbox"
-              id={option}
-              value={option}
-              onChange={() => setSortOrder(option)}
-              checked={sortOrder === option}
-            />
-            <label htmlFor={option}>{option}</label>
-          </div>
-        ))}
-      </div>
-      <table>
-        <thead>
+    <div className="flex flex-col justify-center items-center gap-5">
+      <FilterSort handleSearch={fetchQuestions} />
+
+      <table className="border border-solid border-2 border-indigo-600 w-min-[500] w-full">
+        <thead className="bg-indigo-600 text-white">
           <tr>
             <th>Id</th>
             <th>Question</th>
@@ -207,6 +126,20 @@ export default function List() {
           })}
         </tbody>
       </table>
+      <div className="flex flex-row justify-around w-full">
+        <button
+          className="max-h-8 max-w-xs block rounded-md bg-indigo-600 px-2 py-1 text-center text-xs font-semibold leading-5 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          type="button"
+          onClick={handleAddQuestion}
+        >
+          Create Question
+        </button>
+        <PageSelector
+          totalPages={Math.ceil(questionCounter / MAX_PER_PAGE)}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+      </div>
     </div>
   );
 }
