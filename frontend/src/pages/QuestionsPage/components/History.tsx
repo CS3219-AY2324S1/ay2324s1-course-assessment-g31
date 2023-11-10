@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router";
 import { Attempt } from "../../../types/history";
 
@@ -15,7 +15,7 @@ export default function History() {
 
   const { currentUser } = useAuth();
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     if (currentUser) {
       setHistory([]);
       setError("");
@@ -39,11 +39,11 @@ export default function History() {
         setIsLoading(false);
       }
     }
-  };
+  }, [currentUser, questionId]);
 
   useEffect(() => {
     fetchHistory();
-  }, [currentUser, questionId]);
+  }, [fetchHistory]);
 
   if (error) return <div>Error loading history: {error}</div>;
 

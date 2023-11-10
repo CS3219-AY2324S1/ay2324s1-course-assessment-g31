@@ -1,3 +1,5 @@
+import { Matching } from "../../interfaces/matchingService/matching/object";
+import { MatchingRequest } from "../../interfaces/matchingService/matchingRequest/object";
 import GenericController from "../generic.controller";
 
 interface ICreateMatchingRequest {
@@ -33,7 +35,7 @@ class MatchingController extends GenericController {
 
   public async getMatchingRequests() {
     try {
-      return await this.get("matchingRequest");
+      return await this.get<MatchingRequest[]>("matchingRequest");
     } catch (error) {
       return null;
     }
@@ -41,7 +43,7 @@ class MatchingController extends GenericController {
 
   public async getMatchings() {
     try {
-      return await this.get("matching");
+      return await this.get<Matching[]>("matching");
     } catch (error) {
       return null;
     }

@@ -153,11 +153,11 @@ export default function UpdateProfileModal({
 
       const credential = EmailAuthProvider.credential(email, oldPassword);
 
+      // If reauthentication is successful, update the password
       if (currentUser) {
-        await reauthenticateWithCredential(currentUser, credential).then(() => {
-          // If reauthentication is successful, update the password
-          return updateThePassword(newPassword);
-        });
+        await reauthenticateWithCredential(currentUser, credential).then(() =>
+          updateThePassword(newPassword),
+        );
       }
 
       setPasswordChangeFormOpen(false);

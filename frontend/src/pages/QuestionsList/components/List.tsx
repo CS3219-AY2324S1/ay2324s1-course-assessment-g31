@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent } from "react";
+import { useEffect, useState, ChangeEvent, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { CategoryMap, Difficulties, Question } from "../../../types/question";
 import QuestionRow from "./QuestionRow";
@@ -49,7 +49,7 @@ export default function List() {
     navigate("/questions/form");
   };
 
-  const fetchQuestions = async () => {
+  const fetchQuestions = useCallback(async () => {
     setQuestions(undefined);
     setError("");
     setIsLoading(true);
@@ -73,13 +73,13 @@ export default function List() {
       setError(err.message);
       setIsLoading(false);
     }
-  };
+  }, [sortBy, sortOrder, search, difficultyFilter, categoryFilter]);
 
   // fetching user attempts
   const { currentUser } = useAuth();
   const [historyMap, setHistoryMap] = useState<Map<number, Attempt[]>>();
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     const response = await fetch(`http://localhost:5007/${currentUser?.uid}`, {
       method: "GET",
     });
@@ -92,15 +92,15 @@ export default function List() {
       attemptMap.set(questionAttempts.questionId, questionAttempts.attempts),
     );
     setHistoryMap(attemptMap);
-  };
+  }, [currentUser]);
 
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [fetchQuestions]);
 
   useEffect(() => {
     fetchHistory();
-  }, [currentUser]);
+  }, [fetchHistory]);
 
   if (error) return <div>Error loading questions: {error}</div>;
 

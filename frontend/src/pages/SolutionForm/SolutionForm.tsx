@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { TSolution } from "../../types/question";
 
 export default function SolutionForm() {
-  const languageOptions = ["python", "javascript"];
+  const languageOptions = useMemo(() => ["python", "javascript"], []);
 
   // fetch solution to edit
   const [searchParams] = useSearchParams();
@@ -12,7 +12,8 @@ export default function SolutionForm() {
   const [solutionToEdit, setSolutionToEdit] = useState<TSolution>();
   const [fetchError, setFetchError] = useState<string>("");
   const [isFetching, setIsFetching] = useState<boolean>(false);
-  const fetchSolution = async () => {
+
+  const fetchSolution = useCallback(async () => {
     setSolutionToEdit(undefined);
     setFetchError("");
     setIsFetching(true);
@@ -35,7 +36,7 @@ export default function SolutionForm() {
       setFetchError(err.message);
       setIsFetching(false);
     }
-  };
+  }, [solutionId]);
 
   // form fields
   const [title, setTitle] = useState<string>("");
@@ -91,7 +92,7 @@ export default function SolutionForm() {
     } else {
       setSolutionToEdit(undefined);
     }
-  }, [solutionId]);
+  }, [fetchSolution, solutionId]);
 
   useEffect(() => {
     if (solutionToEdit) {
@@ -107,7 +108,7 @@ export default function SolutionForm() {
       setCode("");
       setLanguage(languageOptions[0]);
     }
-  }, [solutionToEdit]);
+  }, [solutionToEdit, languageOptions]);
 
   // error handling
   if (Number.isNaN(questionId)) {
