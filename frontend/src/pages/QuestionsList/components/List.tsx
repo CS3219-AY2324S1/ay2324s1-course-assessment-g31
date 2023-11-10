@@ -5,6 +5,13 @@ import QuestionRow from "./QuestionRow";
 import { FilterSortContext } from "../../../context/FilterSortContext";
 import FilterSort from "./FilterSort";
 import PageSelector from "./PageSelector";
+import { useAuth } from "../../../context/AuthContext";
+import { Attempt } from "../../../types/history";
+
+interface IQuestionAttempts {
+  questionId: number;
+  attempts: Attempt[];
+}
 
 export default function List() {
   const MAX_PER_PAGE = 15;
@@ -51,11 +58,40 @@ export default function List() {
       setError(err.message);
       setIsLoading(false);
     }
-  }, [sortBy, sortOrder, searchFilter, difficultyFilter, categoryFilter]);
+  }, [
+    sortBy,
+    sortOrder,
+    searchFilter,
+    difficultyFilter,
+    categoryFilter,
+    currentPage,
+  ]);
+
+  const { currentUser } = useAuth();
+  const [historyMap, setHistoryMap] = useState<Map<number, Attempt[]>>();
+
+  const fetchHistory = useCallback(async () => {
+    const response = await fetch(`http://localhost:5007/${currentUser?.uid}`, {
+      method: "GET",
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw Error(data.error);
+    }
+    const attemptMap = new Map<number, Attempt[]>();
+    data.history.map((questionAttempts: IQuestionAttempts) =>
+      attemptMap.set(questionAttempts.questionId, questionAttempts.attempts),
+    );
+    setHistoryMap(attemptMap);
+  }, [currentUser]);
 
   useEffect(() => {
     fetchQuestions();
   }, [fetchQuestions]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
 
   if (error) return <div>Error loading questions: {error}</div>;
 
@@ -73,15 +109,18 @@ export default function List() {
             <th>Complexity</th>
             <th>Category</th>
             <th>Popularity</th>
+            <th>Attempts</th>
           </tr>
         </thead>
         <tbody>
           {questions?.map((question, index) => {
+            const attempts = historyMap?.get(question.id) || [];
             return (
               <QuestionRow
                 key={question.id}
                 question={question}
                 index={index}
+                numAttempts={attempts.length}
               />
             );
           })}

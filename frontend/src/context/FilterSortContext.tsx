@@ -1,4 +1,4 @@
-import React, { createContext, useState, useMemo } from "react";
+import React, { createContext, useState, useMemo, useCallback } from "react";
 
 interface IFilterSortContext {
   searchFilter: string;
@@ -45,30 +45,36 @@ export function FilterSortProvider({
   const [sortBy, setSortBy] = useState<string>(sortingFields[0]);
   const [sortOrder, setSortOrder] = useState<string>(sortingOptions[0]);
 
-  const updateDifficultyFilter = (difficulty: string) => {
-    if (difficultyFilter === difficulty) {
-      setDifficultyFilter("");
-    } else {
-      setDifficultyFilter(difficulty);
-    }
-  };
+  const updateDifficultyFilter = useCallback(
+    (difficulty: string) => {
+      if (difficultyFilter === difficulty) {
+        setDifficultyFilter("");
+      } else {
+        setDifficultyFilter(difficulty);
+      }
+    },
+    [difficultyFilter],
+  );
 
-  const updateCategoryFilter = (category: string) => {
-    if (categoryFilter.includes(category)) {
-      setCategoryFilter(categoryFilter.filter((cat) => cat !== category));
-    } else {
-      setCategoryFilter([...categoryFilter, category]);
-    }
-  };
+  const updateCategoryFilter = useCallback(
+    (category: string) => {
+      if (categoryFilter.includes(category)) {
+        setCategoryFilter(categoryFilter.filter((cat) => cat !== category));
+      } else {
+        setCategoryFilter([...categoryFilter, category]);
+      }
+    },
+    [categoryFilter],
+  );
 
-  const clearAllFilter = () => {
+  const clearAllFilter = useCallback(() => {
     setSearchFilter("");
     setDifficultyFilter("");
     setCategoryFilter([]);
-  };
+  }, []);
 
-  const value = useMemo(() => {
-    return {
+  const value = useMemo(
+    () => ({
       searchFilter,
       difficultyFilter,
       categoryFilter,
@@ -80,20 +86,21 @@ export function FilterSortProvider({
       clearAllFilter,
       setSortBy,
       setSortOrder,
-    };
-  }, [
-    searchFilter,
-    difficultyFilter,
-    categoryFilter,
-    sortBy,
-    sortOrder,
-    setSearchFilter,
-    updateDifficultyFilter,
-    updateCategoryFilter,
-    clearAllFilter,
-    setSortBy,
-    setSortOrder,
-  ]);
+    }),
+    [
+      searchFilter,
+      difficultyFilter,
+      categoryFilter,
+      sortBy,
+      sortOrder,
+      setSearchFilter,
+      updateDifficultyFilter,
+      updateCategoryFilter,
+      clearAllFilter,
+      setSortBy,
+      setSortOrder,
+    ],
+  );
 
   return (
     <FilterSortContext.Provider value={value}>

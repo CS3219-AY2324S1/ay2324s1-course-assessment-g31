@@ -4,9 +4,10 @@ import { Question } from "../../../types/question";
 interface IQuestionRowProps {
   question: Question;
   index: number;
+  numAttempts: number;
 }
 
-export default function QuestionRow({ question, index }: IQuestionRowProps) {
+export default function QuestionRow({ question, index, numAttempts, }: IQuestionRowProps) {
   const navigate = useNavigate();
 
   const handleSelect = () => {
@@ -36,6 +37,7 @@ export default function QuestionRow({ question, index }: IQuestionRowProps) {
         ))}
       </td>
       <td className="text-center">{question.popularity}</td>
+      <td>{numAttempts}</td>
     </tr>
   );
 }
