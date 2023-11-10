@@ -20,18 +20,13 @@ export const getQuestion = async (req: Request, res: Response) => {
       throw Error("invalid question id");
     }
     const question = await prisma.question.findUnique({
-      select: {
-        id: true,
-        title: true,
-        category: true,
-        difficulty: true,
-        description: true,
-        example: true,
-        constraint: true,
-        popularity: true,
-        solutions: true,
-      },
       where: { id: questionId },
+      include: {
+        solutions: true,
+        initialCodes: true,
+        runnerCodes: true,
+        testCases: true,
+      },
     });
     res.status(200).json(question);
   } catch (err: any) {
