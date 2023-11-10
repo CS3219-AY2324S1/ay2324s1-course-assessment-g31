@@ -4,14 +4,9 @@ import { Question } from "../../../types/question";
 interface IQuestionRowProps {
   question: Question;
   index: number;
-  numAttempts: number;
 }
 
-export default function QuestionRow({
-  question,
-  index,
-  numAttempts,
-}: IQuestionRowProps) {
+export default function QuestionRow({ question, index }: IQuestionRowProps) {
   const navigate = useNavigate();
 
   const handleSelect = () => {
@@ -32,14 +27,15 @@ export default function QuestionRow({
           {question.title}
         </span>
       </td>
-      <td>{question.difficulty}</td>
+      <td className="text-center font-bold">{question.difficulty}</td>
       <td className="flex flex-row gap-2">
         {question.category.sort().map((cat) => (
-          <span key={cat}>{cat}</span>
+          <span className="underline text-slate-600" key={cat}>
+            {cat}
+          </span>
         ))}
       </td>
-      <td>{question.popularity}</td>
-      <td>{numAttempts}</td>
+      <td className="text-center">{question.popularity}</td>
     </tr>
   );
 }

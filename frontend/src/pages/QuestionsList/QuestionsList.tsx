@@ -4,7 +4,7 @@ import { FilterSortProvider } from "../../context/FilterSortContext";
 
 export default function QuestionsList() {
   return (
-    <div className="mx-auto max-w-7xl px-6 lg:px-8 my-10">
+    <div className="mx-auto min-w-[800px] w-full max-w-7xl px-6 lg:px-8 my-10">
       <FilterSortProvider>
         <List />
       </FilterSortProvider>

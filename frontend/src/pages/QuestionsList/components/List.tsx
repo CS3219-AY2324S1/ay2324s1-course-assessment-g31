@@ -2,16 +2,9 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router";
 import { Question } from "../../../types/question";
 import QuestionRow from "./QuestionRow";
-import { Attempt } from "../../../types/history";
-import { useAuth } from "../../../context/AuthContext";
 import { FilterSortContext } from "../../../context/FilterSortContext";
 import FilterSort from "./FilterSort";
 import PageSelector from "./PageSelector";
-
-interface IQuestionAttempts {
-  questionId: number;
-  attempts: Attempt[];
-}
 
 export default function List() {
   const MAX_PER_PAGE = 15;
@@ -60,32 +53,9 @@ export default function List() {
     }
   };
 
-  // fetching user attempts
-  const { currentUser } = useAuth();
-  const [historyMap, setHistoryMap] = useState<Map<number, Attempt[]>>();
-
-  const fetchHistory = async () => {
-    const response = await fetch(`http://localhost:5007/${currentUser?.uid}`, {
-      method: "GET",
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw Error(data.error);
-    }
-    const attemptMap = new Map<number, Attempt[]>();
-    data.history.map((questionAttempts: IQuestionAttempts) =>
-      attemptMap.set(questionAttempts.questionId, questionAttempts.attempts),
-    );
-    setHistoryMap(attemptMap);
-  };
-
   useEffect(() => {
     fetchQuestions();
   }, [sortBy, sortOrder, currentPage]);
-
-  useEffect(() => {
-    fetchHistory();
-  }, [currentUser]);
 
   if (error) return <div>Error loading questions: {error}</div>;
 
@@ -95,7 +65,7 @@ export default function List() {
     <div className="flex flex-col justify-center items-center gap-5">
       <FilterSort handleSearch={fetchQuestions} />
 
-      <table className="border border-solid border-2 border-indigo-600 w-full">
+      <table className="border border-solid border-2 border-indigo-600 w-min-[500] w-full">
         <thead className="bg-indigo-600 text-white">
           <tr>
             <th>Id</th>
@@ -103,18 +73,15 @@ export default function List() {
             <th>Complexity</th>
             <th>Category</th>
             <th>Popularity</th>
-            <th>Attempts</th>
           </tr>
         </thead>
         <tbody>
           {questions?.map((question, index) => {
-            const attempts = historyMap?.get(question.id) || [];
             return (
               <QuestionRow
                 key={question.id}
                 question={question}
                 index={index}
-                numAttempts={attempts.length}
               />
             );
           })}
