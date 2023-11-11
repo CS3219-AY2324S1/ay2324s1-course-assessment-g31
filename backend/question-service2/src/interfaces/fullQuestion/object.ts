@@ -2,6 +2,8 @@ import { QuestionTestCase } from "@prisma/client";
 import { Question } from "../question/object";
 import { QuestionInitialCode } from "../questionInitialCode/object";
 import { QuestionRunnerCode } from "../questionRunnerCode/object";
+import { QuestionCategory } from "../questionCategory/object";
+import { QuestionSolution } from "../questionSolution/object";
 
 export type FullQuestion = Question & {
   initialCodes: QuestionInitialCode[];
@@ -9,6 +11,10 @@ export type FullQuestion = Question & {
   runnerCodes: QuestionRunnerCode[];
 } & {
   testCases: QuestionTestCase[];
+} & {
+  categories: QuestionCategory[];
+} & {
+  solutions: QuestionSolution[];
 };
 
 export type OptionalFullQuestion = Partial<FullQuestion>;

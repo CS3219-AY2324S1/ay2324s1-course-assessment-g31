@@ -13,7 +13,14 @@ class QuestionService
   constructor(private readonly prismaClient: PrismaClient) {}
 
   public async create(body: FullQuestionCreateDTO): Promise<FullQuestion> {
-    const { initialCodes, runnerCodes, testCases, ...rest } = body;
+    const {
+      initialCodes,
+      runnerCodes,
+      testCases,
+      categories,
+      solutions,
+      ...rest
+    } = body;
     try {
       const question = await this.prismaClient.question.create({
         data: {
@@ -27,11 +34,19 @@ class QuestionService
           testCases: {
             create: testCases,
           },
+          categories: {
+            create: categories,
+          },
+          solutions: {
+            create: solutions,
+          },
         },
         include: {
           initialCodes: true,
           runnerCodes: true,
           testCases: true,
+          categories: true,
+          solutions: true,
         },
       });
       return question;
@@ -55,6 +70,8 @@ class QuestionService
           initialCodes: true,
           runnerCodes: true,
           testCases: true,
+          categories: true,
+          solutions: true,
         },
       });
       return question;
@@ -72,6 +89,8 @@ class QuestionService
       initialCodes,
       runnerCodes,
       testCases,
+      categories,
+      solutions,
       ...rest
     } = body;
     try {
@@ -81,6 +100,8 @@ class QuestionService
           initialCodes: true,
           runnerCodes: true,
           testCases: true,
+          categories: true,
+          solutions: true,
         },
       });
       return question;
@@ -96,6 +117,8 @@ class QuestionService
           runnerCodes: true,
           initialCodes: true,
           testCases: true,
+          categories: true,
+          solutions: true,
         },
       });
       return questions;
@@ -109,7 +132,14 @@ class QuestionService
     body: Partial<FullQuestionUpdateDTO>,
   ): Promise<FullQuestion> {
     assert(id, "id should be defined in the question service update method");
-    const { initialCodes, runnerCodes, testCases, ...rest } = body;
+    const {
+      initialCodes,
+      runnerCodes,
+      testCases,
+      categories,
+      solutions,
+      ...rest
+    } = body;
 
     try {
       if (initialCodes) {
@@ -201,6 +231,54 @@ class QuestionService
       console.log(error);
     }
 
+    try {
+      if (categories) {
+        await this.prismaClient.questionCategory.deleteMany({
+          where: {
+            questionId: id,
+          },
+        });
+        for (let idx = 0; idx < categories.length; idx++) {
+          const element = categories[idx];
+          await this.prismaClient.questionCategory.upsert({
+            where: {
+              name_questionId: {
+                name: element.name,
+                questionId: id,
+              },
+            },
+            update: {
+              ...element,
+            },
+            create: {
+              ...element,
+              questionId: id,
+            },
+          });
+        }
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+
+    try {
+      if (solutions) {
+        for (let idx = 0; idx < solutions.length; idx++) {
+          const element = solutions[idx];
+          await this.prismaClient.questionSolution.update({
+            where: {
+              id: element.id,
+            },
+            data: {
+              ...element,
+            },
+          });
+        }
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+
     return await this.prismaClient.question.update({
       where: {
         id,
@@ -212,6 +290,8 @@ class QuestionService
         initialCodes: true,
         runnerCodes: true,
         testCases: true,
+        categories: true,
+        solutions: true,
       },
     });
   }
@@ -227,11 +307,26 @@ class QuestionService
           initialCodes: true,
           runnerCodes: true,
           testCases: true,
+          categories: true,
+          solutions: true,
         },
       });
     } catch (error) {
       throw new Error("Failed to delete question.");
     }
+  }
+
+  public async incrementPopularity(id: number) {
+    return await this.prismaClient.question.update({
+      where: {
+        id,
+      },
+      data: {
+        popularity: {
+          increment: 1,
+        },
+      },
+    });
   }
 }
 

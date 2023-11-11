@@ -26,7 +26,6 @@ class QuestionParser
         );
       }
     });
-
     input.initialCodes.forEach((x) => {
       if (!x.code || !x.language) {
         throw new Error(
@@ -38,6 +37,20 @@ class QuestionParser
       if (!x.code || !x.language) {
         throw new Error(
           "Required fields for question's runner code of code or language are missing",
+        );
+      }
+    });
+    input.solutions.forEach((x) => {
+      if (!x.code || !x.language || !x.description || !x.title) {
+        throw new Error(
+          "Required fields for question's solution of code or language or description or title are missing",
+        );
+      }
+    });
+    input.categories.forEach((x) => {
+      if (!x.name) {
+        throw new Error(
+          "Required fields for question's categories of name are missing",
         );
       }
     });
@@ -101,6 +114,18 @@ class QuestionParser
         questionId: parseInt(input.id!, 10),
       }));
     }
+    if (input.id && input.solutions) {
+      parsedInput.solutions = input.solutions.map((x) => ({
+        ...x,
+        questionId: parseInt(input.id!, 10),
+      }));
+    }
+    if (input.id && input.categories) {
+      parsedInput.categories = input.categories.map((x) => ({
+        ...x,
+        questionId: parseInt(input.id!, 10),
+      }));
+    }
     return parsedInput;
   }
 
@@ -119,6 +144,8 @@ class QuestionParser
       ...x,
       testCaseNumber: parseInt(x.testCaseNumber, 10),
     }));
+    parsedInput.solutions = input.solutions;
+    parsedInput.categories = input.categories;
     return parsedInput;
   }
 

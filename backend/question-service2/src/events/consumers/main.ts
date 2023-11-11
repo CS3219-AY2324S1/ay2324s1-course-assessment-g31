@@ -2,14 +2,21 @@ import { EachMessagePayload } from "kafkajs";
 
 import isInEnum from "../../util/isInEnum";
 import kafka from "../kafka";
+import CollaborationTopics from "../topics/collaboration";
 import QuestionTopics from "../topics/question";
 import { ConsumerFunction } from "./main.interface";
+import { matchingCreatedConsumer } from "./matchingCreated";
+import { sessionEndConsumer } from "./sessionEnd";
+import MatchingTopics from "../topics/matching";
 
-const SubscribedQuestionTopics: Map<string, ConsumerFunction> = new Map([]);
+const SubscribedQuestionTopics: Map<string, ConsumerFunction> = new Map([
+  [CollaborationTopics.ENDED.toString(), sessionEndConsumer],
+  [MatchingTopics.CREATE.toString(), matchingCreatedConsumer],
+]);
 
-const consumer = kafka.consumer({ groupId: "user-service" });
+const consumer = kafka.consumer({ groupId: "question-service" });
 
-const userEventConsumer = async () => {
+const questionEventConsumer = async () => {
   // first, we wait for the client to connect and subscribe to the given topic
   await consumer.connect();
 
@@ -31,4 +38,4 @@ const userEventConsumer = async () => {
   });
 };
 
-export default userEventConsumer;
+export default questionEventConsumer;

@@ -20,9 +20,12 @@ model Question {
     createdAt    DateTime              @default(now())
     updatedAt    DateTime              @updatedAt
     authorId     String
+    popularity   Int                   @default(0)
     initialCodes QuestionInitialCode[]
     runnerCodes  QuestionRunnerCode[]
     testCases    QuestionTestCase[]
+    categories   QuestionCategory[]
+    solutions    QuestionSolution[]
 }
 
 model QuestionInitialCode {
@@ -51,4 +54,22 @@ model QuestionTestCase {
     questionId     Int
 
     @@unique([testCaseNumber, questionId])
+}
+
+model QuestionCategory {
+    name       String
+    Question   Question @relation(fields: [questionId], references: [id])
+    questionId Int
+
+    @@unique([name, questionId])
+}
+
+model QuestionSolution {
+    id          String   @id @default(uuid())
+    title       String
+    description String
+    language    String
+    code        String
+    Question    Question @relation(fields: [questionId], references: [id])
+    questionId  Int
 }
