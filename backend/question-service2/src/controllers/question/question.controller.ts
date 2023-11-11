@@ -1,12 +1,14 @@
-import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
+import { Request, Response } from "express";
+import { validationResult } from "express-validator";
 
-import QuestionProducer from '../../events/producers/question/producer';
-import { QuestionUpdateDTO } from '../../interfaces/question/updateDTO';
-import QuestionParser from '../../parsers/question/question.parser';
-import QuestionService from '../../services/question/question.service';
-import Controller from '../controller.abstract';
-import CRUDController from '../crudController.interface';
+import QuestionProducer from "../../events/producers/question/producer";
+import { FullQuestion } from "../../interfaces/fullQuestion/object";
+import { Query } from "../../interfaces/query";
+import { QuestionUpdateDTO } from "../../interfaces/question/updateDTO";
+import QuestionParser from "../../parsers/question/question.parser";
+import QuestionService from "../../services/question/question.service";
+import Controller from "../controller.abstract";
+import CRUDController from "../crudController.interface";
 
 class QuestionController extends Controller implements CRUDController {
   constructor(
@@ -83,8 +85,10 @@ class QuestionController extends Controller implements CRUDController {
       return QuestionController.handleValidationError(res, errors);
     }
 
+    const query: Partial<Query<FullQuestion>> = req.query;
+
     try {
-      const questions = await this.service.findAll();
+      const questions = await this.service.findAll(query);
       return QuestionController.handleSuccess(res, questions);
     } catch (e: any) {
       return QuestionController.handleBadRequest(res, e.message);

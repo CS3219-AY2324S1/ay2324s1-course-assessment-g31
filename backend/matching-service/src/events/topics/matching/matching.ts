@@ -3,6 +3,7 @@ enum MatchingTopics {
   UPDATE = "matching-updated",
   DELETE = "matching-deleted",
   FAIL = "matching-failed",
+  FULFIL = "matching-fulfilled",
 }
 
 export default MatchingTopics;

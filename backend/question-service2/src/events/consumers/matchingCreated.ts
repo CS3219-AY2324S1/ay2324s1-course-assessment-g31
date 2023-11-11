@@ -25,12 +25,12 @@ export const matchingCreatedConsumer: ConsumerFunction = async (message) => {
         difficulty: matching.difficulty,
       });
 
-      if (!selectedQuestion) {
+      if (!selectedQuestion.data) {
         throw new Error(`No questions found at ${matching.difficulty}`);
       }
       fullQuestionEventProducer.fulfil({
         ...matching,
-        questionIdRequested: selectedQuestion.id,
+        questionIdRequested: selectedQuestion.data.id,
       });
     }
   }

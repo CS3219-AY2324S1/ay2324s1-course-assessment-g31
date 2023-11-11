@@ -1,11 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import assert from "assert";
 
+import { DataRecord } from "../../controllers/controller.abstract";
 import { FullQuestionCreateDTO } from "../../interfaces/fullQuestion/createDTO";
 import { FullQuestion } from "../../interfaces/fullQuestion/object";
 import { FullQuestionUpdateDTO } from "../../interfaces/fullQuestion/updateDTO";
+import { Query } from "../../interfaces/query";
 import Service from "../service.interface";
-import { DataRecord } from "../../controllers/controller.abstract";
 
 class QuestionService
   implements
@@ -125,9 +126,45 @@ class QuestionService
     }
   }
 
-  public async findAll(): Promise<DataRecord<FullQuestion[]>> {
+  public async findAll(
+    query: Partial<Query<FullQuestion>>,
+  ): Promise<DataRecord<FullQuestion[]>> {
     try {
       const questions = await this.prismaClient.question.findMany({
+        where: {
+          AND: [
+            query.difficulty ? { difficulty: query.difficulty.value } : {},
+            query.title
+              ? { title: { contains: query.title.value, mode: "insensitive" } }
+              : {},
+            query.categories
+              ? {
+                  categories: {
+                    some: {
+                      name: {
+                        in: query.categories.value.map((x) => x.name),
+                      },
+                    },
+                  },
+                }
+              : {},
+          ],
+        },
+        orderBy: [
+          query.title
+            ? {
+                title: query.title.order,
+              }
+            : {},
+          query.popularity
+            ? {
+                popularity: query.popularity.order,
+              }
+            : {},
+        ],
+        skip: query.offset ? parseInt(query.offset, 10) : 0,
+        take: query.limit ? parseInt(query.limit, 10) : 50,
+
         include: {
           runnerCodes: true,
           initialCodes: true,
