@@ -7,7 +7,11 @@ interface IQuestionRowProps {
   numAttempts: number;
 }
 
-export default function QuestionRow({ question, index, numAttempts, }: IQuestionRowProps) {
+export default function QuestionRow({
+  question,
+  index,
+  numAttempts,
+}: IQuestionRowProps) {
   const navigate = useNavigate();
 
   const handleSelect = () => {

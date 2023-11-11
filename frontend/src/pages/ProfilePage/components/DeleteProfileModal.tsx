@@ -8,10 +8,11 @@ import {
   ExclamationTriangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../../context/AuthContext";
+import UserController from "../../../controllers/user/user.controller";
 
 interface DeleteProfileModalProps {
   isOpen: boolean;
@@ -42,6 +43,8 @@ export default function DeleteProfileModal({
     console.log(password);
   };
 
+  const userController = useMemo(() => new UserController(), []);
+
   const handleDeleteAccount = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
@@ -56,17 +59,11 @@ export default function DeleteProfileModal({
         await reauthenticateWithCredential(currentUser, credential);
         // If reauthentication is successful, delete user from firebase
         await deleteTheUser();
-        const response = await fetch(
-          `http://localhost:5001/user-services/delete/${userId}`,
-          {
-            method: "DELETE",
-          },
-        );
+        const res = await userController.deleteUser(currentUser.uid);
 
-        if (!response.ok) {
+        if (res.status !== 200) {
           // Account deletion from psql failed
-          const data = await response.json();
-          console.error("Failed to delete account from psql:", data.message);
+          console.error("Failed to delete account from psql:", res.statusText);
         }
         navigate(`/`);
       }

@@ -1,4 +1,6 @@
-import { User, UserCreateDTO, UserUpdateDTO } from "../../interfaces/User";
+import { UserCreateDTO } from "../../interfaces/userService/createDTO";
+import { User } from "../../interfaces/userService/object";
+import { UserUpdateDTO } from "../../interfaces/userService/updateDTO";
 import GenericController from "../generic.controller";
 
 class UserController extends GenericController {
@@ -6,7 +8,7 @@ class UserController extends GenericController {
     super(
       window.location.hostname !== "localhost"
         ? "https://user-service-qzxsy455sq-as.a.run.app"
-        : "http://localhost:5001",
+        : "http://localhost:5008",
       "api",
     );
   }

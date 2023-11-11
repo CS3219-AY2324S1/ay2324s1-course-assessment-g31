@@ -1,16 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import DeleteProfileModal from "./DeleteProfileModal";
-import UpdateProfileModal from "./UpdateProfileModal";
-import styles from "./ProfileCard.module.css";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "../../../context/AuthContext";
+import UserController from "../../../controllers/user/user.controller";
+import DeleteProfileModal from "./DeleteProfileModal";
+import styles from "./ProfileCard.module.css";
+import UpdateProfileModal from "./UpdateProfileModal";
 
 export default function ProfileCard() {
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const userId = searchParams.get("userId");
   const navigate = useNavigate();
   const { logout, currentUser } = useAuth();
+
+  const userController = useMemo(() => new UserController(), []);
 
   const [profileData, setProfileData] = useState({
     username: "",
@@ -60,27 +61,27 @@ export default function ProfileCard() {
     try {
       // Check if firebase has this user
       if (currentUser !== null) {
-        const response = await fetch(
-          `http://localhost:5001/user-services/profile/${userId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
+        const res = await userController.getUser(currentUser.uid);
+        // const response = await fetch(
+        //   `http://localhost:5001/user-services/profile/${userId}`,
+        //   {
+        //     method: "GET",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //   },
+        // );
 
-        const data = await response.json();
+        // const data = await response.json();
 
-        if (!response.ok) {
-          console.error("Failed to fetch profile:", data.message);
+        if (!res || !res.data) {
+          console.error("Failed to fetch profile: ", res.statusText);
 
-          setMessage(`Error fetching profile data: ${data.message}`);
+          setMessage(`Error fetching profile data: ${res.statusText}`);
         } else {
-          console.log("Successfully fetched username: ", data);
+          console.log("Successfully fetched username: ", res.data.username);
           setProfileData({
-            ...profileData,
-            username: data.username,
+            username: res.data.username,
             email: currentUser.email ? currentUser.email : "",
           });
           setMessage("Profile fetched successfully");
@@ -94,7 +95,7 @@ export default function ProfileCard() {
       console.log("Error fetching profile data:", error.message);
       setMessage(`Error fetching profile data ${error.message}`);
     }
-  }, [currentUser, userId, profileData]);
+  }, [currentUser, userController]);
 
   useEffect(() => {
     fetchProfileData();
@@ -138,18 +139,22 @@ export default function ProfileCard() {
         </div>
         {message && <p>{message}</p>}
       </div>
-      <DeleteProfileModal
-        isOpen={isDeleteProfileModalOpen}
-        setOpen={setIsDeleteProfileModalOpen}
-        userId={userId}
-      />
-      <UpdateProfileModal
-        isOpen={isUpdateProfileModalOpen}
-        setOpen={setIsUpdateProfileModalOpen}
-        userId={userId}
-        emailProp={profileData.email}
-        usernameProp={profileData.username}
-      />
+      {currentUser && (
+        <>
+          <DeleteProfileModal
+            isOpen={isDeleteProfileModalOpen}
+            setOpen={setIsDeleteProfileModalOpen}
+            userId={currentUser.uid}
+          />
+          <UpdateProfileModal
+            isOpen={isUpdateProfileModalOpen}
+            setOpen={setIsUpdateProfileModalOpen}
+            userId={currentUser.uid}
+            emailProp={profileData.email}
+            usernameProp={profileData.username}
+          />
+        </>
+      )}
     </div>
   );
 }

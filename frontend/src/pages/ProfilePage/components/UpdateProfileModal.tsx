@@ -8,18 +8,19 @@ import {
   ExclamationTriangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { useAuth } from "../../../context/AuthContext";
 import classNames from "../../../util/ClassNames";
 import styles from "./UpdateProfileModal.module.css";
+import UserController from "../../../controllers/user/user.controller";
 
 interface UpdateProfileModalProps {
   isOpen: boolean;
   setOpen: (open: boolean) => void;
   //   onClose: (username: string, email: string) => void;
-  userId: string | null;
+  userId: string;
   emailProp: string | null;
   usernameProp: string | null;
 }
@@ -50,6 +51,8 @@ export default function UpdateProfileModal({
   const [newUsername, setNewUsername] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [passwordForChangeEmail, setPasswordForChangeEmail] = useState("");
+
+  const userController = useMemo(() => new UserController(), []);
 
   const resetAllFields = () => {
     setOldPassword("");
@@ -197,23 +200,13 @@ export default function UpdateProfileModal({
         return;
       }
 
-      const res = await fetch(
-        `http://localhost:5001/user-services/change-username/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            newUsername,
-          }),
-        },
-      );
+      const res = await userController.updateUser(userId, {
+        username: newUsername,
+      });
 
-      if (!res.ok) {
+      if (res.status !== 200) {
         // Username change failed
-        const data = await res.json();
-        console.error("Failed to change username:", data.message);
+        console.error("Failed to change username:", res.data);
         setMessage("Failed to change username, do try again");
         return;
       }
