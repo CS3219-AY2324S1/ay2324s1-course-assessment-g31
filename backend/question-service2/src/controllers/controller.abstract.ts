@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { Result, ValidationError } from "express-validator";
 import httpStatus from "http-status";
 
+export type DataRecord<U> = { data: U; count: number };
+
 abstract class Controller {
   protected static handleValidationError(
     res: Response,
@@ -13,7 +15,7 @@ abstract class Controller {
     });
   }
 
-  protected static handleSuccess(res: Response, data: any) {
+  protected static handleSuccess<T>(res: Response, data: DataRecord<T>) {
     return res.status(httpStatus.OK).json(data);
   }
 
@@ -39,7 +41,7 @@ abstract class Controller {
   }
 
   public healthCheck(_req: Request, res: Response) {
-    return Controller.handleSuccess(res, { message: "OK" });
+    return Controller.handleSuccess<string>(res, { data: "OK", count: 0 });
   }
 }
 

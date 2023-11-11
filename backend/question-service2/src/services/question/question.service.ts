@@ -5,6 +5,7 @@ import { FullQuestionCreateDTO } from "../../interfaces/fullQuestion/createDTO";
 import { FullQuestion } from "../../interfaces/fullQuestion/object";
 import { FullQuestionUpdateDTO } from "../../interfaces/fullQuestion/updateDTO";
 import Service from "../service.interface";
+import { DataRecord } from "../../controllers/controller.abstract";
 
 class QuestionService
   implements
@@ -12,7 +13,9 @@ class QuestionService
 {
   constructor(private readonly prismaClient: PrismaClient) {}
 
-  public async create(body: FullQuestionCreateDTO): Promise<FullQuestion> {
+  public async create(
+    body: FullQuestionCreateDTO,
+  ): Promise<DataRecord<FullQuestion>> {
     const {
       initialCodes,
       runnerCodes,
@@ -49,14 +52,18 @@ class QuestionService
           solutions: true,
         },
       });
-      return question;
+      const result: DataRecord<FullQuestion> = {
+        data: question,
+        count: 1,
+      };
+      return result;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to create question.");
     }
   }
 
-  public async findById(id: number): Promise<FullQuestion | null> {
+  public async findById(id: number): Promise<DataRecord<FullQuestion | null>> {
     assert(
       id,
       "id should be defined in the question service find by id method",
@@ -74,7 +81,11 @@ class QuestionService
           solutions: true,
         },
       });
-      return question;
+      const result: DataRecord<FullQuestion | null> = {
+        data: question,
+        count: Number(question === null),
+      };
+      return result;
     } catch (error) {
       throw new Error("Failed to find question.");
     }
@@ -82,7 +93,7 @@ class QuestionService
 
   public async findOne(
     body: Partial<FullQuestion>,
-  ): Promise<FullQuestion | null> {
+  ): Promise<DataRecord<FullQuestion | null>> {
     const {
       examples,
       constraints,
@@ -104,13 +115,17 @@ class QuestionService
           solutions: true,
         },
       });
-      return question;
+      const result: DataRecord<FullQuestion | null> = {
+        data: question,
+        count: Number(question === null),
+      };
+      return result;
     } catch (error) {
       throw new Error("Failed to find question.");
     }
   }
 
-  public async findAll(): Promise<FullQuestion[]> {
+  public async findAll(): Promise<DataRecord<FullQuestion[]>> {
     try {
       const questions = await this.prismaClient.question.findMany({
         include: {
@@ -121,7 +136,12 @@ class QuestionService
           solutions: true,
         },
       });
-      return questions;
+      const questionCount = await this.prismaClient.question.count();
+      const result: DataRecord<FullQuestion[]> = {
+        data: questions,
+        count: questionCount,
+      };
+      return result;
     } catch (error) {
       throw new Error("Failed to find questions.");
     }
@@ -130,7 +150,7 @@ class QuestionService
   public async update(
     id: number,
     body: Partial<FullQuestionUpdateDTO>,
-  ): Promise<FullQuestion> {
+  ): Promise<DataRecord<FullQuestion>> {
     assert(id, "id should be defined in the question service update method");
     const {
       initialCodes,
@@ -279,7 +299,7 @@ class QuestionService
       console.log(error);
     }
 
-    return await this.prismaClient.question.update({
+    const updatedQuestion = await this.prismaClient.question.update({
       where: {
         id,
       },
@@ -294,12 +314,19 @@ class QuestionService
         solutions: true,
       },
     });
+
+    const result: DataRecord<FullQuestion> = {
+      data: updatedQuestion,
+      count: 1,
+    };
+
+    return result;
   }
 
-  public async delete(id: number): Promise<FullQuestion> {
+  public async delete(id: number): Promise<DataRecord<FullQuestion>> {
     assert(id, "id should be defined in the question service delete method");
     try {
-      return await this.prismaClient.question.delete({
+      const deletedQuestion = await this.prismaClient.question.delete({
         where: {
           id,
         },
@@ -311,6 +338,12 @@ class QuestionService
           solutions: true,
         },
       });
+      const result: DataRecord<FullQuestion> = {
+        data: deletedQuestion,
+        count: 1,
+      };
+
+      return result;
     } catch (error) {
       throw new Error("Failed to delete question.");
     }
