@@ -3,5 +3,3 @@ export type QuestionInitialCode = {
   code: string;
   questionId: number;
 };
-
-export type OptionalQuestionInitialCode = Partial<QuestionInitialCode>;
