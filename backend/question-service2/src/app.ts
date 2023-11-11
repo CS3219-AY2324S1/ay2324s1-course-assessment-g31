@@ -48,6 +48,6 @@ app.use(bodyParser.json());
 app.use("/api/healthCheck", (_req, res) => {
   res.send("OK");
 });
-app.use("/api/question", questionRouter.registerRoutes());
+app.use("/api/questions", questionRouter.registerRoutes());
 
 export default app;

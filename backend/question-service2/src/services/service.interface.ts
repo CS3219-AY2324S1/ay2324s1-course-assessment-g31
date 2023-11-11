@@ -1,4 +1,4 @@
-import { DataRecord } from "../controllers/controller.abstract";
+import { DataRecord } from "../interfaces/dataRecord";
 import { Query } from "../interfaces/query";
 
 type ObjWithId = {

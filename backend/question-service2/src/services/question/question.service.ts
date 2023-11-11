@@ -1,12 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import assert from "assert";
 
-import { DataRecord } from "../../controllers/controller.abstract";
 import { FullQuestionCreateDTO } from "../../interfaces/fullQuestion/createDTO";
 import { FullQuestion } from "../../interfaces/fullQuestion/object";
 import { FullQuestionUpdateDTO } from "../../interfaces/fullQuestion/updateDTO";
 import { Query } from "../../interfaces/query";
 import Service from "../service.interface";
+import { DataRecord } from "../../interfaces/dataRecord";
 
 class QuestionService
   implements

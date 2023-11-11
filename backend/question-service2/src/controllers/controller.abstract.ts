@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { Result, ValidationError } from "express-validator";
 import httpStatus from "http-status";
-
-export type DataRecord<U> = { data: U; count: number };
+import { DataRecord } from "../interfaces/dataRecord";
 
 abstract class Controller {
   protected static handleValidationError(
