@@ -8,6 +8,5 @@ export type Question = {
   createdAt: Date;
   updatedAt: Date;
   authorId: string;
+  popularity: number;
 };
-
-export type OptionalQuestion = Partial<Question>;

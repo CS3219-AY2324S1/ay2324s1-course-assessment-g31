@@ -1,3 +1,4 @@
+import { DataRecord } from "../../interfaces/questionService/dataRecord";
 import { FullQuestionCreateDTO } from "../../interfaces/questionService/fullQuestion/createDTO";
 import { FullQuestion } from "../../interfaces/questionService/fullQuestion/object";
 import { FullQuestionUpdateDTO } from "../../interfaces/questionService/fullQuestion/updateDTO";
@@ -16,8 +17,8 @@ class QuestionController extends GenericController {
 
   public async createQuestion(data: FullQuestionCreateDTO) {
     try {
-      return await this.post<FullQuestion, FullQuestionCreateDTO>(
-        "question",
+      return await this.post<DataRecord<FullQuestion>, FullQuestionCreateDTO>(
+        "questions",
         data,
       );
     } catch (error) {
@@ -25,17 +26,17 @@ class QuestionController extends GenericController {
     }
   }
 
-  public async readQuestions() {
+  public async getQuestions() {
     try {
-      return await this.get<FullQuestion[]>("question");
+      return await this.get<DataRecord<FullQuestion[]>>("questions");
     } catch (error) {
       return null;
     }
   }
 
-  public async getQuestion(id: number) {
+  public async getQuestionById(id: number) {
     try {
-      return await this.get<FullQuestion>(`question/${id}`);
+      return await this.get<DataRecord<FullQuestion>>(`questions/${id}`);
     } catch (error) {
       return null;
     }
@@ -47,10 +48,10 @@ class QuestionController extends GenericController {
   ) {
     console.log(data);
     try {
-      return await this.put<FullQuestion, Partial<FullQuestionUpdateDTO>>(
-        `question/${id}`,
-        data,
-      );
+      return await this.put<
+        DataRecord<FullQuestion>,
+        Partial<FullQuestionUpdateDTO>
+      >(`questions/${id}`, data);
     } catch (error) {
       console.log("Client Question Controller Error", error);
       return null;
@@ -59,7 +60,7 @@ class QuestionController extends GenericController {
 
   public async deleteQuestion(id: number) {
     try {
-      return await this.delete(`question/${id}`);
+      return await this.delete<DataRecord<FullQuestion>>(`questions/${id}`);
     } catch (error) {
       return null;
     }
