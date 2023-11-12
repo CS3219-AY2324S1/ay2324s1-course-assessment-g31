@@ -58,7 +58,7 @@ function CreateQuestionForm() {
           type: "success",
           message: "Question data successfully created!",
         });
-        navigate(`/questions/${res.data.id}/edit`);
+        navigate(`/questions/${res.data.data.id}/edit`);
       }
     });
   }
