@@ -28,7 +28,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("User Disconnected", socket.id);
+    //console.log("User Disconnected", socket.id);
+    socket.disconnect();
   });
 });
 
@@ -36,3 +37,5 @@ const PORT = 9000;
 server.listen(PORT, () => {
   console.log(`SERVER RUNNING ON PORT ${PORT}`);
 });
+
+export { app, io, server }

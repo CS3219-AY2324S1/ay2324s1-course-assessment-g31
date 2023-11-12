@@ -18,8 +18,8 @@ function ChatRoomAdd({ matchingId, username }: ChatRoomAddProps) {
       }
     };
 
-    joinRoom(); // Automatically join the room when the component is mounted
-  }, [matchingId, username]); // Include matchingId, username in the dependency array
+    joinRoom();
+  }, [matchingId, username]);
 
   return (
     <div className="App">

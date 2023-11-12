@@ -7,7 +7,7 @@ import Question from "../../components/Question";
 import { useAuth } from "../../context/AuthContext";
 import { MatchingContext } from "../../context/MatchingContext";
 import { QuestionContext } from "../../context/QuestionContext";
-import ChatRoomAdd from "../../components/ChatRoomAdd";
+import ChatRoomAdd from "../../components/chat/ChatRoomAdd";
 
 export default function SingleQuestionPage() {
   const navigate = useNavigate();
