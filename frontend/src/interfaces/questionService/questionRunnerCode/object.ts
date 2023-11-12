@@ -4,3 +4,6 @@ export type QuestionRunnerCode = {
   questionId: number;
 };
 
+export type QuestionRunnerCodes = {
+  runnerCodes: QuestionRunnerCode[];
+};

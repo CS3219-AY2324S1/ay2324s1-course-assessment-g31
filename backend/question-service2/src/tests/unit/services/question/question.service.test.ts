@@ -13,7 +13,7 @@ describe("Test question service", () => {
   const expectedQuestion: FullQuestion = {
     id: 1,
     title: "New Question",
-    content: "This is the new question",
+    description: "This is the new question",
     authorId: "abc123",
     difficulty: "easy",
     examples: ["1,2,3"],
@@ -38,7 +38,7 @@ describe("Test question service", () => {
   test("Create Question, Valid Input To Prisma -> Return Object", async () => {
     const input: FullQuestionCreateDTO = {
       title: "New Question",
-      content: "This is the new question",
+      description: "This is the new question",
       authorId: "abc123",
       difficulty: "easy",
       examples: ["1,2,3"],
@@ -100,7 +100,7 @@ describe("Test question service", () => {
     const expectedQuestion2: FullQuestion = {
       id: 2,
       title: "New Question 2",
-      content: "This is the new question",
+      description: "This is the new question",
       authorId: "abc123",
       difficulty: "easy",
       examples: ["1,2,3"],
@@ -137,7 +137,7 @@ describe("Test question service", () => {
 
     const input: FullQuestionUpdateDTO = {
       title: "New Question",
-      content: "This is the new question",
+      description: "This is the new question",
       difficulty: "easy",
       examples: ["1,2,3"],
       constraints: ["No Constraints"],

@@ -6,7 +6,7 @@ import QuestionParser from "../../../../parsers/question/question.parser";
 
 const allFieldsInput: StringInterface<FullQuestionCreateDTO> = {
   title: "New Question",
-  content: "This is the new question",
+  description: "This is the new question",
   authorId: "abc123",
   difficulty: "easy",
   examples: ["1,2,3"],
@@ -49,10 +49,10 @@ describe("Test Question Parser Parse Create Input", () => {
     ).toThrow("Invalid Input");
   });
 
-  it("Parser - Parse Create Input: Missing content Input -> Throw Error", () => {
+  it("Parser - Parse Create Input: Missing description Input -> Throw Error", () => {
     const parser = new QuestionParser();
 
-    const { content, ...rest } = allFieldsInput;
+    const { description, ...rest } = allFieldsInput;
 
     expect(() =>
       parser.parseCreateInput(

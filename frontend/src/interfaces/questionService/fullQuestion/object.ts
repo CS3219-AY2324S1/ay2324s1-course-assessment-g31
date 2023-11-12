@@ -1,20 +1,13 @@
 import { Question } from "../question/object";
-import { QuestionInitialCode } from "../questionInitialCode/object";
-import { QuestionRunnerCode } from "../questionRunnerCode/object";
-import { QuestionCategory } from "../questionCategory/object";
-import { QuestionSolution } from "../questionSolution/object";
-import { QuestionTestCase } from "../questionTestCase/object";
+import { QuestionCategories } from "../questionCategory/object";
+import { QuestionInitialCodes } from "../questionInitialCode/object";
+import { QuestionRunnerCodes } from "../questionRunnerCode/object";
+import { QuestionSolutions } from "../questionSolution/object";
+import { QuestionTestCases } from "../questionTestCase/object";
 
-export type FullQuestion = Question & {
-  initialCodes: QuestionInitialCode[];
-} & {
-  runnerCodes: QuestionRunnerCode[];
-} & {
-  testCases: QuestionTestCase[];
-} & {
-  categories: QuestionCategory[];
-} & {
-  solutions: QuestionSolution[];
-};
-
-export type OptionalFullQuestion = Partial<FullQuestion>;
+export type FullQuestion = Question &
+  QuestionInitialCodes &
+  QuestionRunnerCodes &
+  QuestionTestCases &
+  QuestionCategories &
+  QuestionSolutions;

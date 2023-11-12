@@ -4,3 +4,7 @@ export type QuestionTestCase = {
   expectedOutput: string[];
   questionId: number;
 };
+
+export type QuestionTestCases = {
+  testCases: QuestionTestCase[];
+};

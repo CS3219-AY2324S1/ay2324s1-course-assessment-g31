@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, useEffect } from "react";
+import React, { ChangeEvent, useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -9,8 +9,10 @@ import {
   Question,
 } from "../../types/question";
 import styles from "./QuestionForm.module.css";
+import QuestionController from "../../controllers/question/question.controller";
 
 export default function QuestionForm() {
+  const questionController = useMemo(() => new QuestionController(), []);
   // fetching questionToEdit
   const [searchParams] = useSearchParams();
   const questionId = searchParams.get("id");
@@ -59,30 +61,28 @@ export default function QuestionForm() {
       }),
     );
     try {
-      const response = await fetch(
-        questionToEdit
-          ? `http://localhost:5003/question/${questionToEdit.id}`
-          : "http://localhost:5003/question",
-        {
-          method: questionToEdit ? "PATCH" : "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title,
-            difficulty: selectedDifficulty,
-            category: selectedCategory,
-            description,
-            example,
-            constraint,
-          }),
-        },
-      );
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw Error(data.error);
+      if (questionToEdit) {
+        const res = await questionController.updateQuestion(questionToEdit.id, {
+          title,
+          difficulty: selectedDifficulty,
+          categories: selectedCategory.map((x) => ({ name: x })),
+          description,
+          examples: [example],
+          constraints: [constraint],
+        });
+        console.log(res);
+      } else {
+        const res = await questionController.createQuestion({
+          title,
+          difficulty: selectedDifficulty,
+          categories: selectedCategory.map((x) => ({ name: x })),
+          description,
+          examples: [example],
+          constraints: [constraint],
+        });
+        console.log(res);
       }
+      // TODO: Handle Errors
       setIsSubmitting(false);
       // Success
       navigate("/questions");
@@ -96,15 +96,13 @@ export default function QuestionForm() {
     setFetchError(false);
     setIsFetching(true);
     try {
-      const response = await fetch(`http://localhost:5003/question/${id}`, {
-        method: "GET",
-      });
+      const res = await questionController.getQuestionById(id);
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw Error(data.error);
+      if (res.status !== 200) {
+        throw Error(res.statusText);
       } else {
-        setQuestionToEdit(data);
+        res;
+        setQuestionToEdit(res.data.data);
         setIsFetching(false);
       }
     } catch (err: any) {

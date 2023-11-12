@@ -11,7 +11,7 @@ const mockProducer = mockDeep<Producer>();
 const obj: FullQuestion = {
   id: 1,
   title: "New Question",
-  content: "This is the new question",
+  description: "This is the new question",
   authorId: "abc123",
   difficulty: "easy",
   examples: ["1,2,3"],

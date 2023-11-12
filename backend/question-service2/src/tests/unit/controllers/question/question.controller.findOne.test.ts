@@ -59,7 +59,7 @@ describe("Test question request controller", () => {
 
   const createInputAllFields: FullQuestionCreateDTO = {
     title: "Question 1",
-    content: "This is the question content",
+    description: "This is the question description",
     difficulty: "easy",
     examples: ["1,2,3 = 6"],
     constraints: ["No constraints"],
@@ -116,7 +116,7 @@ describe("Test question request controller", () => {
 
   const updateInputAllFields: FullQuestionUpdateDTO = {
     title: "Question 2",
-    content: "This is the question content edited",
+    description: "This is the question description edited",
     difficulty: "medium",
     examples: ["1,2,3 = 7"],
     constraints: ["Some constraints"],

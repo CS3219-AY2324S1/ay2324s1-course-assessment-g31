@@ -6,3 +6,7 @@ export type QuestionSolution = {
   code: string;
   questionId: number;
 };
+
+export type QuestionSolutions = {
+  solutions: QuestionSolution[];
+};

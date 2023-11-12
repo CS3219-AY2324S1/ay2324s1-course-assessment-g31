@@ -13,7 +13,7 @@ class QuestionParser
   ): FullQuestionCreateDTO {
     if (
       !input.title ||
-      !input.content ||
+      !input.description ||
       !input.authorId ||
       !input.difficulty
     ) {
@@ -80,8 +80,8 @@ class QuestionParser
     if (input.title) {
       parsedInput.title = input.title;
     }
-    if (input.content) {
-      parsedInput.content = input.content;
+    if (input.description) {
+      parsedInput.description = input.description;
     }
     if (input.authorId) {
       parsedInput.authorId = input.authorId;
@@ -134,7 +134,7 @@ class QuestionParser
   ): Partial<FullQuestionUpdateDTO> {
     const parsedInput: Partial<FullQuestionUpdateDTO> = {};
     parsedInput.title = input.title;
-    parsedInput.content = input.content;
+    parsedInput.description = input.description;
     parsedInput.difficulty = input.difficulty;
     parsedInput.examples = input.examples;
     parsedInput.constraints = input.constraints;

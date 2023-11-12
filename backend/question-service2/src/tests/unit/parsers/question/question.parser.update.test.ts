@@ -6,7 +6,7 @@ import QuestionParser from "../../../../parsers/question/question.parser";
 
 const allFieldsInput: StringInterface<FullQuestionUpdateDTO> = {
   title: "New Question",
-  content: "This is the new question",
+  description: "This is the new question",
   difficulty: "easy",
   examples: ["1,2,3"],
   constraints: ["No Constraints"],

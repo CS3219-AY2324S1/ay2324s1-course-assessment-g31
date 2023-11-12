@@ -1,8 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Question } from "../../../types/question";
 import Solutions from "./Solutions";
 import QuestionNew from "../../../components/QuestionNew";
+import QuestionController from "../../../controllers/question/question.controller";
 
 export default function QuestionAndSolution() {
   const { id: questionId } = useParams();
@@ -13,6 +14,8 @@ export default function QuestionAndSolution() {
   // either view solutions question
   const [isViewSolution, setIsViewSolution] = useState<boolean>(false);
 
+  const questionController = useMemo(() => new QuestionController(), []);
+
   const navigate = useNavigate();
   const handleEditQuesiton = () => {
     navigate(`/questions/form/?id=${question?.id}`);
@@ -21,18 +24,15 @@ export default function QuestionAndSolution() {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const handleDeleteQuestion = async () => {
     setIsDeleting(true);
-    if (window.confirm("Are you sure you want to delete this question")) {
+    if (
+      question &&
+      window.confirm("Are you sure you want to delete this question")
+    ) {
       try {
-        const response = await fetch(
-          `http://localhost:5003/question/${question?.id}`,
-          {
-            method: "DELETE",
-          },
-        );
+        const res = await questionController.deleteQuestion(question.id);
 
-        const data = await response.json();
-        if (!response.ok) {
-          throw Error(data.error);
+        if (res.status !== 200) {
+          throw Error(res.data.data);
         } else {
           setIsDeleting(false);
           navigate("/questions");

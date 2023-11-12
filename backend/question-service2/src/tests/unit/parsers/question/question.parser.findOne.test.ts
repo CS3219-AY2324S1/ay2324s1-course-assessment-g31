@@ -41,15 +41,15 @@ describe("Test Question Parser Parse Find One Input", () => {
     expect(parser.parseFindOneInput(input)).toEqual(expectedOutput);
   });
 
-  it("Parser - Parse Find One Input: Valid content Input -> Parsed content Input", () => {
+  it("Parser - Parse Find One Input: Valid description Input -> Parsed description Input", () => {
     const parser = new QuestionParser();
 
     const input: Partial<StringInterface<FullQuestion>> = {
-      content: "content",
+      description: "description",
     };
 
     const expectedOutput: Partial<FullQuestion> = {
-      content: "content",
+      description: "description",
     };
 
     expect(parser.parseFindOneInput(input)).toEqual(expectedOutput);

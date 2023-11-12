@@ -3,3 +3,7 @@ export type QuestionInitialCode = {
   code: string;
   questionId: number;
 };
+
+export type QuestionInitialCodes = {
+  initialCodes: QuestionInitialCode[];
+};

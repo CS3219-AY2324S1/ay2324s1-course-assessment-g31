@@ -5,3 +5,7 @@ export type QuestionSolutionUpdateDTO = {
   language: string;
   code: string;
 };
+
+export type QuestionSolutionUpdateDTOs = {
+  solutions: QuestionSolutionUpdateDTO[];
+};

@@ -1,7 +1,7 @@
 export type Question = {
   id: number;
   title: string;
-  content: string;
+  description: string;
   difficulty: string;
   examples: string[];
   constraints: string[];

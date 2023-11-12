@@ -7,12 +7,12 @@ const createQuestionSchema = {
       errorMessage: "Title should be a string.",
     },
   },
-  content: {
+  description: {
     exists: {
-      errorMessage: "Content is required.",
+      errorMessage: "description is required.",
     },
     isString: {
-      errorMessage: "Content should be a string.",
+      errorMessage: "description should be a string.",
     },
   },
   authorId: {

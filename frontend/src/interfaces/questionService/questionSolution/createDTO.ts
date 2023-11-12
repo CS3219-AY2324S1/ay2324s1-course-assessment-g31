@@ -4,3 +4,7 @@ export type QuestionSolutionCreateDTO = {
   language: string;
   code: string;
 };
+
+export type QuestionSolutionCreateDTOs = {
+  solutions: QuestionSolutionCreateDTO[];
+};

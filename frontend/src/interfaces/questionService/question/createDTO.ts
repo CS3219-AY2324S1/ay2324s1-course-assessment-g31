@@ -1,6 +1,6 @@
 export type QuestionCreateDTO = {
   title: string;
-  content: string;
+  description: string;
   difficulty: string;
   examples: string[];
   constraints: string[];
