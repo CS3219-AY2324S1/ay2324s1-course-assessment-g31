@@ -18,6 +18,7 @@ import {
 } from "@firebase/auth";
 import database from "./FirebaseConfig";
 import LoadingPage from "../pages/LoadingPage/LoadingPage";
+import UserController from "../controllers/user/user.controller";
 
 interface AuthContextType {
   currentUser: User | null;
@@ -54,6 +55,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentRole, setCurrentRole] = useState<string>("user");
+  const userController = useMemo(() => new UserController(), []);
 
   const signUp = useCallback(
     (email: string, password: string) =>
@@ -96,26 +98,49 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [currentUser],
   );
 
+  // async function getUserRole(user: User): Promise<string> {
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:3000/user-services/userRole/${user.uid}`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       },
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       console.error("Failed to fetch role:", data.message);
+  //       return "user";
+  //     }
+  //     console.log("Successfully fetched role: ", data.user_role);
+  //     return data.user_role;
+  //   } catch (error: any) {
+  //     console.log("Error fetching profile data:", error.message);
+  //     return "user";
+  //   }
+  // }
+
   async function getUserRole(user: User): Promise<string> {
     try {
-      const response = await fetch(
-        `http://localhost:3000/user-services/userRole/${user.uid}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.error("Failed to fetch role:", data.message);
-        return "user";
+      // Check if firebase has this user
+      if (user !== null) {
+        const res = await userController.getUser(user.uid);
+        if (!res || !res.data) {
+          console.error("Failed to fetch role: ", res.statusText);
+        } else {
+          console.log("Successfully fetched role: ", res.data.roles.length);
+          if (res.data.roles.length > 1) {
+            return "admin";
+          }
+        }
+      } else {
+        console.log("Current user is not defined");
       }
-      console.log("Successfully fetched role: ", data.user_role);
-      return data.user_role;
+      return "user";
     } catch (error: any) {
       console.log("Error fetching profile data:", error.message);
       return "user";
@@ -135,7 +160,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(false);
     });
     return unsubscribe;
-  }, []);
+  });
 
   const value = useMemo(
     () => ({
