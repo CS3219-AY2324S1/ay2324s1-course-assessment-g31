@@ -2,7 +2,8 @@ import { DataRecord } from "../../interfaces/questionService/dataRecord";
 import { FullQuestionCreateDTO } from "../../interfaces/questionService/fullQuestion/createDTO";
 import { FullQuestion } from "../../interfaces/questionService/fullQuestion/object";
 import { FullQuestionUpdateDTO } from "../../interfaces/questionService/fullQuestion/updateDTO";
-import GenericController from "../generic.controller";
+import { Query } from "../../interfaces/questionService/query";
+import GenericController, { ControllerParamsHeaders } from "../generic.controller";
 
 const devServerUri = "http://localhost:5003";
 const prodServerUri = "https://question-service-qzxsy455sq-as.a.run.app";
@@ -44,12 +45,18 @@ class QuestionController extends GenericController {
     }
   }
 
-  public async getQuestions(): Promise<
+  public async getQuestions(query: Partial<Query<FullQuestion>>): Promise<
     ControllerResponse<DataRecord<FullQuestion[]>>
   > {
+    const paramsHeader: ControllerParamsHeaders = {
+        params: {
+            query
+        }
+    }
     const res =
       await this.get<ControllerResponse<DataRecord<FullQuestion[]>>>(
         "questions",
+        paramsHeader
       );
     if (res.data.success && res.data.data) {
       const result: ControllerResponse<DataRecord<FullQuestion[]>> = {

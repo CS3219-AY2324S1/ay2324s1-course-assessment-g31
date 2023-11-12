@@ -1,14 +1,15 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { useNavigate, useParams } from "react-router";
-import { Question } from "../../../types/question";
-import Solutions from "./Solutions";
-import QuestionNew from "../../../components/QuestionNew";
-import QuestionController from "../../../controllers/question/question.controller";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
+
+import QuestionNew from '../../../components/QuestionNew';
+import QuestionController from '../../../controllers/question/question.controller';
+import { FullQuestion } from '../../../interfaces/questionService/fullQuestion/object';
+import Solutions from './Solutions';
 
 export default function QuestionAndSolution() {
   const { id: questionId } = useParams();
 
-  const [question, setQuestion] = useState<Question>();
+  const [question, setQuestion] = useState<FullQuestion>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   // either view solutions question
@@ -31,8 +32,8 @@ export default function QuestionAndSolution() {
       try {
         const res = await questionController.deleteQuestion(question.id);
 
-        if (res.status !== 200) {
-          throw Error(res.data.data);
+        if (!res.success) {
+          throw Error(res.errors[0]);
         } else {
           setIsDeleting(false);
           navigate("/questions");
@@ -48,24 +49,20 @@ export default function QuestionAndSolution() {
     setQuestion(undefined);
     setError("");
     setIsLoading(true);
+    if(questionId) {
     try {
-      const response = await fetch(
-        `http://localhost:5003/question/${questionId}`,
-        {
-          method: "GET",
-        },
-      );
-      const data = await response.json();
-      if (!response.ok) {
-        throw Error(data.error);
-      } else {
-        setQuestion(data);
-        setIsLoading(false);
-      }
+        const res = await questionController.getQuestionById(parseInt(questionId));
+        if(res.success && res.data) {
+            setQuestion(res.data.data);
+            setIsLoading(false)
+        } else {
+            throw Error(res.errors[0])
+        }
     } catch (err: any) {
       setError(err.message);
       setIsLoading(false);
     }
+}
   }, [questionId]);
 
   useEffect(() => {
