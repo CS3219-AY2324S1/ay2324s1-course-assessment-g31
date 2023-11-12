@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 
-import QuestionNew from '../../../components/QuestionNew';
-import QuestionController from '../../../controllers/question/question.controller';
-import { FullQuestion } from '../../../interfaces/questionService/fullQuestion/object';
-import Solutions from './Solutions';
+import QuestionNew from "../../../components/QuestionNew";
+import QuestionController from "../../../controllers/question/question.controller";
+import { FullQuestion } from "../../../interfaces/questionService/fullQuestion/object";
+import Solutions from "./Solutions";
 
 export default function QuestionAndSolution() {
   const { id: questionId } = useParams();
@@ -49,21 +49,23 @@ export default function QuestionAndSolution() {
     setQuestion(undefined);
     setError("");
     setIsLoading(true);
-    if(questionId) {
-    try {
-        const res = await questionController.getQuestionById(parseInt(questionId));
-        if(res.success && res.data) {
-            setQuestion(res.data.data);
-            setIsLoading(false)
+    if (questionId) {
+      try {
+        const res = await questionController.getQuestionById(
+          parseInt(questionId, 10),
+        );
+        if (res.success && res.data) {
+          setQuestion(res.data.data);
+          setIsLoading(false);
         } else {
-            throw Error(res.errors[0])
+          throw Error(res.errors[0]);
         }
-    } catch (err: any) {
-      setError(err.message);
-      setIsLoading(false);
+      } catch (err: any) {
+        setError(err.message);
+        setIsLoading(false);
+      }
     }
-}
-  }, [questionId]);
+  }, [questionId, questionController]);
 
   useEffect(() => {
     fetchQuestion();

@@ -7,6 +7,7 @@ import { FullQuestionCreateDTO } from "../interfaces/questionService/fullQuestio
 import ComponentContainer from "./container/Component";
 import { NotificationContext } from "../context/NotificationContext";
 import { useAuth } from "../context/AuthContext";
+import { QuestionCategory } from "../interfaces/questionService/questionCategory/object";
 
 type questionExample = {
   number: number;
@@ -25,6 +26,9 @@ function CreateQuestionForm() {
   const [title, setTitle] = useState<string>("");
   const [difficulty, setDifficulty] = useState<string>("Easy");
   const [description, setDescription] = useState<string>("");
+  const [categories, setCategories] = useState<QuestionCategory[]>(
+    [] as unknown as QuestionCategory[],
+  );
   const [examples, setExamples] = useState<questionExample[]>(
     [] as unknown as questionExample[],
   );
@@ -38,13 +42,15 @@ function CreateQuestionForm() {
     const createDTO: FullQuestionCreateDTO = {
       title,
       difficulty,
-      content: description,
+      description,
+      categories: categories,
       examples: examples.map((x) => x.text),
       constraints: constraints.map((x) => x.text),
-      authorId: currentUser.id,
+      authorId: currentUser.uid,
       initialCodes: [],
       runnerCodes: [],
       testCases: [],
+      solutions: []
     };
     controller.createQuestion(createDTO).then((res) => {
       if (res && res.data) {

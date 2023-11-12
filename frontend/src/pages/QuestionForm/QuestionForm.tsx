@@ -2,31 +2,33 @@ import React, { ChangeEvent, useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
 import {
-  Category,
-  CategoryMap,
+  Categories,
+  CategoriesMap,
   Difficulties,
   Difficulty,
   Question,
 } from "../../types/question";
 import styles from "./QuestionForm.module.css";
 import QuestionController from "../../controllers/question/question.controller";
+import { FullQuestion } from "../../interfaces/questionService/fullQuestion/object";
+import { QuestionCategory } from "../../interfaces/questionService/questionCategory/object";
 
 export default function QuestionForm() {
   const questionController = useMemo(() => new QuestionController(), []);
   // fetching questionToEdit
   const [searchParams] = useSearchParams();
   const questionId = searchParams.get("id");
-  const [questionToEdit, setQuestionToEdit] = useState<Question>();
+  const [questionToEdit, setQuestionToEdit] = useState<FullQuestion>();
   const [fetchError, setFetchError] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   // Form fields
   const [title, setTitle] = useState<string>("");
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>(
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>(
     Difficulties[0],
   );
   const [description, setDescription] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState<Category[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<QuestionCategory[]>([]);
   const [example, setExample] = useState<string>("");
   const [constraint, setConstraint] = useState<string>("");
 
@@ -36,13 +38,13 @@ export default function QuestionForm() {
   const navigate = useNavigate();
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedValue = event.target.value as Category;
-    if (selectedCategory.includes(selectedValue)) {
-      setSelectedCategory(
-        selectedCategory.filter((value) => value !== selectedValue),
+    const selectedValue = event.target.value
+    if (selectedCategories.map(x=>x.name).includes(selectedValue)) {
+      setSelectedCategories(
+        selectedCategories.filter((value) => value.name !== selectedValue),
       );
     } else {
-      setSelectedCategory([...selectedCategory, selectedValue]);
+      setSelectedCategories([...selectedCategories, {name: selectedValue,questionId: parseInt(questionId!,10)}]);
     }
   };
 
@@ -54,7 +56,7 @@ export default function QuestionForm() {
       JSON.stringify({
         title,
         difficulty: selectedDifficulty,
-        category: selectedCategory,
+        categories: selectedCategories,
         description,
         example,
         constraint,
@@ -65,7 +67,7 @@ export default function QuestionForm() {
         const res = await questionController.updateQuestion(questionToEdit.id, {
           title,
           difficulty: selectedDifficulty,
-          categories: selectedCategory.map((x) => ({ name: x })),
+          categories: selectedCategories,
           description,
           examples: [example],
           constraints: [constraint],
@@ -75,10 +77,15 @@ export default function QuestionForm() {
         const res = await questionController.createQuestion({
           title,
           difficulty: selectedDifficulty,
-          categories: selectedCategory.map((x) => ({ name: x })),
+          categories: selectedCategories,
           description,
           examples: [example],
           constraints: [constraint],
+          authorId:'abc123',
+          initialCodes: [],
+          runnerCodes: [],
+          testCases: [],
+          solutions: []
         });
         console.log(res);
       }
@@ -98,12 +105,13 @@ export default function QuestionForm() {
     try {
       const res = await questionController.getQuestionById(id);
 
-      if (res.status !== 200) {
-        throw Error(res.statusText);
-      } else {
-        res;
+      if (res.success && res.data) {
         setQuestionToEdit(res.data.data);
         setIsFetching(false);
+
+      } else {
+        throw Error(res.errors[0]);
+
       }
     } catch (err: any) {
       setFetchError(true);
@@ -129,7 +137,7 @@ export default function QuestionForm() {
       // prefill form with question to edit
       setTitle(questionToEdit.title);
       setSelectedDifficulty(questionToEdit.difficulty);
-      setSelectedCategory([...questionToEdit.category]);
+      setSelectedCategories([...questionToEdit.categories]);
       setDescription(questionToEdit.description);
       setExample(questionToEdit.example);
       setConstraint(questionToEdit.constraint);
@@ -137,7 +145,7 @@ export default function QuestionForm() {
       // return to default
       setTitle("");
       setSelectedDifficulty(Difficulties[0]);
-      setSelectedCategory([]);
+      setSelectedCategories([]);
       setDescription("");
       setExample("");
       setConstraint("");
@@ -180,18 +188,18 @@ export default function QuestionForm() {
             </div>
           ))}
         </div>
-        <span>Category:</span>
-        <div className={styles.categoryContainer}>
-          {Object.values(CategoryMap).map((category) => (
-            <div key={category}>
+        <span>Categories:</span>
+        <div className={styles.categoriesContainer}>
+          {Object.values(CategoriesMap).map((categories) => (
+            <div key={categories}>
               <input
                 type="checkbox"
-                id={category}
-                value={category}
+                id={categories}
+                value={categories}
                 onChange={handleCheckboxChange}
-                checked={selectedCategory.includes(category)}
+                checked={selectedCategories.includes(categories)}
               />
-              <label htmlFor={category}>{category}</label>
+              <label htmlFor={categories}>{categories}</label>
             </div>
           ))}
         </div>

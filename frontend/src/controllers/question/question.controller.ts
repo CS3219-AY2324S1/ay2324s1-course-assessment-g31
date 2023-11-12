@@ -3,7 +3,9 @@ import { FullQuestionCreateDTO } from "../../interfaces/questionService/fullQues
 import { FullQuestion } from "../../interfaces/questionService/fullQuestion/object";
 import { FullQuestionUpdateDTO } from "../../interfaces/questionService/fullQuestion/updateDTO";
 import { Query } from "../../interfaces/questionService/query";
-import GenericController, { ControllerParamsHeaders } from "../generic.controller";
+import GenericController, {
+  ControllerParamsHeaders,
+} from "../generic.controller";
 
 const devServerUri = "http://localhost:5003";
 const prodServerUri = "https://question-service-qzxsy455sq-as.a.run.app";
@@ -36,28 +38,26 @@ class QuestionController extends GenericController {
         data: res.data.data,
       };
       return result;
-    } else {
-      const result: ControllerResponse<DataRecord<FullQuestion>> = {
-        success: false,
-        errors: res.data.errors,
-      };
-      return result;
     }
+    const result: ControllerResponse<DataRecord<FullQuestion>> = {
+      success: false,
+      errors: res.data.errors,
+    };
+    return result;
   }
 
-  public async getQuestions(query: Partial<Query<FullQuestion>>): Promise<
-    ControllerResponse<DataRecord<FullQuestion[]>>
-  > {
+  public async getQuestions(
+    query: Partial<Query<FullQuestion>>,
+  ): Promise<ControllerResponse<DataRecord<FullQuestion[]>>> {
     const paramsHeader: ControllerParamsHeaders = {
-        params: {
-            query
-        }
-    }
-    const res =
-      await this.get<ControllerResponse<DataRecord<FullQuestion[]>>>(
-        "questions",
-        paramsHeader
-      );
+      params: {
+        query,
+      },
+    };
+    const res = await this.get<ControllerResponse<DataRecord<FullQuestion[]>>>(
+      "questions",
+      paramsHeader,
+    );
     if (res.data.success && res.data.data) {
       const result: ControllerResponse<DataRecord<FullQuestion[]>> = {
         success: true,
@@ -65,13 +65,12 @@ class QuestionController extends GenericController {
         data: res.data.data,
       };
       return result;
-    } else {
-      const result: ControllerResponse<DataRecord<FullQuestion[]>> = {
-        success: false,
-        errors: res.data.errors,
-      };
-      return result;
     }
+    const result: ControllerResponse<DataRecord<FullQuestion[]>> = {
+      success: false,
+      errors: res.data.errors,
+    };
+    return result;
   }
 
   public async getQuestionById(
@@ -87,13 +86,12 @@ class QuestionController extends GenericController {
         data: res.data.data,
       };
       return result;
-    } else {
-      const result: ControllerResponse<DataRecord<FullQuestion>> = {
-        success: false,
-        errors: res.data.errors,
-      };
-      return result;
     }
+    const result: ControllerResponse<DataRecord<FullQuestion>> = {
+      success: false,
+      errors: res.data.errors,
+    };
+    return result;
   }
 
   public async updateQuestion(
@@ -111,13 +109,12 @@ class QuestionController extends GenericController {
         data: res.data.data,
       };
       return result;
-    } else {
-      const result: ControllerResponse<DataRecord<FullQuestion>> = {
-        success: false,
-        errors: res.data.errors,
-      };
-      return result;
     }
+    const result: ControllerResponse<DataRecord<FullQuestion>> = {
+      success: false,
+      errors: res.data.errors,
+    };
+    return result;
   }
 
   public async deleteQuestion(id: number) {
@@ -131,13 +128,12 @@ class QuestionController extends GenericController {
         data: res.data.data,
       };
       return result;
-    } else {
-      const result: ControllerResponse<DataRecord<FullQuestion>> = {
-        success: false,
-        errors: res.data.errors,
-      };
-      return result;
     }
+    const result: ControllerResponse<DataRecord<FullQuestion>> = {
+      success: false,
+      errors: res.data.errors,
+    };
+    return result;
   }
 }
 

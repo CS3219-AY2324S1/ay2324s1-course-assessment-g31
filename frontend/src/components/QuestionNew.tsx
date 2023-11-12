@@ -1,10 +1,10 @@
-import { Disclosure } from '@headlessui/react';
-import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
-import parse from 'html-react-parser';
-import React from 'react';
+import { Disclosure } from "@headlessui/react";
+import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import parse from "html-react-parser";
+import React from "react";
 
-import { FullQuestion } from '../interfaces/questionService/fullQuestion/object';
-import classNames from '../util/ClassNames';
+import { FullQuestion } from "../interfaces/questionService/fullQuestion/object";
+import classNames from "../util/ClassNames";
 
 interface IQuestionProps {
   question: FullQuestion;
@@ -28,7 +28,10 @@ function QuestionNew({ question }: IQuestionProps) {
         <h2 className="sr-only">Category</h2>
         <div className="flex flex-row gap-3">
           {question.categories.map((category) => (
-            <div key={`${category.name}-${category.questionId}`} className="text-gray-700 underline">
+            <div
+              key={`${category.name}-${category.questionId}`}
+              className="text-gray-700 underline"
+            >
               {parse(category.name)}
             </div>
           ))}
