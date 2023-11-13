@@ -18,13 +18,13 @@ function SignInPage() {
 
   const [wrongPasswordFlag, setWrongPasswordFlag] = useState<boolean>(false);
   const [noUserFlag, setNoUserFlag] = useState<boolean>(false);
+  
   const [noUserOrWrongPasswordFlag, setNoUserOrWrongPasswordFlag] =
     useState<boolean>(false);
   // const userController = new UserController();
   // const { addNotification } = useContext(NotificationContext);
   const navigate = useNavigate();
   const { login } = useAuth();
-
   const handleSubmit = async () => {
     console.log("Form submitted with data");
     setLoading(true);
