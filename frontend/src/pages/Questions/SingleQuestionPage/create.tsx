@@ -1,5 +1,5 @@
-import PageContainer from "../../components/container/Page";
-import CreateQuestionForm from "../../components/CreateQuestionForm";
+import PageContainer from "../../../components/container/Page";
+import CreateQuestionForm from "../../../components/CreateQuestionForm";
 
 export default function CreateSingleQuestionPage() {
   return (

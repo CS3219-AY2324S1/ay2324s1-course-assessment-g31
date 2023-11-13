@@ -16,6 +16,7 @@ import { QuestionUpdateDTO } from "../interfaces/questionService/question/update
 import { NotificationContext } from "./NotificationContext";
 import QuestionController from "../controllers/question/question.controller";
 import { encode64, decode64 } from "../util/base64";
+import { Query } from "../interfaces/questionService/query";
 
 export type CodingLanguage = keyof typeof langs;
 
@@ -56,6 +57,7 @@ interface QuestionContextType {
   saveNewRunnerCode: (lang: string, newCode: string) => void;
   saveNewTestCases: (testCases: QuestionTestCase[]) => void;
   updateQuestionData: (questionData: QuestionUpdateDTO) => void;
+  setQuestionQuery: (query: Partial<Query<FullQuestion>>) => void;
 }
 
 export const QuestionContext = createContext<QuestionContextType>({
@@ -73,6 +75,7 @@ export const QuestionContext = createContext<QuestionContextType>({
   saveNewRunnerCode: (_lang: string, _newCode: string) => {},
   saveNewTestCases: (_testCases: QuestionTestCase[]) => {},
   updateQuestionData: (_questionData: QuestionUpdateDTO) => {},
+  setQuestionQuery: (_query: Partial<Query<FullQuestion>>) => {},
 });
 
 export function QuestionProvider({ children }: QuestionProviderProps) {
@@ -92,15 +95,16 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
   const [runnerCode, setRunnerCode] = useState<string>(defaultRunnerCode);
   const [questionId, setQuestionId] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [questionQuery, setQuestionQuery] = useState<Partial<Query<FullQuestion>>>({});
 
   const controller = useMemo(() => new QuestionController(), []);
 
   const loadQuestions = useCallback(async () => {
-    const res = await controller.readQuestions();
+    const res = await controller.getQuestions(questionQuery);
     if (res && res.data) {
-      setQuestions(res.data);
+      setQuestions(res.data.data);
     }
-  }, [controller]);
+  }, [controller, questionQuery]);
 
   const saveNewInitialCode = useCallback(
     async (lang: string, newCode: string) => {
@@ -122,12 +126,12 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
 
       try {
         const res = await controller.updateQuestion(question.id, data);
-        if (res) {
+        if (res.success && res.data) {
           addNotification({
             type: "success",
             message: "Initial Codes have been updated successfully",
           });
-          setQuestion(res.data);
+          setQuestion(res.data.data);
         }
       } catch (error) {
         console.error(error);
@@ -156,12 +160,12 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
 
       try {
         const res = await controller.updateQuestion(question.id, data);
-        if (res) {
+        if (res.success && res.data) {
           addNotification({
             type: "success",
             message: "Runner Codes have been updated successfully",
           });
-          setQuestion(res.data);
+          setQuestion(res.data.data);
         }
       } catch (error) {
         console.error(error);
@@ -179,12 +183,12 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
 
       try {
         const res = await controller.updateQuestion(question.id, data);
-        if (res) {
+        if (res.success && res.data) {
           addNotification({
             type: "success",
             message: "Test Cases have been updated successfully",
           });
-          setQuestion(res.data);
+          setQuestion(res.data.data);
         }
       } catch (error) {
         console.error(error);
@@ -199,12 +203,12 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
 
       try {
         const res = await controller.updateQuestion(question.id, dto);
-        if (res) {
+        if (res.success && res.data) {
           addNotification({
             type: "success",
             message: "Question have been updated successfully",
           });
-          setQuestion(res.data);
+          setQuestion(res.data.data);
         }
       } catch (error) {
         console.error(error);
@@ -229,6 +233,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       saveNewRunnerCode,
       saveNewTestCases,
       updateQuestionData,
+      setQuestionQuery
     }),
     [
       questions,
@@ -245,16 +250,17 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       saveNewRunnerCode,
       saveNewTestCases,
       updateQuestionData,
+      setQuestionQuery
     ],
   );
 
   const loadQuestionData = useCallback(() => {
     if (!questionId) return;
     controller
-      .getQuestion(questionId)
+      .getQuestionById(questionId)
       .then((res) => {
-        if (res) {
-          setQuestion(res.data);
+        if (res.success && res.data) {
+          setQuestion(res.data.data);
         }
       })
       .catch((err) => {});

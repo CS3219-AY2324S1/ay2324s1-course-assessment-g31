@@ -1,10 +1,10 @@
 import { useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import PageContainer from "../../components/container/Page";
-import UpdatingCodingSpace from "../../components/UpdatingCodingSpace";
-import { QuestionContext } from "../../context/QuestionContext";
-import QuestionForm from "../QuestionForm/QuestionForm";
+import PageContainer from "../../../components/container/Page";
+import UpdatingCodingSpace from "../../../components/UpdatingCodingSpace";
+import { QuestionContext } from "../../../context/QuestionContext";
+import QuestionForm from "../../QuestionForm/QuestionForm";
 
 export default function EditSingleQuestionPage() {
   const { questionId } = useParams();

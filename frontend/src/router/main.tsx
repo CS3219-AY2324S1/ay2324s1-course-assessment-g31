@@ -13,11 +13,12 @@ import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import QuestionForm from "../pages/QuestionForm/QuestionForm";
 import QuestionsList from "../pages/QuestionsList/QuestionsList";
 import QuestionsPage from "../pages/QuestionsPage/QuestionsPage";
-import SingleQuestionPage from "../pages/SingleQuestionPage";
+import SingleQuestionPage from "../pages/Questions/SingleQuestionPage";
 import SolutionForm from "../pages/SolutionForm/SolutionForm";
 import RegistrationPage from "../pages/Users/RegistrationPage";
 import SignInPage from "../pages/Users/SignInPage";
-import CreateSingleQuestionPage from "../pages/SingleQuestionPage/create";
+import CreateSingleQuestionPage from "../pages/Questions/SingleQuestionPage/create";
+import AllQuestionPage from "../pages/Questions/AllQuestionsPage";
 
 // import RegisterPage from "./pages/RegisterPage/RegisterPage";
 // import LoginPage from "./pages/LoginPage/LoginPage";
@@ -81,7 +82,7 @@ export default function MainRouter() {
           path="/questions"
           element={
             <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
-              <QuestionsList />
+              <AllQuestionPage />
             </ProtectedRoute>
           }
         />

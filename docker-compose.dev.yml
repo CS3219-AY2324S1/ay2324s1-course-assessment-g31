@@ -102,7 +102,7 @@ services:
     container_name: question-service2
     build:
       context: ./backend/question-service2
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - "5003:5000"
     environment:
