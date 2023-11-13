@@ -8,25 +8,25 @@ class UserController extends GenericController {
     super(
       window.location.hostname !== "localhost"
         ? "https://user-service-qzxsy455sq-as.a.run.app"
-        : "http://localhost:5008",
+        : "http://localhost:5001",
       "api",
     );
   }
 
   createUser(data: UserCreateDTO) {
-    return this.post<User, UserCreateDTO>("user", data);
+    return this.post<User, UserCreateDTO>("users", data);
   }
 
   getUser(id: string) {
-    return this.get<User>(`user/${id}`);
+    return this.get<User>(`users/${id}`);
   }
 
   updateUser(id: string, data: Partial<UserUpdateDTO>) {
-    return this.put<User, Partial<UserUpdateDTO>>(`user/${id}`, data);
+    return this.put<User, Partial<UserUpdateDTO>>(`users/${id}`, data);
   }
 
   deleteUser(id: string) {
-    return this.delete<User>("user");
+    return this.delete<User>(`users/${id}`);
   }
 }
 

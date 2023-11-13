@@ -148,11 +148,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(database, async (user) => {
+    const unsubscribe = onAuthStateChanged(database, (user) => {
       if (user) {
         setCurrentUser(user);
-        const role = await getUserRole(user);
-        setCurrentRole(role);
+        getUserRole(user).then(role => {
+            setCurrentRole(role)
+        });
       } else {
         setCurrentUser(null);
         setCurrentRole("user");

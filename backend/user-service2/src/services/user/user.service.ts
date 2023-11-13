@@ -11,14 +11,18 @@ class UserService implements Service<UserCreateDTO, UserUpdateDTO, User> {
   constructor(private readonly prismaClient: PrismaClient) {}
 
   public async create(body: UserCreateDTO): Promise<User> {
+    let userFromDb;
     try {
-      const userFromDb = await this.findById(body.id);
-      if (userFromDb) {
-        throw new Error("User Exists");
-      }
+      userFromDb = await this.findById(body.id);
     } catch (error) {
       throw new Error("Cannot Check if User Exists");
+    } finally {
+      if (userFromDb) {
+        const user = await this.update(body.id, body);
+        return user;
+      }
     }
+
     try {
       const user = await this.prismaClient.user.create({
         data: body,

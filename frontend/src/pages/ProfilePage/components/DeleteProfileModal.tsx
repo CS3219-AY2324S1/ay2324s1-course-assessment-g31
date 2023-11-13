@@ -45,9 +45,8 @@ export default function DeleteProfileModal({
 
   const userController = useMemo(() => new UserController(), []);
 
-  const handleDeleteAccount = async (e: React.FormEvent) => {
+  const handleDeleteAccount = async () => {
     try {
-      e.preventDefault();
       setIsLoading(true);
 
       if (currentUser) {
@@ -59,13 +58,21 @@ export default function DeleteProfileModal({
         await reauthenticateWithCredential(currentUser, credential);
         // If reauthentication is successful, delete user from firebase
         await deleteTheUser();
-        const res = await userController.deleteUser(currentUser.uid);
 
-        if (res.status !== 200) {
-          // Account deletion from psql failed
-          console.error("Failed to delete account from psql:", res.statusText);
+        try {
+          const res = await userController.deleteUser(currentUser.uid);
+          console.log(res);
+          if (res.status !== 200) {
+            // Account deletion from psql failed
+            console.error(
+              "Failed to delete account from psql:",
+              res.statusText,
+            );
+          }
+          navigate(`/`);
+        } catch (err: any) {
+          console.log(err);
         }
-        navigate(`/`);
       }
     } catch (error: any) {
       if (error instanceof FirebaseError) {
@@ -140,7 +147,7 @@ export default function DeleteProfileModal({
                       </p>
                     </div>
                     <div className="mt-2">
-                      <form onSubmit={handleDeleteAccount}>
+                      <div>
                         <div>
                           <p className="text-sm text-gray-500">
                             Enter password to confirm account deletion
@@ -159,15 +166,16 @@ export default function DeleteProfileModal({
                           </div>
                           {message && <p className="text">{message}</p>}
                         </div>
-                      </form>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                   <button
-                    type="submit"
+                    type="button"
                     className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                     disabled={isLoading}
+                    onClick={handleDeleteAccount}
                   >
                     Delete
                   </button>

@@ -21,13 +21,10 @@ class UserController extends Controller implements CRUDController {
   }
 
   public create = async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return UserController.handleValidationError(res, errors);
-    }
+    console.log("Pre Parser", req.body)
     try {
       const parsedUser = this.parser.parseCreateInput(req.body);
+      console.log("After Parser", parsedUser)
       const user = await this.service.create(parsedUser);
       if (user) {
         this.eventProducer.create(user);
