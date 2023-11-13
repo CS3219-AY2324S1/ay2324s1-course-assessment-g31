@@ -1,25 +1,23 @@
-import { User } from "@firebase/auth";
-import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { User } from '@firebase/auth';
+import React from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-import { useAuth } from "../context/AuthContext";
-import ForbiddenPage from "../pages/ForbiddenPage/ForbiddenPage";
-import LandingPage from "../pages/LandingPage";
-import Layout from "../pages/Layout/Layout";
-import MatchingControlPanelPage from "../pages/MatchingControlPanelPage/MatchingControlPanelPage";
-import MatchPage from "../pages/MatchingPage/MatchPage";
-import PageNotFoundPage from "../pages/PageNotFoundPage/PageNotFoundPage";
-import ProfilePage from "../pages/ProfilePage/ProfilePage";
-import QuestionForm from "../pages/QuestionForm/QuestionForm";
-import QuestionsList from "../pages/QuestionsList/QuestionsList";
-import QuestionsPage from "../pages/QuestionsPage/QuestionsPage";
-import SingleQuestionPage from "../pages/Questions/SingleQuestionPage";
-import SolutionForm from "../pages/SolutionForm/SolutionForm";
-import RegistrationPage from "../pages/Users/RegistrationPage";
-import SignInPage from "../pages/Users/SignInPage";
-import CreateSingleQuestionPage from "../pages/Questions/SingleQuestionPage/create";
-import AllQuestionPage from "../pages/Questions/AllQuestionsPage";
-import EditSingleQuestionPage from "../pages/Questions/SingleQuestionPage/edit";
+import { useAuth } from '../context/AuthContext';
+import ForbiddenPage from '../pages/ForbiddenPage/ForbiddenPage';
+import LandingPage from '../pages/LandingPage';
+import Layout from '../pages/Layout/Layout';
+import MatchingControlPanelPage from '../pages/MatchingControlPanelPage/MatchingControlPanelPage';
+import MatchPage from '../pages/MatchPage';
+import PageNotFoundPage from '../pages/PageNotFoundPage/PageNotFoundPage';
+import ProfilePage from '../pages/ProfilePage/ProfilePage';
+import QuestionForm from '../pages/QuestionForm/QuestionForm';
+import AllQuestionPage from '../pages/Questions/AllQuestionsPage';
+import SingleQuestionPage from '../pages/Questions/SingleQuestionPage';
+import CreateSingleQuestionPage from '../pages/Questions/SingleQuestionPage/create';
+import EditSingleQuestionPage from '../pages/Questions/SingleQuestionPage/edit';
+import SolutionForm from '../pages/SolutionForm/SolutionForm';
+import RegistrationPage from '../pages/Users/RegistrationPage';
+import SignInPage from '../pages/Users/SignInPage';
 
 // import RegisterPage from "./pages/RegisterPage/RegisterPage";
 // import LoginPage from "./pages/LoginPage/LoginPage";
@@ -88,14 +86,14 @@ export default function MainRouter() {
           }
         />
 
-<Route
-            path="questions/:questionId/edit"
-            element={
-                <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+        <Route
+          path="questions/:questionId/edit"
+          element={
+            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
               <EditSingleQuestionPage />
-              </ProtectedRoute>
-            }
-          />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/questions/:questionId"

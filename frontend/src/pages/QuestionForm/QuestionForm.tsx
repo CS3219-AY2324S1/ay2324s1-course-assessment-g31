@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 export default function QuestionForm() {
   //   const questionController = useMemo(() => new QuestionController(), []);

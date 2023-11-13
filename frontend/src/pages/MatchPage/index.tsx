@@ -1,11 +1,12 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useAuth } from "../../context/AuthContext";
+import MatchingModal from "../../components/MatchingModal";
+import ThreeTier from "../../components/ThreeTier";
 import { MatchingContext } from "../../context/MatchingContext";
 import MatchingController from "../../controllers/matching/matching.controller";
-import MatchingModal from "./components/MatchingModal";
-import ThreeTier from "./components/ThreeTier";
+import useTimer from "../../util/useTimer";
+import { useAuth } from "../../context/AuthContext";
 
 function MatchPage() {
   const { currentUser } = useAuth();
@@ -28,25 +29,48 @@ function MatchPage() {
     new MatchingController(),
   );
 
-  useEffect(() => {
-    if (difficulty === "" || foundMatch || !currentUser) {
-      return;
-    }
-    setOpen(true);
+  const { time, startTimer, stopTimer, resetTimer, isActive, percent } =
+    useTimer(10);
 
-    matchingController.current.createMatchingRequest({
-      userId: currentUser.uid,
-      difficulty,
-    });
-  }, [difficulty, foundMatch, currentUser]);
-
-  const cancelMatch = () => {
+  const cancelMatch = useCallback(() => {
     if (!currentUser) return;
     setOpen(false);
+    setDifficulty("");
+    stopTimer();
     matchingController.current.cancelMatchingRequest({
       userId: currentUser.uid,
     });
-  };
+  }, [currentUser, stopTimer]);
+
+  const startMatching = useCallback(
+    (newDifficulty: string) => {
+      if (newDifficulty === "") return;
+      setDifficulty(newDifficulty);
+      if (foundMatch || !currentUser) {
+        return;
+      }
+      resetTimer();
+      setOpen(true);
+      startTimer();
+      if (!establishedConnection) {
+        return;
+      }
+      const obj = {
+        userId: currentUser.uid,
+        difficulty: newDifficulty,
+      };
+      console.log(obj);
+      matchingController.current.createMatchingRequest(obj);
+    },
+    [currentUser, establishedConnection, foundMatch, startTimer, resetTimer],
+  );
+
+  useEffect(() => {
+    console.log(time);
+    if (!isActive) {
+      cancelMatch();
+    }
+  }, [isActive, cancelMatch, time]);
 
   useEffect(() => {
     if (
@@ -57,7 +81,7 @@ function MatchPage() {
     ) {
       setOpen(false);
       beginCollaboration();
-      navigate("/questions/1?lang=javascript");
+      navigate("/questions/1");
     }
   }, [
     foundMatch,
@@ -70,7 +94,7 @@ function MatchPage() {
 
   return (
     <div className="space-y-16 py-16 xl:space-y-20">
-      <ThreeTier setDifficulty={setDifficulty} />
+      <ThreeTier startMatching={startMatching} />
       <MatchingModal
         difficulty={difficulty}
         open={open}
@@ -80,6 +104,7 @@ function MatchPage() {
         matchLoading={matchLoading}
         matchSuccess={foundMatch}
         cancelMatch={cancelMatch}
+        waitingPercentage={percent}
       />
     </div>
   );
