@@ -105,7 +105,7 @@ function CodeEditor() {
     <div className="h-144 border rounded-lg shadow">
       <CodeMirror
         value={currentCode}
-        height="576px"
+        height="500px"
         extensions={extensions}
         onChange={onChange}
         theme={

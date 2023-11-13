@@ -328,13 +328,17 @@ class QuestionService
       if (solutions) {
         for (let idx = 0; idx < solutions.length; idx++) {
           const element = solutions[idx];
-          await this.prismaClient.questionSolution.update({
+          await this.prismaClient.questionSolution.upsert({
             where: {
               id: element.id,
             },
-            data: {
+            update: {
               ...element,
             },
+            create: {
+                ...element,
+                questionId: id
+            }
           });
         }
       }

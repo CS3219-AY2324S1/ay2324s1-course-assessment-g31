@@ -1,3 +1,4 @@
+import { uuidv4 } from "@firebase/util";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { langs } from "@uiw/codemirror-extensions-langs";
 import CodeMirror, {
@@ -9,7 +10,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 
 import { DarkModeContext } from "../context/DarkModeContext";
 import { QuestionContext } from "../context/QuestionContext";
-import { QuestionSolution } from "../interfaces/questionService/questionSolution/object";
+import { QuestionSolutionUpdateDTO } from "../interfaces/questionService/questionSolution/updateDTO";
 import { QuestionTestCase } from "../interfaces/questionService/questionTestCase/object";
 
 function UpdateCodeEditor() {
@@ -18,6 +19,7 @@ function UpdateCodeEditor() {
     initialCode,
     runnerCode,
     selectedLanguage,
+    solutionCodes,
     saveNewInitialCode,
     saveNewRunnerCode,
     saveNewTestCases,
@@ -31,7 +33,7 @@ function UpdateCodeEditor() {
   const [localInitialCode, setLocalInitialCode] = useState<string>("");
   const [localRunnerCode, setLocalRunnerCode] = useState<string>("");
   const [localSolutionCodes, setLocalSolutionCodes] = useState<
-    QuestionSolution[]
+    QuestionSolutionUpdateDTO[]
   >([]);
   const [testCases, setTestCases] = useState<QuestionTestCase[]>();
 
@@ -66,6 +68,40 @@ function UpdateCodeEditor() {
     [setLocalSolutionCodes],
   );
 
+  const handleTitleChange = useCallback(
+    (newTitle: string, solutionId: string) => {
+      setLocalSolutionCodes((prevState) =>
+        prevState.map((x) => {
+          if (x.id === solutionId) {
+            return {
+              ...x,
+              title: newTitle,
+            };
+          }
+          return x;
+        }),
+      );
+    },
+    [setLocalSolutionCodes],
+  );
+
+  const handleDescriptionChange = useCallback(
+    (newDescription: string, solutionId: string) => {
+      setLocalSolutionCodes((prevState) =>
+        prevState.map((x) => {
+          if (x.id === solutionId) {
+            return {
+              ...x,
+              description: newDescription,
+            };
+          }
+          return x;
+        }),
+      );
+    },
+    [setLocalSolutionCodes],
+  );
+
   useEffect(() => {
     if (langs[selectedLanguage]) {
       setExtensions([langs[selectedLanguage]()]);
@@ -90,6 +126,11 @@ function UpdateCodeEditor() {
     setInitializing(false);
   }, [runnerCode, setLocalRunnerCode]);
 
+  useEffect(() => {
+    setLocalSolutionCodes(solutionCodes);
+    setInitializing(false);
+  }, [solutionCodes, setLocalSolutionCodes]);
+
   const codeMirrorOptions: BasicSetupOptions = {
     indentOnInput: true,
   };
@@ -101,7 +142,7 @@ function UpdateCodeEditor() {
         <div className="min-h-144 border rounded-lg shadow">
           <CodeMirror
             value={localInitialCode}
-            height="576px"
+            height="500px"
             extensions={extensions}
             onChange={handleLocalInitialCodeChange}
             theme={isDarkMode ? "dark" : "light"}
@@ -126,7 +167,7 @@ function UpdateCodeEditor() {
         <div className="min-h-144 border rounded-lg shadow">
           <CodeMirror
             value={localRunnerCode}
-            height="576px"
+            height="500px"
             extensions={extensions}
             onChange={handleLocalRunnerCodeChange}
             theme={isDarkMode ? "dark" : "light"}
@@ -150,17 +191,60 @@ function UpdateCodeEditor() {
         <h1 className="font-semibold mb-2">Solution Code</h1>
         <div className="flex gap-4">
           {localSolutionCodes.map((code) => (
-            <div className="min-h-144 w-1/2 border rounded-lg shadow">
-              <CodeMirror
-                value={code.code}
-                height="576px"
-                extensions={extensions}
-                onChange={(value, viewUpdate) =>
-                  handleLocalSolutionCodeChange(value, viewUpdate, code.id)
-                }
-                theme={isDarkMode ? "dark" : "light"}
-                basicSetup={codeMirrorOptions}
-              />
+            <div className="w-1/2">
+              <h1>{`Solution ${code.id}`}</h1>
+
+              <div className="my-2">
+                <label
+                  htmlFor={`solution-${code.id}-title`}
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Title
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name={`solution-${code.id}-title`}
+                    id={`solution-${code.id}-title`}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="Title"
+                    onChange={(e) => handleTitleChange(e.target.value, code.id)}
+                  />
+                </div>
+              </div>
+
+              <div className="my-2">
+                <label
+                  htmlFor={`solution-${code.id}-description`}
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Description
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name={`solution-${code.id}-description`}
+                    id={`solution-${code.id}-description`}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="Description"
+                    onChange={(e) =>
+                      handleDescriptionChange(e.target.value, code.id)
+                    }
+                  />
+                </div>
+              </div>
+              <div className="min-h-144 w-full border rounded-lg shadow">
+                <CodeMirror
+                  value={code.code}
+                  height="500px"
+                  extensions={extensions}
+                  onChange={(value, viewUpdate) =>
+                    handleLocalSolutionCodeChange(value, viewUpdate, code.id)
+                  }
+                  theme={isDarkMode ? "dark" : "light"}
+                  basicSetup={codeMirrorOptions}
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -168,7 +252,9 @@ function UpdateCodeEditor() {
           <button
             type="button"
             className="rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-400"
-            onClick={() => {saveNewSolutionCodes(localSolutionCodes)}}
+            onClick={() => {
+              saveNewSolutionCodes(localSolutionCodes);
+            }}
           >
             Save Solution Codes
           </button>
@@ -179,11 +265,11 @@ function UpdateCodeEditor() {
               setLocalSolutionCodes((prevState) => [
                 ...prevState,
                 {
-                  id: "",
+                  id: uuidv4(),
                   title: "",
                   description: "",
-                  language: "",
-                  code: "",
+                  language: selectedLanguage,
+                  code: "// Default Code",
                   questionId: question.id,
                 },
               ]);
