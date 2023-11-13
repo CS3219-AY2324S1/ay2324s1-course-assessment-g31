@@ -6,10 +6,10 @@ import CodeMirror, {
   ViewUpdate,
 } from "@uiw/react-codemirror";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { DarkModeContext } from "../context/DarkModeContext";
 import { QuestionContext } from "../context/QuestionContext";
+import { QuestionSolution } from "../interfaces/questionService/questionSolution/object";
 import { QuestionTestCase } from "../interfaces/questionService/questionTestCase/object";
 
 function UpdateCodeEditor() {
@@ -18,10 +18,10 @@ function UpdateCodeEditor() {
     initialCode,
     runnerCode,
     selectedLanguage,
-    solutionCodes,
     saveNewInitialCode,
     saveNewRunnerCode,
     saveNewTestCases,
+    saveNewSolutionCodes,
   } = useContext(QuestionContext);
   const { isDarkMode } = useContext(DarkModeContext);
 
@@ -30,10 +30,10 @@ function UpdateCodeEditor() {
   const [extensions, setExtensions] = useState<Extension[]>();
   const [localInitialCode, setLocalInitialCode] = useState<string>("");
   const [localRunnerCode, setLocalRunnerCode] = useState<string>("");
-  const [localSolutionCodes, setLocalSolutionCodes] = useState<string[]>([]);
+  const [localSolutionCodes, setLocalSolutionCodes] = useState<
+    QuestionSolution[]
+  >([]);
   const [testCases, setTestCases] = useState<QuestionTestCase[]>();
-
-  const navigate = useNavigate();
 
   const handleLocalInitialCodeChange = useCallback(
     (value: string, _viewUpdate: ViewUpdate) => {
@@ -50,12 +50,20 @@ function UpdateCodeEditor() {
   );
 
   const handleLocalSolutionCodeChange = useCallback(
-    (value: string, _viewUpdate: ViewUpdate, solutionId: number) => {
-      setLocalSolutionCodes(prevState => prevState.map(x => {
-        if(x.
-      }));
+    (value: string, _viewUpdate: ViewUpdate, solutionId: string) => {
+      setLocalSolutionCodes((prevState) =>
+        prevState.map((x) => {
+          if (x.id === solutionId) {
+            return {
+              ...x,
+              code: value,
+            };
+          }
+          return x;
+        }),
+      );
     },
-    [setLocalRunnerCode],
+    [setLocalSolutionCodes],
   );
 
   useEffect(() => {
@@ -81,11 +89,6 @@ function UpdateCodeEditor() {
     setLocalRunnerCode(runnerCode);
     setInitializing(false);
   }, [runnerCode, setLocalRunnerCode]);
-
-  useEffect(() => {
-    setLocalSolutionCodes(solutionCodes);
-    setInitializing(false);
-  }, [solutionCodes, setLocalSolutionCodes]);
 
   const codeMirrorOptions: BasicSetupOptions = {
     indentOnInput: true,
@@ -146,29 +149,26 @@ function UpdateCodeEditor() {
       <div className="col-span-2">
         <h1 className="font-semibold mb-2">Solution Code</h1>
         <div className="flex gap-4">
-            {
-                localSolutionCodes.map((code) => (
-<div className="min-h-144 w-1/2 border rounded-lg shadow">
-            <CodeMirror
-              value={code}
-              height="576px"
-              extensions={extensions}
-              onChange={(value, viewUpdate) => handleLocalSolutionCodeChange(value, viewUpdate)}
-              theme={isDarkMode ? "dark" : "light"}
-              basicSetup={codeMirrorOptions}
-            />
-          </div>
-                ))
-            }
-
+          {localSolutionCodes.map((code) => (
+            <div className="min-h-144 w-1/2 border rounded-lg shadow">
+              <CodeMirror
+                value={code.code}
+                height="576px"
+                extensions={extensions}
+                onChange={(value, viewUpdate) =>
+                  handleLocalSolutionCodeChange(value, viewUpdate, code.id)
+                }
+                theme={isDarkMode ? "dark" : "light"}
+                basicSetup={codeMirrorOptions}
+              />
+            </div>
+          ))}
         </div>
         <div className="flex flex-row-reverse mt-5 gap-3">
           <button
             type="button"
             className="rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-400"
-            onClick={() => {
-              saveNewRunnerCode(selectedLanguage, localRunnerCode);
-            }}
+            onClick={() => {saveNewSolutionCodes(localSolutionCodes)}}
           >
             Save Solution Codes
           </button>
@@ -176,7 +176,17 @@ function UpdateCodeEditor() {
             type="button"
             className="rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-400"
             onClick={() => {
-              saveNewRunnerCode(selectedLanguage, localRunnerCode);
+              setLocalSolutionCodes((prevState) => [
+                ...prevState,
+                {
+                  id: "",
+                  title: "",
+                  description: "",
+                  language: "",
+                  code: "",
+                  questionId: question.id,
+                },
+              ]);
             }}
           >
             Add New Solution Codes

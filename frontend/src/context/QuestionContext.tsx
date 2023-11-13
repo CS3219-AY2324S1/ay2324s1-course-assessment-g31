@@ -9,16 +9,20 @@ import {
   useState,
 } from "react";
 
+import QuestionController from "../controllers/question/question.controller";
 import { FullQuestion } from "../interfaces/questionService/fullQuestion/object";
 import { FullQuestionUpdateDTO } from "../interfaces/questionService/fullQuestion/updateDTO";
-import { QuestionTestCase } from "../interfaces/questionService/questionTestCase/object";
-import { QuestionUpdateDTO } from "../interfaces/questionService/question/updateDTO";
-import { NotificationContext } from "./NotificationContext";
-import QuestionController from "../controllers/question/question.controller";
-import { encode64, decode64 } from "../util/base64";
 import { Query } from "../interfaces/questionService/query";
-import { QuestionSolution, QuestionSolutions } from "../interfaces/questionService/questionSolution/object";
-import { QuestionSolutionUpdateDTO, QuestionSolutionUpdateDTOs } from "../interfaces/questionService/questionSolution/updateDTO";
+import { QuestionUpdateDTO } from "../interfaces/questionService/question/updateDTO";
+import {
+  QuestionSolutionUpdateDTO,
+  QuestionSolutionUpdateDTOs,
+} from "../interfaces/questionService/questionSolution/updateDTO";
+import { QuestionTestCase } from "../interfaces/questionService/questionTestCase/object";
+import { decode64, encode64 } from "../util/base64";
+import { NotificationContext } from "./NotificationContext";
+import { QuestionSolution } from "../interfaces/questionService/questionSolution/object";
+import { QuestionSolutionCreateDTO } from "../interfaces/questionService/questionSolution/createDTO";
 
 export type CodingLanguage = keyof typeof langs;
 
@@ -51,7 +55,7 @@ interface QuestionContextType {
   selectedTheme: CodingTheme;
   initialCode: string;
   runnerCode: string;
-  solutionCodes: {lang: string, newCode: string, id: number}[];
+  solutionCodes: QuestionSolution[];
   controller: QuestionController;
   setSelectedLanguage: (selectedLanguage: CodingLanguage) => void;
   setSelectedTheme: (selectedTheme: CodingTheme) => void;
@@ -59,9 +63,7 @@ interface QuestionContextType {
   saveNewInitialCode: (lang: string, newCode: string) => void;
   saveNewRunnerCode: (lang: string, newCode: string) => void;
   saveNewTestCases: (testCases: QuestionTestCase[]) => void;
-  saveNewSolutionCodes: (
-    solutionCodes: {lang: string, newCode: string, solutionId: number}[],
-  ) => void;
+  saveNewSolutionCodes: (solutionCodes: QuestionSolution[]) => void;
   updateQuestionData: (questionData: QuestionUpdateDTO) => void;
   setQuestionQuery: React.Dispatch<
     React.SetStateAction<Partial<Query<FullQuestion>>>
@@ -83,9 +85,7 @@ export const QuestionContext = createContext<QuestionContextType>({
   saveNewInitialCode: (_lang: string, _newCode: string) => {},
   saveNewRunnerCode: (_lang: string, _newCode: string) => {},
   saveNewTestCases: (_testCases: QuestionTestCase[]) => {},
-  saveNewSolutionCodes: (
-    _solutionCodes: {lang: string, newCode: string, solutionId: number}[],
-  ) => {},
+  saveNewSolutionCodes: (_solutionCodes) => {},
   updateQuestionData: (_questionData: QuestionUpdateDTO) => {},
   setQuestionQuery: () => {},
 });
@@ -105,7 +105,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
     useState<CodingTheme>(defaultSelectedTheme);
   const [initialCode, setInitialCode] = useState<string>(defaultInitialCode);
   const [runnerCode, setRunnerCode] = useState<string>(defaultRunnerCode);
-  const [solutionCodes, setSolutionCodes] = useState<{lang: string, newCode: string, solutionId: number}[]>([]);
+  const [solutionCodes, setSolutionCodes] = useState<QuestionSolution[]>([]);
   const [questionId, setQuestionId] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
   const [questionQuery, setQuestionQuery] = useState<
@@ -194,19 +194,19 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
   );
 
   const saveNewSolutionCodes = useCallback(
-    async (solutionCodes: QuestionSolutionUpdateDTO[]) => {
+    async (newSolutionCodes: QuestionSolutionUpdateDTO[]) => {
       if (loading || !question) return;
 
       const data: QuestionSolutionUpdateDTOs = {
-          solutions: solutionCodes
-      }
+        solutions: newSolutionCodes,
+      };
 
       try {
         const res = await controller.updateQuestion(question.id, data);
         if (res.success && res.data) {
           addNotification({
             type: "success",
-            message: "Runner Codes have been updated successfully",
+            message: "Solution Codes have been updated successfully",
           });
           setQuestion(res.data.data);
         }
@@ -268,6 +268,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       selectedTheme,
       initialCode,
       runnerCode,
+      solutionCodes,
       controller,
       setSelectedLanguage,
       setSelectedTheme,
@@ -286,6 +287,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       selectedTheme,
       initialCode,
       runnerCode,
+      solutionCodes,
       controller,
       setSelectedLanguage,
       setSelectedTheme,
@@ -335,11 +337,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
 
   const loadSolutionCodes = useCallback(async () => {
     if (loading || !question) return;
-    setSolutionCodes(question.solutions.map(x => ({
-        lang: x.language,
-        newCode: decode64(x.code),
-        solutionId: x.id
-    })))
+    setSolutionCodes(question.solutions);
     const foundCode = question.runnerCodes.find(
       (x) => x.language === selectedLanguage,
     );
@@ -361,6 +359,10 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
   useEffect(() => {
     loadQuestions();
   }, [loadQuestions]);
+
+  useEffect(() => {
+    loadSolutionCodes();
+  }, [loadSolutionCodes]);
 
   return (
     <QuestionContext.Provider value={value}>

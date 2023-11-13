@@ -2,7 +2,7 @@ import { useCallback, useContext, useMemo } from "react";
 
 import { CodingLanguage, QuestionContext } from "../context/QuestionContext";
 import ComponentContainer from "./container/Component";
-import CodeEditorEditor from "./UpdatingCodeEditor";
+import UpdatingCodeEditor from "./UpdatingCodeEditor";
 
 function UpdatingCodingSpace() {
   const languageOptions: CodingLanguage[] = useMemo(() => ["java", "cpp"], []);
@@ -46,7 +46,7 @@ function UpdatingCodingSpace() {
           </div>
         </div>
       </div>
-      <CodeEditorEditor />
+      <UpdatingCodeEditor />
     </ComponentContainer>
   );
 }
