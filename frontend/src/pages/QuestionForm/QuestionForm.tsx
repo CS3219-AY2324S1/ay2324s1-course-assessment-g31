@@ -1,17 +1,4 @@
-import React, { ChangeEvent, useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router";
-import { useSearchParams } from "react-router-dom";
-import {
-  Categories,
-  CategoriesMap,
-  Difficulties,
-  Difficulty,
-  Question,
-} from "../../types/question";
-import styles from "./QuestionForm.module.css";
-import QuestionController from "../../controllers/question/question.controller";
-import { FullQuestion } from "../../interfaces/questionService/fullQuestion/object";
-import { QuestionCategory } from "../../interfaces/questionService/questionCategory/object";
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
 
 export default function QuestionForm() {
   //   const questionController = useMemo(() => new QuestionController(), []);

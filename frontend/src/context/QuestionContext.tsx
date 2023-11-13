@@ -95,7 +95,9 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
   const [runnerCode, setRunnerCode] = useState<string>(defaultRunnerCode);
   const [questionId, setQuestionId] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [questionQuery, setQuestionQuery] = useState<Partial<Query<FullQuestion>>>({});
+  const [questionQuery, setQuestionQuery] = useState<
+    Partial<Query<FullQuestion>>
+  >({});
 
   const controller = useMemo(() => new QuestionController(), []);
 
@@ -233,7 +235,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       saveNewRunnerCode,
       saveNewTestCases,
       updateQuestionData,
-      setQuestionQuery
+      setQuestionQuery,
     }),
     [
       questions,
@@ -250,7 +252,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       saveNewRunnerCode,
       saveNewTestCases,
       updateQuestionData,
-      setQuestionQuery
+      setQuestionQuery,
     ],
   );
 
