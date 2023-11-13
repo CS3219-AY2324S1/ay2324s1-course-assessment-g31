@@ -5,10 +5,24 @@ import { server } from '../app';
 describe("App Tests", () => {
   let clientSocket1: Socket;
   let clientSocket2: Socket;
+  let serverPort: number;
+
+  beforeAll(done => {
+    // Check if the server is listening and get its address
+    const address = server.listening && server.address();
+    if (address) {
+      serverPort = typeof address === 'string' ? parseInt(address.split(':')[1]) : address.port;
+      done();
+    } else {
+      // Handle the case where the server is not listening or address is null
+      console.error('Server is not listening or address could not be retrieved.');
+      done.fail('Failed to retrieve server port.');
+    }
+  });
 
   beforeEach(() => {
-    clientSocket1 = Client('http://localhost:9000');
-    clientSocket2 = Client('http://localhost:9000');
+    clientSocket1 = Client(`http://localhost:${serverPort}`);
+    clientSocket2 = Client(`http://localhost:${serverPort}`);
   });
 
   afterEach(() => {
