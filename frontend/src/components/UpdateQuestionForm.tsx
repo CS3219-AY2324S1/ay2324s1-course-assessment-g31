@@ -1,11 +1,12 @@
-import { TrashIcon } from "@heroicons/react/24/outline";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { QuestionContext } from "../context/QuestionContext";
-import { FullQuestion } from "../interfaces/questionService/fullQuestion/object";
-import { QuestionUpdateDTO } from "../interfaces/questionService/question/updateDTO";
-import ComponentContainer from "./container/Component";
+import { QuestionContext } from '../context/QuestionContext';
+import { FullQuestion } from '../interfaces/questionService/fullQuestion/object';
+import { QuestionUpdateDTO } from '../interfaces/questionService/question/updateDTO';
+import { QuestionCategoryUpdateDTOs } from '../interfaces/questionService/questionCategory/updateDTO';
+import ComponentContainer from './container/Component';
 
 type questionExample = {
   number: number;
@@ -22,6 +23,20 @@ function UpdateQuestionForm() {
   const [title, setTitle] = useState<string>("");
   const [difficulty, setDifficulty] = useState<string>("Easy");
   const [description, setDescription] = useState<string>("");
+  const categories = useMemo(
+    () => [
+      "Strings",
+      "DataStructures",
+      "Algorithms",
+      "BitManipulation",
+      "Databases",
+      "Arrays",
+      "Brainteaser",
+      "Recursion",
+    ],
+    [],
+  );
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [examples, setExamples] = useState<questionExample[]>(
     [] as unknown as questionExample[],
   );
@@ -34,8 +49,8 @@ function UpdateQuestionForm() {
   const loadFormData = useCallback((questionData: FullQuestion) => {
     if (questionData) {
       setTitle(questionData.title);
-      setDifficulty(questionData.difficulty.toUpperCase());
-      setDescription(questionData.content);
+      setDifficulty(questionData.difficulty);
+      setDescription(questionData.description);
       setExamples(
         questionData.examples.map((val, idx) => ({
           number: idx + 1,
@@ -48,6 +63,9 @@ function UpdateQuestionForm() {
           text: val,
         })),
       );
+      setSelectedCategories(
+        questionData.categories.map(x => x.name)
+      )
     }
   }, []);
 
@@ -58,12 +76,13 @@ function UpdateQuestionForm() {
   }, [question, loadFormData]);
 
   function handleSaveFormData() {
-    const updateDTO: QuestionUpdateDTO = {
-      title,
-      difficulty,
-      content: description,
-      examples: examples.map((x) => x.text),
-      constraints: constraints.map((x) => x.text),
+    const updateDTO: QuestionUpdateDTO & QuestionCategoryUpdateDTOs = {
+        title,
+        difficulty,
+        description,
+        examples: examples.map((x) => x.text),
+        constraints: constraints.map((x) => x.text),
+        categories: selectedCategories.map(x => ({name: x, questionId: question.id}))
     };
     updateQuestionData(updateDTO);
   }
@@ -99,6 +118,14 @@ function UpdateQuestionForm() {
         x.number === number ? { ...x, text: newText } : x,
       ),
     );
+  }
+
+  function handleSelectedCategoriesChange(category: string) {
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories(selectedCategories.filter((x) => x !== category));
+    } else {
+      setSelectedCategories([...selectedCategories, category]);
+    }
   }
 
   return (
@@ -157,6 +184,48 @@ function UpdateQuestionForm() {
               <option>Medium</option>
               <option>Hard</option>
             </select>
+          </div>
+
+          <div className="col-span-3">
+            <label
+              htmlFor="categories"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Categories
+            </label>
+            <div className="mt-2">
+              <fieldset>
+                <div className="">
+                  {categories.map((category) => (
+                    <div
+                      key={`${category}`}
+                      className="relative flex items-start py-2"
+                    >
+                      <div className="min-w-0 flex-1 text-sm leading-6">
+                        <label
+                          htmlFor={`category-${category}`}
+                          className="select-none font-medium text-gray-900"
+                        >
+                          {category}
+                        </label>
+                      </div>
+                      <div className="ml-3 flex h-6 items-center">
+                        <input
+                          id={`category-${category}`}
+                          name={`category-${category}`}
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                          onChange={() => {
+                            handleSelectedCategoriesChange(category);
+                          }}
+                          checked={selectedCategories.includes(category)}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </fieldset>
+            </div>
           </div>
 
           <div className="col-span-full border-b border-gray-900/10 pb-12">

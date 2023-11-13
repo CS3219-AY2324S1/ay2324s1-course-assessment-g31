@@ -4,5 +4,4 @@ export type QuestionUpdateDTO = {
   difficulty: string;
   examples: string[];
   constraints: string[];
-  popularity: number;
 };
