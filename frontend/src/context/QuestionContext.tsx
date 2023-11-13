@@ -17,6 +17,7 @@ import { NotificationContext } from "./NotificationContext";
 import QuestionController from "../controllers/question/question.controller";
 import { encode64, decode64 } from "../util/base64";
 import { Query } from "../interfaces/questionService/query";
+import { QuestionSolution } from "../interfaces/questionService/questionSolution/object";
 
 export type CodingLanguage = keyof typeof langs;
 
@@ -49,6 +50,7 @@ interface QuestionContextType {
   selectedTheme: CodingTheme;
   initialCode: string;
   runnerCode: string;
+  solutionCodes: string[];
   controller: QuestionController;
   setSelectedLanguage: (selectedLanguage: CodingLanguage) => void;
   setSelectedTheme: (selectedTheme: CodingTheme) => void;
@@ -56,6 +58,7 @@ interface QuestionContextType {
   saveNewInitialCode: (lang: string, newCode: string) => void;
   saveNewRunnerCode: (lang: string, newCode: string) => void;
   saveNewTestCases: (testCases: QuestionTestCase[]) => void;
+  saveNewSolutionCodes: (solutionCodes: {lang: string, newCode: string}[]) => void;
   updateQuestionData: (questionData: QuestionUpdateDTO) => void;
   setQuestionQuery: React.Dispatch<
     React.SetStateAction<Partial<Query<FullQuestion>>>
@@ -69,6 +72,7 @@ export const QuestionContext = createContext<QuestionContextType>({
   selectedTheme: defaultSelectedTheme,
   initialCode: defaultInitialCode,
   runnerCode: defaultRunnerCode,
+  solutionCodes: [],
   controller: null as unknown as QuestionController,
   setSelectedLanguage: (_selectedLanguage: CodingLanguage) => {},
   setSelectedTheme: (_selectedTheme: CodingTheme) => {},
@@ -76,6 +80,7 @@ export const QuestionContext = createContext<QuestionContextType>({
   saveNewInitialCode: (_lang: string, _newCode: string) => {},
   saveNewRunnerCode: (_lang: string, _newCode: string) => {},
   saveNewTestCases: (_testCases: QuestionTestCase[]) => {},
+  saveNewSolutionCodes: (_solutionCodes: {lang: string, newCode: string}[]) => {},
   updateQuestionData: (_questionData: QuestionUpdateDTO) => {},
   setQuestionQuery: () => {},
 });
@@ -182,6 +187,40 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
     [loading, controller, question, addNotification],
   );
 
+  const saveNewSolutionCodes = useCallback(
+    async (solutionCodes: {lang: string, newCode: string}[]) => {
+        if (loading || !question) return;
+        const data: Partial<FullQuestionUpdateDTO> = {
+            solutionCodes: question.solutions.map((x) => {
+            if (x.language === lang) {
+              return {
+                ...x,
+                code: encode64(newCode),
+              };
+            }
+            return {
+              ...x,
+              code: encode64(x.code),
+            };
+          }),
+        };
+
+        try {
+          const res = await controller.updateQuestion(question.id, data);
+          if (res.success && res.data) {
+            addNotification({
+              type: "success",
+              message: "Runner Codes have been updated successfully",
+            });
+            setQuestion(res.data.data);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      [loading, controller, question, addNotification],
+  )
+
   const saveNewTestCases = useCallback(
     async (testCases: QuestionTestCase[]) => {
       if (loading || !question) return;
@@ -240,6 +279,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       saveNewInitialCode,
       saveNewRunnerCode,
       saveNewTestCases,
+      saveNewSolutionCodes,
       updateQuestionData,
       setQuestionQuery,
     }),
@@ -257,6 +297,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       saveNewInitialCode,
       saveNewRunnerCode,
       saveNewTestCases,
+      saveNewSolutionCodes,
       updateQuestionData,
       setQuestionQuery,
     ],

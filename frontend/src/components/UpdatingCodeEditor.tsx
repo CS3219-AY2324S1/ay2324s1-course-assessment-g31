@@ -29,6 +29,7 @@ function CodeEditorEditor() {
   const [extensions, setExtensions] = useState<Extension[]>();
   const [localInitialCode, setLocalInitialCode] = useState<string>("");
   const [localRunnerCode, setLocalRunnerCode] = useState<string>("");
+  const [localSolutionCodes, setLocalSolutionCodes] = useState<string[]>("");
   const [testCases, setTestCases] = useState<QuestionTestCase[]>();
 
   const navigate = useNavigate();
@@ -97,10 +98,11 @@ function CodeEditorEditor() {
               saveNewInitialCode(selectedLanguage, localInitialCode);
             }}
           >
-            Edit Initial Code
+            Save Initial Code
           </button>
         </div>
       </div>
+
       <div>
         <h1 className="font-semibold mb-2">Runner Code</h1>
         <div className="min-h-144 border rounded-lg shadow">
@@ -121,7 +123,53 @@ function CodeEditorEditor() {
               saveNewRunnerCode(selectedLanguage, localRunnerCode);
             }}
           >
-            Edit Runner Code
+            Save Runner Code
+          </button>
+        </div>
+      </div>
+
+      <div className="col-span-2">
+        <h1 className="font-semibold mb-2">Solution Code</h1>
+        <div className="flex gap-4">
+            <div className="min-h-144 w-1/2 border rounded-lg shadow">
+                <CodeMirror
+                    value={localRunnerCode}
+                    height="576px"
+                    extensions={extensions}
+                    onChange={handleLocalRunnerCodeChange}
+                    theme={isDarkMode ? "dark" : "light"}
+                    basicSetup={codeMirrorOptions}
+                />
+            </div>
+            <div className="min-h-144 w-1/2 border rounded-lg shadow">
+                <CodeMirror
+                    value={localRunnerCode}
+                    height="576px"
+                    extensions={extensions}
+                    onChange={handleLocalRunnerCodeChange}
+                    theme={isDarkMode ? "dark" : "light"}
+                    basicSetup={codeMirrorOptions}
+                />
+            </div>
+        </div>
+        <div className="flex flex-row-reverse mt-5 gap-3">
+          <button
+            type="button"
+            className="rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-400"
+            onClick={() => {
+              saveNewRunnerCode(selectedLanguage, localRunnerCode);
+            }}
+          >
+            Save Solution Codes
+          </button>
+          <button
+            type="button"
+            className="rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-400"
+            onClick={() => {
+              saveNewRunnerCode(selectedLanguage, localRunnerCode);
+            }}
+          >
+            Add New Solution Codes
           </button>
         </div>
       </div>
