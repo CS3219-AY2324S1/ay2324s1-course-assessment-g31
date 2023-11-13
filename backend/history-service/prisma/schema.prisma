@@ -15,7 +15,7 @@ model History {
     questionId      Int
     user1Id          String
     user2Id          String
-    attemptDateTime DateTime
+    createdAt  DateTime         @default(now())
     code     String
     language        String
 }
