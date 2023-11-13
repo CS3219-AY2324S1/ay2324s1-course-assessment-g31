@@ -41,6 +41,10 @@ export default function ProfileCard() {
     setIsUpdateProfileModalOpen(true);
   };
 
+  const setUsernameCallback = (username: string) => {
+    setProfileData({ ...profileData, username });
+  };
+
   //   const closeUpdateProfileModal = (username: string, email: string) => {
   //     setIsUpdateProfileModalOpen(false);
   //     setProfileData({
@@ -152,6 +156,7 @@ export default function ProfileCard() {
             userId={currentUser.uid}
             emailProp={profileData.email}
             usernameProp={profileData.username}
+            setUsernameCallback={setUsernameCallback}
           />
         </>
       )}

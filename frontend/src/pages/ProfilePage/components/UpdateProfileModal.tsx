@@ -23,6 +23,7 @@ interface UpdateProfileModalProps {
   userId: string;
   emailProp: string | null;
   usernameProp: string | null;
+  setUsernameCallback: (username: string) => void;
 }
 
 interface TabItem {
@@ -37,6 +38,7 @@ export default function UpdateProfileModal({
   userId,
   emailProp,
   usernameProp,
+  setUsernameCallback,
 }: UpdateProfileModalProps) {
   const [email, setEmail] = useState(emailProp || "");
   const [username, setUsername] = useState(usernameProp || "");
@@ -213,7 +215,7 @@ export default function UpdateProfileModal({
 
       setUsernameChangeFormOpen(false);
       setMessage("");
-      setUsername(newUsername);
+      setUsernameCallback(newUsername);
       setNewUsername("");
       setMessage("Username changed successfully!");
     } catch (error: any) {

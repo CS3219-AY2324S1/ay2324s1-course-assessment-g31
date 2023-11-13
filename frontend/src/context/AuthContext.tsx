@@ -151,8 +151,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const unsubscribe = onAuthStateChanged(database, (user) => {
       if (user) {
         setCurrentUser(user);
-        getUserRole(user).then(role => {
-            setCurrentRole(role)
+        getUserRole(user).then((role) => {
+          setCurrentRole(role);
         });
       } else {
         setCurrentUser(null);
