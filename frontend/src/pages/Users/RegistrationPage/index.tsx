@@ -30,8 +30,7 @@ function RegistrationPage() {
   //   }
   // };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     // setIsLoading(true);
 
     if (password !== password2) {
@@ -102,7 +101,7 @@ function RegistrationPage() {
 
           <div className="mt-10">
             <div>
-              <form onSubmit={handleSubmit} method="POST" className="space-y-6">
+              <div className="space-y-6">
                 <div>
                   <label
                     htmlFor="email"
@@ -209,8 +208,9 @@ function RegistrationPage() {
 
                 <div>
                   <button
-                    type="submit"
+                    type="button"
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    onClick={handleSubmit}
                   >
                     Register
                   </button>
@@ -224,7 +224,7 @@ function RegistrationPage() {
                     {message}
                   </label>
                 </div>
-              </form>
+              </div>
             </div>
 
             <div className="mt-10">

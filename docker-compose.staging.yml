@@ -1,218 +1,169 @@
-# User          - 01
-# Matching      - 02
-# Question      - 03
-# Socket        - 04
-
-version: "3"
+version: '3'
 services:
   user:
-    container_name: user-service
-    build:
-      context: ./backend/user-service
-      dockerfile: Dockerfile
-    ports:
-      - "5001:5000"
-    environment:
-      - PORT=5000
-      - NODE_ENV=production
-    env_file:
-      - ./backend/user-service/.env
-    depends_on:
-      postgres_user_service:
-        condition: service_healthy
-      broker:
-        condition: service_healthy
-    networks:
-      - user-service-network
-      - api-network
-
-  user2:
     container_name: user-service2
     build:
       context: ./backend/user-service2
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.staging
     ports:
-      - "5008:5000"
+      - '5001:5000'
     environment:
       - PORT=5000
       - NODE_ENV=production
-
     env_file:
       - ./backend/user-service2/.env
     depends_on:
       postgres_user_service:
         condition: service_healthy
-      broker:
-        condition: service_healthy
     networks:
       - user-service-network
       - api-network
-
   postgres_user_service:
-    image: postgres:latest
+    image: 'postgres:latest'
     container_name: postgres-user-service
     volumes:
-      - progresDB:/data/postgres/user-service
+      - 'progresDB:/data/postgres/user-service'
     env_file:
       - ./backend/user-service2/.env
     networks:
       - user-service-network
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U admin -d postgres'"]
+      test:
+        - CMD-SHELL
+        - sh -c 'pg_isready -U admin -d postgres'
       interval: 10s
       timeout: 3s
       retries: 3
-
   matching:
     container_name: matching-service
     build:
       context: ./backend/matching-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.staging
     ports:
-      - "5002:5000"
+      - '5002:5000'
     environment:
       - PORT=5000
       - NODE_ENV=production
-
     env_file:
       - ./backend/matching-service/.env
     depends_on:
       postgres_matching_service:
         condition: service_healthy
-      broker:
-        condition: service_healthy
     networks:
       - matching-service-network
       - api-network
-
   postgres_matching_service:
-    image: postgres:latest
+    image: 'postgres:latest'
     container_name: postgres-matching-service
     volumes:
-      - progresDB:/data/postgres/matching-service
+      - 'progresDB:/data/postgres/matching-service'
     env_file:
       - ./backend/matching-service/.env
     networks:
       - matching-service-network
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U admin -d postgres'"]
+      test:
+        - CMD-SHELL
+        - sh -c 'pg_isready -U admin -d postgres'
       interval: 10s
       timeout: 3s
       retries: 3
-
   question:
     container_name: question-service
     build:
       context: ./backend/question-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.staging
     ports:
-      - "5003:5000"
+      - '5003:5000'
     environment:
       - PORT=5000
       - NODE_ENV=production
-
     env_file:
       - ./backend/question-service/.env
     depends_on:
       postgres_question_service:
         condition: service_healthy
-      broker:
-        condition: service_healthy
     networks:
       - question-service-network
       - api-network
-
   postgres_question_service:
-    image: postgres:latest
+    image: 'postgres:latest'
     container_name: postgres-question-service
     volumes:
-      - progresDB:/data/postgres/question-service
+      - 'progresDB:/data/postgres/question-service'
     env_file:
       - ./backend/question-service/.env
     networks:
       - question-service-network
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U admin -d postgres'"]
+      test:
+        - CMD-SHELL
+        - sh -c 'pg_isready -U admin -d postgres'
       interval: 10s
       timeout: 3s
       retries: 3
-
   history:
     container_name: history-service
     build:
       context: ./backend/history-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.staging
     ports:
-      - "5007:5000"
+      - '5007:5000'
     environment:
       - PORT=5000
       - NODE_ENV=production
-
     env_file:
       - ./backend/history-service/.env
     depends_on:
       postgres_history_service:
         condition: service_healthy
-      broker:
-        condition: service_healthy
     networks:
       - history-service-network
       - api-network
-
   postgres_history_service:
-    image: postgres:latest
+    image: 'postgres:latest'
     container_name: postgres-history-service
     volumes:
-      - progresDB:/data/postgres/history-service
+      - 'progresDB:/data/postgres/history-service'
     env_file:
       - ./backend/history-service/.env
     networks:
       - history-service-network
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready'"]
+      test:
+        - CMD-SHELL
+        - sh -c 'pg_isready'
       interval: 15s
       timeout: 15s
       start_period: 90s
       retries: 3
-
   socket:
     container_name: socket-service
     build:
       context: ./backend/socket-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.staging
     ports:
-      - "5004:5000"
+      - '5004:5000'
     environment:
       - PORT=5000
       - NODE_ENV=production
-
     env_file:
       - ./backend/socket-service/.env
-    depends_on:
-      broker:
-        condition: service_healthy
     networks:
       - socket-service-network
       - api-network
-
 networks:
   user-service-network:
     driver: bridge
-
   matching-service-network:
     driver: bridge
-
   question-service-network:
     driver: bridge
-
   socket-service-network:
     driver: bridge
-
   history-service-network:
     driver: bridge
-
   api-network:
     driver: bridge
-
 volumes:
-  progresDB:
+  progresDB: null

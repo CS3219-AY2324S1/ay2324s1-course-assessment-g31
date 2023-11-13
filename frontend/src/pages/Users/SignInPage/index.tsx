@@ -23,8 +23,7 @@ function SignInPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     console.log("Form submitted with data");
     setLoading(true);
     await login(email, password)
@@ -119,7 +118,7 @@ function SignInPage() {
 
           <div className="mt-10">
             <div>
-              <form onSubmit={handleSubmit} method="POST" className="space-y-6">
+              <div className="space-y-6">
                 <div>
                   <label
                     htmlFor="email"
@@ -236,10 +235,11 @@ function SignInPage() {
                 <div>
                   <button
                     name="sign-in"
-                    type="submit"
+                    type="button"
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-100 shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     disabled={loading}
                     data-testid="sign-in-page-sign-in-button"
+                    onClick={handleSubmit}
                   >
                     {loading ? (
                       <>
@@ -254,7 +254,7 @@ function SignInPage() {
                     )}
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
 
             <div className="mt-10">

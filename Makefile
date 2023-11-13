@@ -13,8 +13,7 @@ restart_socket_staging:
 	docker-compose -f docker-compose.staging.yml up socket --build -d
 
 restart_user_staging:
-	docker-compose -f docker-compose.staging.yml down user postgres_user_service && \
-	docker-compose -f docker-compose.staging.yml up postgres_user_service -d && \
+	docker-compose -f docker-compose.staging.yml down user && \
 	docker-compose -f docker-compose.staging.yml up user --build -d
 
 restart_client_staging:

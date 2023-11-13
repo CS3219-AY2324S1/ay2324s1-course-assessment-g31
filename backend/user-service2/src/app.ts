@@ -15,11 +15,6 @@ dotenv.config();
 
 const app: Express = express();
 
-const corsOptions = {
-  origin: "*",
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-
 // Event Producer
 const userEventProducer = new UserProducer(kafka.producer());
 
@@ -39,7 +34,7 @@ const userController = new UserController(
 // Routers
 const userRouter = new UserRouter(userController, express.Router());
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -48,6 +43,6 @@ app.use(bodyParser.json());
 app.use("/api/healthCheck", (_req, res) => {
   res.send("OK");
 });
-app.use("/api/user", userRouter.registerRoutes());
+app.use("/api/users", userRouter.registerRoutes());
 
 export default app;
