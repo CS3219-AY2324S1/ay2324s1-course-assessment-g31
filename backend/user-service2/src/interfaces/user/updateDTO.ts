@@ -1,5 +1,5 @@
 export type UserUpdateDTO = {
-    username: string;
+  username: string;
   roles: string[];
   questionsAuthored: number;
 };

@@ -10,7 +10,6 @@ import UserService from "../../services/user/user.service";
 import logger from "../../util/logger";
 import Controller from "../controller.abstract";
 import CRUDController from "../crudController.interface";
-import { InternalRequest } from "express-validator/src/base";
 
 class UserController extends Controller implements CRUDController {
   constructor(

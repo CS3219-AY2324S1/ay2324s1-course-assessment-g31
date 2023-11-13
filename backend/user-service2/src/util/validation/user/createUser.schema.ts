@@ -1,21 +1,17 @@
 const createUserSchema = {
-  user1Id: {
+  id: {
     exists: {
       errorMessage: "User id is required",
       options: { checkFalsy: true },
     },
     isString: { errorMessage: "User Id should be string" },
   },
-  user2Id: {
+  username: {
     exists: {
-      errorMessage: "User id is required",
+      errorMessage: "Username is required",
       options: { checkFalsy: true },
     },
     isString: { errorMessage: "User Id should be string" },
-  },
-  dateTimeMatched: {
-    optional: true,
-    isDate: { errorMessage: "Date matched should be string" },
   },
 };
 

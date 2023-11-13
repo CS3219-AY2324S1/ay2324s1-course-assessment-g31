@@ -12,6 +12,14 @@ class UserService implements Service<UserCreateDTO, UserUpdateDTO, User> {
 
   public async create(body: UserCreateDTO): Promise<User> {
     try {
+      const userFromDb = await this.findById(body.id);
+      if (userFromDb) {
+        throw new Error("User Exists");
+      }
+    } catch (error) {
+      throw new Error("Cannot Check if User Exists");
+    }
+    try {
       const user = await this.prismaClient.user.create({
         data: body,
       });
