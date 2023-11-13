@@ -1,4 +1,6 @@
-import { User, UserCreateDTO, UserUpdateDTO } from "../../interfaces/User";
+import { UserCreateDTO } from "../../interfaces/userService/createDTO";
+import { User } from "../../interfaces/userService/object";
+import { UserUpdateDTO } from "../../interfaces/userService/updateDTO";
 import GenericController from "../generic.controller";
 
 class UserController extends GenericController {
@@ -12,19 +14,19 @@ class UserController extends GenericController {
   }
 
   createUser(data: UserCreateDTO) {
-    return this.post<User, UserCreateDTO>("user", data);
+    return this.post<User, UserCreateDTO>("users", data);
   }
 
   getUser(id: string) {
-    return this.get<User>(`user/${id}`);
+    return this.get<User>(`users/${id}`);
   }
 
   updateUser(id: string, data: Partial<UserUpdateDTO>) {
-    return this.put<User, Partial<UserUpdateDTO>>(`user/${id}`, data);
+    return this.put<User, Partial<UserUpdateDTO>>(`users/${id}`, data);
   }
 
   deleteUser(id: string) {
-    return this.delete<User>("user");
+    return this.delete<User>(`users/${id}`);
   }
 }
 
