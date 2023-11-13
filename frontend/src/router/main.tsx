@@ -87,6 +87,15 @@ export default function MainRouter() {
         />
 
         <Route
+          path="/questions/create"
+          element={
+            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+              <CreateSingleQuestionPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="questions/:questionId/edit"
           element={
             <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
@@ -100,15 +109,6 @@ export default function MainRouter() {
           element={
             <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
               <SingleQuestionPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/questions/form/v2"
-          element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
-              <CreateSingleQuestionPage />
             </ProtectedRoute>
           }
         />

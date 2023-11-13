@@ -25,7 +25,7 @@ function Question() {
 
         <div className="space-y-6">
           <p className="text-base text-gray-700 dark:text-gray-300">
-            {question.content}
+            {question.description}
           </p>
         </div>
       </div>

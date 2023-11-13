@@ -5,7 +5,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Fragment, useContext, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import PageContainer from "../../../components/container/Page";
 import { QuestionContext } from "../../../context/QuestionContext";
@@ -27,6 +27,8 @@ function AllQuestionPage() {
   const [sortByStatus, setSortByStatus] = useState<SortBy>(SortBy.ASC);
   const [sortByTitle, setSortByTitle] = useState<SortBy>(SortBy.ASC);
   const [sortByDifficulty, setSortByDifficulty] = useState<SortBy>(SortBy.ASC);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (questions.length > 1) {
@@ -269,13 +271,31 @@ function AllQuestionPage() {
           complexity levels, ensuring there&apos;s something for every coding
           enthusiast, from beginners to seasoned professionals.
         </p>
-        <div className="mt-4">
-          <button
-            type="button"
-            className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Random Question
-          </button>
+        <div className="flex gap-4">
+          <div className="mt-4">
+            <button
+              type="button"
+              className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              onClick={() => {
+                navigate(
+                  `/questions/${Math.floor(Math.random() * questions.length) + 1}`,
+                );
+              }}
+            >
+              Random Question
+            </button>
+          </div>
+          <div className="mt-4">
+            <button
+              type="button"
+              className="block rounded-md bg-slate-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
+              onClick={() => {
+                navigate("/questions/create");
+              }}
+            >
+              Create Question
+            </button>
+          </div>
         </div>
       </div>
 

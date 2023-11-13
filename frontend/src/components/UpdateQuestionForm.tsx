@@ -1,12 +1,12 @@
-import { TrashIcon } from '@heroicons/react/24/outline';
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { QuestionContext } from '../context/QuestionContext';
-import { FullQuestion } from '../interfaces/questionService/fullQuestion/object';
-import { QuestionUpdateDTO } from '../interfaces/questionService/question/updateDTO';
-import { QuestionCategoryUpdateDTOs } from '../interfaces/questionService/questionCategory/updateDTO';
-import ComponentContainer from './container/Component';
+import { QuestionContext } from "../context/QuestionContext";
+import { FullQuestion } from "../interfaces/questionService/fullQuestion/object";
+import { QuestionUpdateDTO } from "../interfaces/questionService/question/updateDTO";
+import { QuestionCategoryUpdateDTOs } from "../interfaces/questionService/questionCategory/updateDTO";
+import ComponentContainer from "./container/Component";
 
 type questionExample = {
   number: number;
@@ -63,9 +63,7 @@ function UpdateQuestionForm() {
           text: val,
         })),
       );
-      setSelectedCategories(
-        questionData.categories.map(x => x.name)
-      )
+      setSelectedCategories(questionData.categories.map((x) => x.name));
     }
   }, []);
 
@@ -77,12 +75,15 @@ function UpdateQuestionForm() {
 
   function handleSaveFormData() {
     const updateDTO: QuestionUpdateDTO & QuestionCategoryUpdateDTOs = {
-        title,
-        difficulty,
-        description,
-        examples: examples.map((x) => x.text),
-        constraints: constraints.map((x) => x.text),
-        categories: selectedCategories.map(x => ({name: x, questionId: question.id}))
+      title,
+      difficulty,
+      description,
+      examples: examples.map((x) => x.text),
+      constraints: constraints.map((x) => x.text),
+      categories: selectedCategories.map((x) => ({
+        name: x,
+        questionId: question.id,
+      })),
     };
     updateQuestionData(updateDTO);
   }
