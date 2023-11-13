@@ -39,9 +39,26 @@ class HistoryService
   }
 
   public async findOne(body: Partial<History>): Promise<History | null> {
+    const { user1Id, user2Id, ...rest } = body;
     try {
       const history = await this.prismaClient.history.findFirst({
-        where: body,
+        where: {
+          ...rest,
+          OR: [
+            {
+              user1Id: user1Id,
+            },
+            {
+              user1Id: user2Id,
+            },
+            {
+              user2Id: user1Id,
+            },
+            {
+              user2Id: user2Id,
+            },
+          ],
+        },
       });
       return history;
     } catch (error) {
@@ -55,8 +72,12 @@ class HistoryService
         where: {
           AND: [
             query.questionId ? { questionId: query.questionId } : {},
-            query.user1Id ? { user1Id: query.user1Id } : {},
-            query.user2Id ? { user2Id: query.user2Id } : {},
+            query.user1Id
+              ? { OR: [{ user1Id: query.user1Id }, { user2Id: query.user1Id }] }
+              : {},
+            query.user2Id
+              ? { OR: [{ user1Id: query.user2Id }, { user2Id: query.user2Id }] }
+              : {},
             query.language ? { language: query.language } : {},
             query.code ? { code: query.code } : {},
           ],
