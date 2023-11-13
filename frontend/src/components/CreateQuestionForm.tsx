@@ -1,13 +1,12 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useAuth } from "../context/AuthContext";
+import { NotificationContext } from "../context/NotificationContext";
 import { QuestionContext } from "../context/QuestionContext";
 import { FullQuestionCreateDTO } from "../interfaces/questionService/fullQuestion/createDTO";
 import ComponentContainer from "./container/Component";
-import { NotificationContext } from "../context/NotificationContext";
-import { useAuth } from "../context/AuthContext";
-import { QuestionCategory } from "../interfaces/questionService/questionCategory/object";
 
 type questionExample = {
   number: number;
@@ -26,9 +25,20 @@ function CreateQuestionForm() {
   const [title, setTitle] = useState<string>("");
   const [difficulty, setDifficulty] = useState<string>("Easy");
   const [description, setDescription] = useState<string>("");
-  const [categories, setCategories] = useState<QuestionCategory[]>(
-    [] as unknown as QuestionCategory[],
+  const categories = useMemo(
+    () => [
+      "Strings",
+      "DataStructures",
+      "Algorithms",
+      "BitManipulation",
+      "Databases",
+      "Arrays",
+      "Brainteaser",
+      "Recursion",
+    ],
+    [],
   );
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [examples, setExamples] = useState<questionExample[]>(
     [] as unknown as questionExample[],
   );
@@ -43,14 +53,14 @@ function CreateQuestionForm() {
       title,
       difficulty,
       description,
-      categories: categories,
+      categories: selectedCategories.map((x) => ({ name: x })),
       examples: examples.map((x) => x.text),
       constraints: constraints.map((x) => x.text),
       authorId: currentUser.uid,
       initialCodes: [],
       runnerCodes: [],
       testCases: [],
-      solutions: []
+      solutions: [],
     };
     controller.createQuestion(createDTO).then((res) => {
       if (res && res.data) {
@@ -94,6 +104,14 @@ function CreateQuestionForm() {
         x.number === number ? { ...x, text: newText } : x,
       ),
     );
+  }
+
+  function handleSelectedCategoriesChange(category: string) {
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories(selectedCategories.filter((x) => x !== category));
+    } else {
+      setSelectedCategories([...selectedCategories, category]);
+    }
   }
 
   return (
@@ -152,6 +170,48 @@ function CreateQuestionForm() {
               <option>Medium</option>
               <option>Hard</option>
             </select>
+          </div>
+
+          <div className="col-span-3">
+            <label
+              htmlFor="categories"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Categories
+            </label>
+            <div className="mt-2">
+              <fieldset>
+                <div className="">
+                  {categories.map((category) => (
+                    <div
+                      key={`${category}`}
+                      className="relative flex items-start py-2"
+                    >
+                      <div className="min-w-0 flex-1 text-sm leading-6">
+                        <label
+                          htmlFor={`category-${category}`}
+                          className="select-none font-medium text-gray-900"
+                        >
+                          {category}
+                        </label>
+                      </div>
+                      <div className="ml-3 flex h-6 items-center">
+                        <input
+                          id={`category-${category}`}
+                          name={`category-${category}`}
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                          onChange={() => {
+                            handleSelectedCategoriesChange(category);
+                          }}
+                          checked={selectedCategories.includes(category)}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </fieldset>
+            </div>
           </div>
 
           <div className="col-span-full border-b border-gray-900/10 pb-12">
