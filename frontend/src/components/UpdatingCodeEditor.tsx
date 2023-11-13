@@ -1,4 +1,4 @@
-import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { langs } from "@uiw/codemirror-extensions-langs";
 import CodeMirror, {
   BasicSetupOptions,
@@ -12,12 +12,13 @@ import { DarkModeContext } from "../context/DarkModeContext";
 import { QuestionContext } from "../context/QuestionContext";
 import { QuestionTestCase } from "../interfaces/questionService/questionTestCase/object";
 
-function CodeEditorEditor() {
+function UpdateCodeEditor() {
   const {
     question,
     initialCode,
     runnerCode,
     selectedLanguage,
+    solutionCodes,
     saveNewInitialCode,
     saveNewRunnerCode,
     saveNewTestCases,
@@ -29,7 +30,7 @@ function CodeEditorEditor() {
   const [extensions, setExtensions] = useState<Extension[]>();
   const [localInitialCode, setLocalInitialCode] = useState<string>("");
   const [localRunnerCode, setLocalRunnerCode] = useState<string>("");
-  const [localSolutionCodes, setLocalSolutionCodes] = useState<string[]>("");
+  const [localSolutionCodes, setLocalSolutionCodes] = useState<string[]>([]);
   const [testCases, setTestCases] = useState<QuestionTestCase[]>();
 
   const navigate = useNavigate();
@@ -44,6 +45,15 @@ function CodeEditorEditor() {
   const handleLocalRunnerCodeChange = useCallback(
     (value: string, _viewUpdate: ViewUpdate) => {
       setLocalRunnerCode(value);
+    },
+    [setLocalRunnerCode],
+  );
+
+  const handleLocalSolutionCodeChange = useCallback(
+    (value: string, _viewUpdate: ViewUpdate, solutionId: number) => {
+      setLocalSolutionCodes(prevState => prevState.map(x => {
+        if(x.
+      }));
     },
     [setLocalRunnerCode],
   );
@@ -71,6 +81,11 @@ function CodeEditorEditor() {
     setLocalRunnerCode(runnerCode);
     setInitializing(false);
   }, [runnerCode, setLocalRunnerCode]);
+
+  useEffect(() => {
+    setLocalSolutionCodes(solutionCodes);
+    setInitializing(false);
+  }, [solutionCodes, setLocalSolutionCodes]);
 
   const codeMirrorOptions: BasicSetupOptions = {
     indentOnInput: true,
@@ -131,26 +146,21 @@ function CodeEditorEditor() {
       <div className="col-span-2">
         <h1 className="font-semibold mb-2">Solution Code</h1>
         <div className="flex gap-4">
-            <div className="min-h-144 w-1/2 border rounded-lg shadow">
-                <CodeMirror
-                    value={localRunnerCode}
-                    height="576px"
-                    extensions={extensions}
-                    onChange={handleLocalRunnerCodeChange}
-                    theme={isDarkMode ? "dark" : "light"}
-                    basicSetup={codeMirrorOptions}
-                />
-            </div>
-            <div className="min-h-144 w-1/2 border rounded-lg shadow">
-                <CodeMirror
-                    value={localRunnerCode}
-                    height="576px"
-                    extensions={extensions}
-                    onChange={handleLocalRunnerCodeChange}
-                    theme={isDarkMode ? "dark" : "light"}
-                    basicSetup={codeMirrorOptions}
-                />
-            </div>
+            {
+                localSolutionCodes.map((code) => (
+<div className="min-h-144 w-1/2 border rounded-lg shadow">
+            <CodeMirror
+              value={code}
+              height="576px"
+              extensions={extensions}
+              onChange={(value, viewUpdate) => handleLocalSolutionCodeChange(value, viewUpdate)}
+              theme={isDarkMode ? "dark" : "light"}
+              basicSetup={codeMirrorOptions}
+            />
+          </div>
+                ))
+            }
+
         </div>
         <div className="flex flex-row-reverse mt-5 gap-3">
           <button
@@ -303,4 +313,4 @@ function CodeEditorEditor() {
   );
 }
 
-export default CodeEditorEditor;
+export default UpdateCodeEditor;

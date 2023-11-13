@@ -1,9 +1,8 @@
 import { useCallback, useContext, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { CodingLanguage, QuestionContext } from "../context/QuestionContext";
-import CodeEditorEditor from "./UpdatingCodeEditor";
 import ComponentContainer from "./container/Component";
+import CodeEditorEditor from "./UpdatingCodeEditor";
 
 function UpdatingCodingSpace() {
   const languageOptions: CodingLanguage[] = useMemo(() => ["java", "cpp"], []);
