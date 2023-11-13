@@ -1,14 +1,18 @@
-import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react';
-import { ChevronDownIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { Fragment, useContext, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
-import PageContainer from '../../../components/container/Page';
-import { QuestionContext } from '../../../context/QuestionContext';
-import classNames from '../../../util/ClassNames';
+import PageContainer from "../../../components/container/Page";
+import { QuestionContext } from "../../../context/QuestionContext";
+import classNames from "../../../util/ClassNames";
 
 function AllQuestionPage() {
-  const { questions } = useContext(QuestionContext);
+  const { questions, setQuestionQuery } = useContext(QuestionContext);
 
   const PAGINATION_SIZE = 10;
 
@@ -25,24 +29,24 @@ function AllQuestionPage() {
   const [sortByDifficulty, setSortByDifficulty] = useState<SortBy>(SortBy.ASC);
 
   useEffect(() => {
-    if(questions.length > 1) {
-        setMaxPageNumber(Math.floor(questions.length / PAGINATION_SIZE))
+    if (questions.length > 1) {
+      setMaxPageNumber(Math.floor(questions.length / PAGINATION_SIZE));
     }
-  }, [questions])
+  }, [questions]);
 
   const [filters, setFilters] = useState([
     {
       id: "category",
       name: "Category",
       options: [
-        { value: "Strings", label:"Strings", checked: false},
-        { value: "DataStructures", label:"DataStructures", checked: false},
-        { value: "Algorithms", label:"Algorithms", checked: false},
-        { value: "BitManipulation", label:"BitManipulation", checked: false},
-        { value: "Databases", label:"Databases", checked: false},
-        { value: "Arrays", label:"Arrays", checked: false},
-        { value: "Brainteaser", label:"Brainteaser", checked: false},
-        { value: "Recursion", label:"Recursion", checked: false},
+        { value: "Strings", label: "Strings", checked: true },
+        { value: "DataStructures", label: "DataStructures", checked: true },
+        { value: "Algorithms", label: "Algorithms", checked: true },
+        { value: "BitManipulation", label: "BitManipulation", checked: true },
+        { value: "Databases", label: "Databases", checked: true },
+        { value: "Arrays", label: "Arrays", checked: true },
+        { value: "Brainteaser", label: "Brainteaser", checked: true },
+        { value: "Recursion", label: "Recursion", checked: true },
       ],
     },
   ]);
@@ -79,6 +83,17 @@ function AllQuestionPage() {
     );
   }
 
+  useEffect(() => {
+    setQuestionQuery((prevState) => ({
+      ...prevState,
+      categories: activeFilters.map((x) => ({
+        value: { name: x.value, questionId: 0 },
+        order: "asc",
+        sortBy: false,
+      })),
+    }));
+  }, [setQuestionQuery, activeFilters]);
+
   return (
     <PageContainer>
       {/* Mobile filter dialog */}
@@ -110,7 +125,7 @@ function AllQuestionPage() {
               leaveFrom="translate-x-0"
               leaveTo="translate-x-full"
             >
-              <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto py-4 pb-12 shadow-xl">
+              <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col bg-white overflow-y-auto py-4 pb-12 shadow-xl">
                 <div className="flex items-center justify-between px-4">
                   <h2 className="text-lg font-medium text-gray-900">Filters</h2>
                   <button
@@ -125,6 +140,41 @@ function AllQuestionPage() {
 
                 {/* Filters */}
                 <form className="mt-4">
+                  <div className="p-4">
+                    <label
+                      htmlFor="questionName"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Question Name
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        name="questionName"
+                        id="questionName"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        placeholder="Two Sum"
+                      />
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <label
+                      htmlFor="location"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Location
+                    </label>
+                    <select
+                      id="location"
+                      name="location"
+                      className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      defaultValue="Canada"
+                    >
+                      <option>United States</option>
+                      <option>Canada</option>
+                      <option>Mexico</option>
+                    </select>
+                  </div>
                   {filters.map((section) => (
                     <Disclosure
                       as="div"
@@ -163,7 +213,9 @@ function AllQuestionPage() {
                                     type="checkbox"
                                     defaultChecked={option.checked}
                                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    onChange={()=> {handleCategoryChange(option.value)}}
+                                    onChange={() => {
+                                      handleCategoryChange(option.value);
+                                    }}
                                   />
                                   <label
                                     htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
@@ -214,7 +266,44 @@ function AllQuestionPage() {
         </h2>
 
         <div className="border-b border-gray-200  pb-4">
-          <div className="mx-auto flex max-w-7xl items-center justify-end px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-row">
+              <div className="p-4">
+                <label
+                  htmlFor="questionName"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Question Name
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="questionName"
+                    id="questionName"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="Two Sum"
+                  />
+                </div>
+              </div>
+              <div className="p-4">
+                <label
+                  htmlFor="location"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Location
+                </label>
+                <select
+                  id="location"
+                  name="location"
+                  className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  defaultValue="Canada"
+                >
+                  <option>United States</option>
+                  <option>Canada</option>
+                  <option>Mexico</option>
+                </select>
+              </div>
+            </div>
             <button
               type="button"
               className="inline-block text-sm font-medium text-gray-700 hover:text-gray-900 sm:hidden"
@@ -262,7 +351,9 @@ function AllQuestionPage() {
                                   type="checkbox"
                                   defaultChecked={option.checked}
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                  onChange={()=> {handleCategoryChange(option.value)}}
+                                  onChange={() => {
+                                    handleCategoryChange(option.value);
+                                  }}
                                 />
                                 <label
                                   htmlFor={`filter-${section.id}-${optionIdx}`}

@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import formatUrl from "../util/formatUrl";
 
 export type ControllerParamsHeaders = {
-  params?: Record<string, any | any[]>;
+  params?: Record<string, any>;
   headers?: any;
 };
 
@@ -36,6 +36,7 @@ class GenericController {
         ...paramsHeader?.headers,
       },
     };
+    console.log(options)
     const response = axios<T, R>(options);
 
     return response;

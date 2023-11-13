@@ -57,7 +57,9 @@ interface QuestionContextType {
   saveNewRunnerCode: (lang: string, newCode: string) => void;
   saveNewTestCases: (testCases: QuestionTestCase[]) => void;
   updateQuestionData: (questionData: QuestionUpdateDTO) => void;
-  setQuestionQuery: (query: Partial<Query<FullQuestion>>) => void;
+  setQuestionQuery: React.Dispatch<
+    React.SetStateAction<Partial<Query<FullQuestion>>>
+  >;
 }
 
 export const QuestionContext = createContext<QuestionContextType>({
@@ -75,7 +77,7 @@ export const QuestionContext = createContext<QuestionContextType>({
   saveNewRunnerCode: (_lang: string, _newCode: string) => {},
   saveNewTestCases: (_testCases: QuestionTestCase[]) => {},
   updateQuestionData: (_questionData: QuestionUpdateDTO) => {},
-  setQuestionQuery: (_query: Partial<Query<FullQuestion>>) => {},
+  setQuestionQuery: () => {},
 });
 
 export function QuestionProvider({ children }: QuestionProviderProps) {
@@ -102,9 +104,13 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
   const controller = useMemo(() => new QuestionController(), []);
 
   const loadQuestions = useCallback(async () => {
+    console.log(questionQuery);
     const res = await controller.getQuestions(questionQuery);
     if (res && res.data) {
+        console.log(res.data.data)
       setQuestions(res.data.data);
+    } else {
+        console.log(res.errors)
     }
   }, [controller, questionQuery]);
 

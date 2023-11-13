@@ -51,7 +51,7 @@ class QuestionController extends GenericController {
   ): Promise<ControllerResponse<DataRecord<FullQuestion[]>>> {
     const paramsHeader: ControllerParamsHeaders = {
       params: {
-        query,
+        ...query,
       },
     };
     const res = await this.get<ControllerResponse<DataRecord<FullQuestion[]>>>(

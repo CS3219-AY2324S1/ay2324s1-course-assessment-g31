@@ -19,8 +19,8 @@ class QuestionParser
     ) {
       throw new Error("Invalid Input");
     }
-    if(!input.testCases) {
-        throw new Error("Test Cases field is required")
+    if (!input.testCases) {
+      throw new Error("Test Cases field is required");
     }
     input.testCases.forEach((x) => {
       if (!x.testCaseNumber || !x.input || !x.expectedOutput) {
@@ -29,8 +29,8 @@ class QuestionParser
         );
       }
     });
-    if(!input.initialCodes) {
-        throw new Error("Initial Codes field is required")
+    if (!input.initialCodes) {
+      throw new Error("Initial Codes field is required");
     }
     input.initialCodes.forEach((x) => {
       if (!x.code || !x.language) {
@@ -39,8 +39,8 @@ class QuestionParser
         );
       }
     });
-    if(!input.runnerCodes) {
-        throw new Error("Runner Codes field is required")
+    if (!input.runnerCodes) {
+      throw new Error("Runner Codes field is required");
     }
     input.runnerCodes.forEach((x) => {
       if (!x.code || !x.language) {
@@ -49,8 +49,8 @@ class QuestionParser
         );
       }
     });
-    if(!input.solutions) {
-        throw new Error("Solutions field is required")
+    if (!input.solutions) {
+      throw new Error("Solutions field is required");
     }
     input.solutions.forEach((x) => {
       if (!x.code || !x.language || !x.description || !x.title) {
@@ -59,8 +59,8 @@ class QuestionParser
         );
       }
     });
-    if(!input.categories) {
-        throw new Error("Categories field is required")
+    if (!input.categories) {
+      throw new Error("Categories field is required");
     }
     input.categories.forEach((x) => {
       if (!x.name) {

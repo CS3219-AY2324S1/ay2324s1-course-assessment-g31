@@ -7,6 +7,7 @@ import { FullQuestionUpdateDTO } from "../../interfaces/fullQuestion/updateDTO";
 import { Query } from "../../interfaces/query";
 import Service from "../service.interface";
 import { DataRecord } from "../../interfaces/dataRecord";
+import logger from "../../util/logger";
 
 class QuestionService
   implements
@@ -140,9 +141,14 @@ class QuestionService
             query.categories
               ? {
                   categories: {
+                    every: {
+                      name: {
+                        in: query.categories.map((x) => x.value.name),
+                      },
+                    },
                     some: {
                       name: {
-                        in: query.categories.value.map((x) => x.name),
+                        in: query.categories.map((x) => x.value.name),
                       },
                     },
                   },
