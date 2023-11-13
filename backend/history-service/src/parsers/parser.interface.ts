@@ -6,7 +6,7 @@ type ObjWithId = {
 
 interface Parser<CreateDTO, UpdateDTO, Obj extends ObjWithId> {
   parseCreateInput(input: StringInterface<CreateDTO>): CreateDTO;
-  parseFindByIdInput(id: string): Obj["id"];
+  parseFindByIdInput(id: string | undefined): Obj["id"];
   parseFindOneInput(input: Partial<StringInterface<Obj>>): Partial<Obj>;
   parseFindAllInput(input: Partial<StringInterface<Obj>>): Partial<Obj>;
   parseUpdateInput(

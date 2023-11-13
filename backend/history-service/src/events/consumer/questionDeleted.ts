@@ -1,16 +1,21 @@
-import prisma from "../../model/prismaClient";
+import prismaClient from "../../util/prisma/client";
 import { ConsumerFunction } from "./main.interface";
 
 export const questionDeletedConsumer: ConsumerFunction = (message) => {
   if (message.value) {
-    const { questionId } = JSON.parse(message.value.toString());
+    let { questionId } = JSON.parse(message.value.toString());
 
-    prisma.history
+    questionId = parseInt(questionId, 10);
+    if (Number.isNaN(questionId)) {
+      throw new Error("Invalid QuestionId");
+    }
+
+    prismaClient.history
       .deleteMany({
         where: {
           questionId: questionId,
         },
       })
-      .then((res) => console.log(res.count));
+      .then((res: any) => console.log(`${res.count} history deleted`));
   }
 };

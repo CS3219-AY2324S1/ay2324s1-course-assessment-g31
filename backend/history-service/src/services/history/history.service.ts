@@ -45,18 +45,10 @@ class HistoryService
         where: {
           ...rest,
           OR: [
-            {
-              user1Id: user1Id,
-            },
-            {
-              user1Id: user2Id,
-            },
-            {
-              user2Id: user1Id,
-            },
-            {
-              user2Id: user2Id,
-            },
+            user1Id ? { user1Id: user1Id } : {},
+            user1Id ? { user2Id: user1Id } : {},
+            user2Id ? { user1Id: user2Id } : {},
+            user2Id ? { user2Id: user2Id } : {},
           ],
         },
       });
