@@ -1,6 +1,6 @@
 import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react';
 import { ChevronDownIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Fragment, useContext, useMemo, useState } from 'react';
+import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import PageContainer from '../../../components/container/Page';
@@ -13,9 +13,7 @@ function AllQuestionPage() {
   const PAGINATION_SIZE = 10;
 
   const [pageNumber, setPageNumber] = useState<number>(0);
-  const [maxPageNumber, _setMaxPageNumber] = useState<number>(
-    Math.floor(questions.length / PAGINATION_SIZE),
-  );
+  const [maxPageNumber, setMaxPageNumber] = useState<number>(0);
 
   enum SortBy {
     ASC = "asc",
@@ -25,6 +23,12 @@ function AllQuestionPage() {
   const [sortByStatus, setSortByStatus] = useState<SortBy>(SortBy.ASC);
   const [sortByTitle, setSortByTitle] = useState<SortBy>(SortBy.ASC);
   const [sortByDifficulty, setSortByDifficulty] = useState<SortBy>(SortBy.ASC);
+
+  useEffect(() => {
+    if(questions.length > 1) {
+        setMaxPageNumber(Math.floor(questions.length / PAGINATION_SIZE))
+    }
+  }, [questions])
 
   const [filters, setFilters] = useState([
     {
