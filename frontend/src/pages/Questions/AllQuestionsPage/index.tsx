@@ -258,7 +258,7 @@ function AllQuestionPage() {
         </Dialog>
       </Transition.Root>
 
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="py-8">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
           Unleash Your Problem-Solving Prowess
         </h1>
@@ -286,7 +286,7 @@ function AllQuestionPage() {
         </h2>
 
         <div className="border-b border-gray-200  pb-4">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
             <div className="flex flex-row">
               <div className="p-4">
                 <label
