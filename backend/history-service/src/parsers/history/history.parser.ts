@@ -43,7 +43,7 @@ class HistoryParser
     if (input.questionId) {
       const questionIntId = parseInt(input.questionId, 10);
       if (Number.isNaN(questionIntId)) {
-        throw new Error("Invalid question ID, must be integer");
+        throw new Error("Invalid questionId");
       }
       parsedInput.questionId = questionIntId;
     }
@@ -72,7 +72,7 @@ class HistoryParser
     if (input.questionId) {
       const questionIntId = parseInt(input.questionId, 10);
       if (Number.isNaN(questionIntId)) {
-        throw new Error("Invalid question ID, must be integer");
+        throw new Error("Invalid questionId");
       }
       parsedInput.questionId = questionIntId;
     }

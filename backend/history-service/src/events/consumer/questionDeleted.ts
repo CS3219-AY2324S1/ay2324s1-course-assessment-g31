@@ -7,7 +7,7 @@ export const questionDeletedConsumer: ConsumerFunction = (message) => {
 
     questionId = parseInt(questionId, 10);
     if (Number.isNaN(questionId)) {
-      throw new Error("Invalid QuestionId");
+      throw new Error("Invalid qestionId");
     }
 
     prismaClient.history
