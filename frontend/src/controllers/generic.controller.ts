@@ -36,7 +36,7 @@ class GenericController {
         ...paramsHeader?.headers,
       },
     };
-    console.log(options)
+    console.log(options);
     const response = axios<T, R>(options);
 
     return response;

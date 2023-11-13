@@ -154,25 +154,45 @@ function AllQuestionPage() {
                         id="questionName"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         placeholder="Two Sum"
+                        onChange={(e) => {
+                          setQuestionQuery((prevState) => ({
+                            ...prevState,
+                            title: {
+                              value: e.target.value,
+                              order: "asc",
+                              sortBy: false,
+                            },
+                          }));
+                        }}
                       />
                     </div>
                   </div>
                   <div className="p-4">
                     <label
-                      htmlFor="location"
+                      htmlFor="difficulty"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Location
+                      Difficulty
                     </label>
                     <select
-                      id="location"
-                      name="location"
+                      id="difficulty"
+                      name="difficulty"
                       className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      defaultValue="Canada"
+                      defaultValue="Easy"
+                      onChange={(e) => {
+                        setQuestionQuery((prevState) => ({
+                          ...prevState,
+                          difficulty: {
+                            value: e.target.value,
+                            order: "asc",
+                            sortBy: false,
+                          },
+                        }));
+                      }}
                     >
-                      <option>United States</option>
-                      <option>Canada</option>
-                      <option>Mexico</option>
+                      <option>Easy</option>
+                      <option>Medium</option>
+                      <option>Hard</option>
                     </select>
                   </div>
                   {filters.map((section) => (
@@ -282,25 +302,45 @@ function AllQuestionPage() {
                     id="questionName"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     placeholder="Two Sum"
+                    onChange={(e) => {
+                      setQuestionQuery((prevState) => ({
+                        ...prevState,
+                        title: {
+                          value: e.target.value,
+                          order: "asc",
+                          sortBy: false,
+                        },
+                      }));
+                    }}
                   />
                 </div>
               </div>
               <div className="p-4">
                 <label
-                  htmlFor="location"
+                  htmlFor="difficulty"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Location
+                  Difficulty
                 </label>
                 <select
-                  id="location"
-                  name="location"
+                  id="difficulty"
+                  name="difficulty"
                   className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  defaultValue="Canada"
+                  defaultValue="Easy"
+                  onChange={(e) => {
+                    setQuestionQuery((prevState) => ({
+                      ...prevState,
+                      difficulty: {
+                        value: e.target.value,
+                        order: "asc",
+                        sortBy: false,
+                      },
+                    }));
+                  }}
                 >
-                  <option>United States</option>
-                  <option>Canada</option>
-                  <option>Mexico</option>
+                  <option>Easy</option>
+                  <option>Medium</option>
+                  <option>Hard</option>
                 </select>
               </div>
             </div>
@@ -398,6 +438,9 @@ function AllQuestionPage() {
                     <button
                       type="button"
                       className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-500"
+                      onClick={() => {
+                        handleCategoryChange(activeFilter.value);
+                      }}
                     >
                       <span className="sr-only">
                         Remove filter for {activeFilter.label}
@@ -502,7 +545,7 @@ function AllQuestionPage() {
                     scope="col"
                     className="px-3 py-3 text-left text-xs font-medium tracking-wide text-gray-500 dark:text-gray-400"
                   >
-                    Tags
+                    Categories
                   </th>
                   <th scope="col" className="relative py-3 pl-3 pr-4 sm:pr-0">
                     <span className="sr-only">Attempt</span>
@@ -541,23 +584,23 @@ function AllQuestionPage() {
                       >
                         {question.difficulty}
                       </td>
-                      {/* <td
-                              className={classNames(
-                                "whitespace-nowrap px-3 py-4 text-sm",
-                                "text-gray-700 dark:text-gray-300",
-                              )}
-                            >
-                              {question.tags.map((tag) => (
-                                <span
-                                  className={classNames(
-                                    "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset",
-                                    "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-500/10",
-                                  )}
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </td> */}
+                      <td
+                        className={classNames(
+                          "whitespace-nowrap px-3 py-4 text-sm",
+                          "text-gray-700 dark:text-gray-300",
+                        )}
+                      >
+                        {question.categories.map((category) => (
+                          <span
+                            className={classNames(
+                              "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset mr-3",
+                              "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-500/10",
+                            )}
+                          >
+                            {category.name}
+                          </span>
+                        ))}
+                      </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                         <Link
                           to={`${question.id}`}

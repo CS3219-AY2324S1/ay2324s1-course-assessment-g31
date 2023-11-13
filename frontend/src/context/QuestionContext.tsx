@@ -107,10 +107,10 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
     console.log(questionQuery);
     const res = await controller.getQuestions(questionQuery);
     if (res && res.data) {
-        console.log(res.data.data)
+      console.log(res.data.data);
       setQuestions(res.data.data);
     } else {
-        console.log(res.errors)
+      console.log(res.errors);
     }
   }, [controller, questionQuery]);
 
