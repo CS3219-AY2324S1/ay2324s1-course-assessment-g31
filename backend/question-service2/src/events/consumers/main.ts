@@ -32,7 +32,7 @@ const questionEventConsumer = async () => {
         isInEnum(QuestionTopics, topic) &&
         SubscribedQuestionTopics.has(topic)
       ) {
-        SubscribedQuestionTopics.get(topic)!(message);
+        await SubscribedQuestionTopics.get(topic)!(message);
       }
     },
   });

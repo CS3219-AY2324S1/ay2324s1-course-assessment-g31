@@ -4,9 +4,12 @@ import { ConsumerFunction } from "./main.interface";
 
 const questionService = new QuestionService(prismaClient);
 
-export const sessionEndConsumer: ConsumerFunction = (message) => {
+export const sessionEndConsumer: ConsumerFunction = async (message) => {
   if (message.value) {
     const { questionId } = JSON.parse(message.value.toString());
-    questionService.incrementPopularity(questionId);
+    await questionService.incrementPopularity(questionId);
   }
+
+  // Backpressure
+  return Promise.resolve();
 };

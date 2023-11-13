@@ -33,5 +33,8 @@ export const matchingCreatedConsumer: ConsumerFunction = async (message) => {
         questionIdRequested: selectedQuestion.data.id,
       });
     }
+
+    // Backpressure
+    return Promise.resolve();
   }
 };
