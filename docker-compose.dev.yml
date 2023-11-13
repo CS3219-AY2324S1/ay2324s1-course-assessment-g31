@@ -52,7 +52,7 @@ services:
     volumes:
       - progresDB:/data/postgres/user-service
     env_file:
-      - ./backend/user-service/.env
+      - ./backend/user-service2/.env
     networks:
       - user-service-network
     healthcheck:
