@@ -2,6 +2,7 @@ import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
+  PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Fragment, useContext, useEffect, useMemo, useState } from "react";
@@ -305,12 +306,15 @@ function AllQuestionPage() {
       <div className="grid grid-cols-4 gap-8 py-12">
         <div className="col-span-3">
           {/* Filters */}
-          <section aria-labelledby="filter-heading" className="bg-gray-50 rounded-lg p-4">
+          <section
+            aria-labelledby="filter-heading"
+            className="bg-gray-50 rounded-lg p-4 border"
+          >
             <h2 id="filter-heading" className="sr-only">
               Filters
             </h2>
 
-            <div className="border-b border-gray-200  pb-4">
+            <div className="border-b border-gray-200 pb-4">
               <div className="flex items-center justify-between">
                 <div className="flex flex-row">
                   <div className="p-4">
@@ -440,7 +444,7 @@ function AllQuestionPage() {
             </div>
 
             {/* Active filters */}
-            <div className="bg-gray-100">
+            <div className="bg-gray-50">
               <div className="mx-auto max-w-7xl px-4 py-3 sm:flex sm:items-center sm:px-6 lg:px-8">
                 <h3 className="text-sm font-medium text-gray-500">
                   Filters
@@ -494,7 +498,7 @@ function AllQuestionPage() {
           <div className="mt-8 flow-root">
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                <table className="min-w-full divide-y divide-gray-300">
+                <table className="min-w-full divide-y divide-gray-300 p-4">
                   <thead className="">
                     <tr>
                       <th
@@ -581,67 +585,106 @@ function AllQuestionPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-gray-100 dark:bg-gray-800">
-                    { questions.length > 0 ?
-                    questions
-                      .slice(
-                        pageNumber * PAGINATION_SIZE,
-                        (pageNumber + 1) * PAGINATION_SIZE,
-                      )
-                      .map((question) => (
-                        <tr key={question.id}>
-                          <td
-                            className={classNames(
-                              "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-0",
-                              "text-gray-700 dark:text-gray-300",
-                            )}
-                          >
-                            Not Done
-                          </td>
-                          <td
-                            className={classNames(
-                              "whitespace-nowrap px-3 py-4 text-sm",
-                              "text-gray-700 dark:text-gray-300",
-                            )}
-                          >
-                            {question.title}
-                          </td>
-                          <td
-                            className={classNames(
-                              "whitespace-nowrap px-3 py-4 text-sm",
-                              "text-gray-700 dark:text-gray-300",
-                            )}
-                          >
-                            {question.difficulty}
-                          </td>
-                          <td
-                            className={classNames(
-                              "whitespace-nowrap px-3 py-4 text-sm",
-                              "text-gray-700 dark:text-gray-300",
-                            )}
-                          >
-                            {question.categories.map((category) => (
-                              <span
-                                className={classNames(
-                                  "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset mr-3",
-                                  "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-500/10",
-                                )}
-                              >
-                                {category.name}
-                              </span>
-                            ))}
-                          </td>
-                          <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                            <Link
-                              to={`${question.id}`}
-                              className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-100"
+                    {questions.length > 0 ? (
+                      questions
+                        .slice(
+                          pageNumber * PAGINATION_SIZE,
+                          (pageNumber + 1) * PAGINATION_SIZE,
+                        )
+                        .map((question) => (
+                          <tr key={question.id}>
+                            <td
+                              className={classNames(
+                                "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-0",
+                                "text-gray-700 dark:text-gray-300",
+                              )}
                             >
-                              Attempt
-                            </Link>
-                          </td>
-                        </tr>
-                      ))
-                      : <p>No Questions</p>
-                      }
+                              Not Done
+                            </td>
+                            <td
+                              className={classNames(
+                                "whitespace-nowrap px-3 py-4 text-sm",
+                                "text-gray-700 dark:text-gray-300",
+                              )}
+                            >
+                              {question.title}
+                            </td>
+                            <td
+                              className={classNames(
+                                "whitespace-nowrap px-3 py-4 text-sm",
+                                "text-gray-700 dark:text-gray-300",
+                              )}
+                            >
+                              {question.difficulty}
+                            </td>
+                            <td
+                              className={classNames(
+                                "whitespace-nowrap px-3 py-4 text-sm",
+                                "text-gray-700 dark:text-gray-300",
+                              )}
+                            >
+                              {question.categories.map((category) => (
+                                <span
+                                  className={classNames(
+                                    "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset mr-3",
+                                    "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-500/10",
+                                  )}
+                                >
+                                  {category.name}
+                                </span>
+                              ))}
+                            </td>
+                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                              <Link
+                                to={`${question.id}`}
+                                className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-100"
+                              >
+                                Attempt
+                              </Link>
+                            </td>
+                          </tr>
+                        ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} className="text-center py-8">
+                          <div className="text-center">
+                            <svg
+                              className="mx-auto h-12 w-12 text-gray-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              aria-hidden="true"
+                            >
+                              <path
+                                vectorEffect="non-scaling-stroke"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+                              />
+                            </svg>
+                            <h3 className="mt-2 text-sm font-semibold text-gray-900">
+                              No Questions
+                            </h3>
+                            <p className="mt-1 text-sm text-gray-500">
+                              Get started by creating a new question.
+                            </p>
+                            <div className="mt-6">
+                              <button
+                                type="button"
+                                className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                              >
+                                <PlusIcon
+                                  className="-ml-0.5 mr-1.5 h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                                New Question
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
