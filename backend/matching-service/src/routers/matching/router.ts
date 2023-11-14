@@ -1,7 +1,6 @@
 import express from "express";
-import { checkSchema } from "express-validator";
+
 import MatchingController from "../../controllers/matching/matching.controller";
-import createMatchingSchema from "../../util/validation/matching/createMatching.schema";
 import BaseRouter from "../router.abstract";
 
 class MatchingRouter extends BaseRouter<MatchingController> {
@@ -16,7 +15,7 @@ class MatchingRouter extends BaseRouter<MatchingController> {
     this.router
       .route("/")
       .get(this.controller.findAll)
-      .post(checkSchema(createMatchingSchema), this.controller.create);
+      .post(this.controller.create);
 
     return this.router;
   }

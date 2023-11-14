@@ -13,6 +13,8 @@ const MatchingRequestFailure: ConsumerFunction = (message) => {
       `THERE IS CURRENTLY NO COUNTERPART FOR YOU: ${matchingRequest.userId}`,
     );
   }
+
+  return Promise.resolve();
 };
 
 export default MatchingRequestFailure;

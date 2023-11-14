@@ -10,6 +10,7 @@ import QuestionParser from "./parsers/question/question.parser";
 import QuestionRouter from "./routers/question/router";
 import QuestionService from "./services/question/question.service";
 import prismaClient from "./util/prisma/client";
+import { Partitioners } from "kafkajs";
 
 dotenv.config();
 
@@ -21,7 +22,9 @@ const corsOptions = {
 };
 
 // Event Producer
-const questionEventProducer = new QuestionProducer(kafka.producer());
+const questionEventProducer = new QuestionProducer(
+  kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner }),
+);
 
 // Services
 const questionService = new QuestionService(prismaClient);

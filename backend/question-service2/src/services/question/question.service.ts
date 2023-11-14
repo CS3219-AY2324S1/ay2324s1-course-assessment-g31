@@ -336,9 +336,9 @@ class QuestionService
               ...element,
             },
             create: {
-                ...element,
-                questionId: id
-            }
+              ...element,
+              questionId: id,
+            },
           });
         }
       }

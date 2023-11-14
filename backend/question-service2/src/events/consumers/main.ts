@@ -3,15 +3,18 @@ import { EachMessagePayload } from "kafkajs";
 import isInEnum from "../../util/isInEnum";
 import kafka from "../kafka";
 import CollaborationTopics from "../topics/collaboration";
+import MatchingTopics from "../topics/matching";
 import QuestionTopics from "../topics/question";
 import { ConsumerFunction } from "./main.interface";
 import { matchingCreatedConsumer } from "./matchingCreated";
 import { sessionEndConsumer } from "./sessionEnd";
-import MatchingTopics from "../topics/matching";
 
-const SubscribedQuestionTopics: Map<string, ConsumerFunction> = new Map([
-  [CollaborationTopics.ENDED.toString(), sessionEndConsumer],
-  [MatchingTopics.CREATE.toString(), matchingCreatedConsumer],
+const SubscribedCollaborationTopics: Map<string, ConsumerFunction> = new Map([
+  [CollaborationTopics.ENDED, sessionEndConsumer],
+]);
+
+const SubscribedMatchingTopics: Map<string, ConsumerFunction> = new Map([
+  [MatchingTopics.CREATE, matchingCreatedConsumer],
 ]);
 
 const consumer = kafka.consumer({ groupId: "question-service" });
@@ -21,7 +24,9 @@ const questionEventConsumer = async () => {
   await consumer.connect();
 
   await consumer.subscribe({
-    topics: Array.from(SubscribedQuestionTopics.keys()),
+    topics: Array.from(SubscribedCollaborationTopics.keys()).concat(
+      Array.from(SubscribedMatchingTopics.keys()),
+    ),
   });
 
   await consumer.run({
@@ -30,9 +35,16 @@ const questionEventConsumer = async () => {
       // here, we just log the message to the standard output
       if (
         isInEnum(QuestionTopics, topic) &&
-        SubscribedQuestionTopics.has(topic)
+        SubscribedCollaborationTopics.has(topic)
       ) {
-        await SubscribedQuestionTopics.get(topic)!(message);
+        await SubscribedCollaborationTopics.get(topic)!(message);
+      }
+
+      if (
+        isInEnum(MatchingTopics, topic) &&
+        SubscribedMatchingTopics.has(topic)
+      ) {
+        await SubscribedMatchingTopics.get(topic)!(message);
       }
     },
   });
