@@ -62,6 +62,7 @@ interface QuestionContextType {
   setSelectedLanguage: (selectedLanguage: CodingLanguage) => void;
   setSelectedTheme: (selectedTheme: CodingTheme) => void;
   setQuestionId: (id: number) => void;
+  setHistoryId: (id: string) => void;
   saveNewInitialCode: (lang: string, newCode: string) => void;
   saveNewRunnerCode: (lang: string, newCode: string) => void;
   saveNewTestCases: (testCases: QuestionTestCase[]) => void;
@@ -85,6 +86,7 @@ export const QuestionContext = createContext<QuestionContextType>({
   setSelectedLanguage: (_selectedLanguage: CodingLanguage) => {},
   setSelectedTheme: (_selectedTheme: CodingTheme) => {},
   setQuestionId: (_id: number) => {},
+  setHistoryId: (_id: string) => {},
   saveNewInitialCode: (_lang: string, _newCode: string) => {},
   saveNewRunnerCode: (_lang: string, _newCode: string) => {},
   saveNewTestCases: (_testCases: QuestionTestCase[]) => {},
@@ -115,6 +117,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
     QuestionSolutionUpdateDTO[]
   >([]);
   const [questionId, setQuestionId] = useState<number>();
+  const [historyId, setHistoryId] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [questionQuery, setQuestionQuery] = useState<
     Partial<Query<FullQuestion>>
@@ -298,6 +301,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       setSelectedLanguage,
       setSelectedTheme,
       setQuestionId,
+      setHistoryId,
       saveNewInitialCode,
       saveNewRunnerCode,
       saveNewTestCases,
@@ -318,6 +322,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       setSelectedLanguage,
       setSelectedTheme,
       setQuestionId,
+      setHistoryId,
       saveNewInitialCode,
       saveNewRunnerCode,
       saveNewTestCases,
@@ -350,8 +355,19 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
     const foundCode = question.initialCodes.find(
       (x) => x.language === selectedLanguage,
     );
-    setInitialCode(foundCode ? decode64(foundCode.code) : defaultInitialCode);
-  }, [loading, question, selectedLanguage]);
+    if (historyId) {
+      const history = await historyController.getHistory(historyId);
+      if (history.success && history.data) {
+        setInitialCode(decode64(history.data.code));
+      } else {
+        setInitialCode(
+          foundCode ? decode64(foundCode.code) : defaultInitialCode,
+        );
+      }
+    } else {
+      setInitialCode(foundCode ? decode64(foundCode.code) : defaultInitialCode);
+    }
+  }, [loading, question, selectedLanguage, historyId, historyController]);
 
   const loadRunnerCode = useCallback(async () => {
     if (loading || !question) return;

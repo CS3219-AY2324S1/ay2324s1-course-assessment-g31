@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import Chat from "../../../components/Chat";
 import CodingSpace from "../../../components/CodingSpace";
@@ -15,13 +15,21 @@ export default function SingleQuestionPage() {
   const { matchedUserId, matchingId, cancelCollaboration } =
     useContext(MatchingContext);
   const { currentUser } = useAuth();
-  const { setQuestionId } = useContext(QuestionContext);
+  const { setQuestionId, setHistoryId } = useContext(QuestionContext);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     if (questionId) {
       setQuestionId(parseInt(questionId, 10));
     }
   }, [questionId, setQuestionId]);
+
+  useEffect(() => {
+    const historyId = searchParams.get("historyId");
+    if (historyId) {
+      setHistoryId(historyId);
+    }
+  }, [searchParams, setHistoryId]);
 
   const handleCancelCollaboration = () => {
     if (!currentUser) return;
@@ -96,4 +104,7 @@ export default function SingleQuestionPage() {
       </div>
     </PageContainer>
   );
+}
+function useQuery() {
+  throw new Error("Function not implemented.");
 }
