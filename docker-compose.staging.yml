@@ -1,0 +1,60 @@
+version: '3'
+services:
+  matching:
+    container_name: matching-service
+    build:
+      context: ./backend/matching-service
+      dockerfile: Dockerfile.staging
+    ports:
+      - '5002:5000'
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+    env_file:
+      - ./backend/matching-service/.env
+    depends_on:
+      postgres_matching_service:
+        condition: service_healthy
+    networks:
+      - matching-service-network
+      - api-network
+  postgres_matching_service:
+    image: 'postgres:latest'
+    container_name: postgres-matching-service
+    volumes:
+      - 'progresDB:/data/postgres/matching-service'
+    env_file:
+      - ./backend/matching-service/.env
+    networks:
+      - matching-service-network
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - sh -c 'pg_isready -U admin -d postgres'
+      interval: 10s
+      timeout: 3s
+      retries: 3
+  socket:
+    container_name: socket-service
+    build:
+      context: ./backend/socket-service
+      dockerfile: Dockerfile.staging
+    ports:
+      - '5004:5000'
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+    env_file:
+      - ./backend/socket-service/.env
+    networks:
+      - socket-service-network
+      - api-network
+networks:
+  matching-service-network:
+    driver: bridge
+  socket-service-network:
+    driver: bridge
+  api-network:
+    driver: bridge
+volumes:
+  progresDB:
