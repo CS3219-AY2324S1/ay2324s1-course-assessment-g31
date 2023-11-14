@@ -30,7 +30,7 @@ function CodeResult() {
         question.testCases.map((x) => ({
           ...x,
           resultsAvailable: false,
-          passed: false,
+          passed: true,
           running: false,
           actualOutput: "",
           executionToken: "",
@@ -76,6 +76,7 @@ function CodeResult() {
         if (fullTestCases) {
           const updatedTestCases = fullTestCases.map((x, idx) => ({
             ...x,
+            resultsAvailable: false,
             running: true,
             executionToken: res.data[idx].token,
           }));
@@ -100,14 +101,14 @@ function CodeResult() {
         const acceptedSubmissions = res.data.submissions.filter(
           (sub) => sub.status.id !== 1 && sub.status.id !== 2,
         );
-        console.log("Accepted Submissions", acceptedSubmissions);
+        console.log("Accepted Submissions", acceptedSubmissions); // submissions that are completed
         const newOngoingCodeExecutions = ongoingCodeExecutions.filter(
           (codeExecutions) =>
             !acceptedSubmissions
               .map((x) => x.token)
               .includes(codeExecutions.token),
         );
-        console.log("Ongoing Executions", acceptedSubmissions);
+        console.log("Ongoing Executions", newOngoingCodeExecutions);
 
         setOngoingCodeExecutions(newOngoingCodeExecutions);
         if (executedSubmissions) {
@@ -128,14 +129,33 @@ function CodeResult() {
                 (sub) => sub.token === executionToken,
               )!;
               console.log(foundSubmission);
+              let passed: boolean = false;
+              let actualOutput: string = "";
+              switch (foundSubmission.status.id) {
+                case 5:
+                  actualOutput = "Time Limit Exceeded";
+                  break;
+
+                case 6:
+                  actualOutput = "Compilation Error";
+                  break;
+
+                case 7 || 8 || 9 || 10 || 11 || 12 || 13 || 14:
+                  actualOutput = "Runtime Error";
+                  break;
+
+                default:
+                  passed = testCase.expectedOutput.includes(
+                    decode64(foundSubmission.stdout).trim(),
+                  );
+                  actualOutput = decode64(foundSubmission.stdout);
+              }
               return {
                 ...testCase,
-                passed: testCase.expectedOutput.includes(
-                  decode64(foundSubmission.stdout).trim(),
-                ),
+                passed,
                 running: false,
                 resultsAvailable: true,
-                actualOutput: decode64(foundSubmission.stdout),
+                actualOutput,
               };
             }
             return testCase;
