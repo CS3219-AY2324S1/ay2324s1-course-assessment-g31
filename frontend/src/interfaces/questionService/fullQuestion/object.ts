@@ -1,3 +1,4 @@
+import { QuestionHistories } from "../../historyService/history/object";
 import { Question } from "../question/object";
 import { QuestionCategories } from "../questionCategory/object";
 import { QuestionInitialCodes } from "../questionInitialCode/object";
@@ -10,4 +11,5 @@ export type FullQuestion = Question &
   QuestionRunnerCodes &
   QuestionTestCases &
   QuestionCategories &
-  QuestionSolutions;
+  QuestionSolutions &
+  QuestionHistories;

@@ -7,3 +7,7 @@ export type History = {
   code: string;
   language: string;
 };
+
+export type QuestionHistories = {
+  histories: History[];
+};

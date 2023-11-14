@@ -21,6 +21,8 @@ import {
 import { QuestionTestCase } from "../interfaces/questionService/questionTestCase/object";
 import { decode64, encode64 } from "../util/base64";
 import { NotificationContext } from "./NotificationContext";
+import HistoryController from "../controllers/history/history.controller";
+import { useAuth } from "./AuthContext";
 
 export type CodingLanguage = keyof typeof langs;
 
@@ -112,7 +114,27 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
     Partial<Query<FullQuestion>>
   >({});
 
+  const { currentUser } = useAuth();
+
   const controller = useMemo(() => new QuestionController(), []);
+  const historyController = useMemo(() => new HistoryController(), []);
+
+  const loadHistory = useCallback(async () => {
+    if (currentUser) {
+      const res = await historyController.getUserHistory(currentUser.uid);
+      if (res) {
+        const userHistories = res.data;
+        if (userHistories) {
+          setQuestions(
+            questions.map((x) => ({
+              ...x,
+              histories: userHistories.filter((y) => y.questionId === x.id),
+            })),
+          );
+        }
+      }
+    }
+  }, [historyController, currentUser, questions, setQuestions]);
 
   const loadQuestions = useCallback(async () => {
     console.log(questionQuery);
