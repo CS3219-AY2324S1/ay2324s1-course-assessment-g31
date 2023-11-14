@@ -9,7 +9,9 @@ import {
   useState,
 } from "react";
 
+import HistoryController from "../controllers/history/history.controller";
 import QuestionController from "../controllers/question/question.controller";
+import { History } from "../interfaces/historyService/history/object";
 import { FullQuestion } from "../interfaces/questionService/fullQuestion/object";
 import { FullQuestionUpdateDTO } from "../interfaces/questionService/fullQuestion/updateDTO";
 import { Query } from "../interfaces/questionService/query";
@@ -20,9 +22,8 @@ import {
 } from "../interfaces/questionService/questionSolution/updateDTO";
 import { QuestionTestCase } from "../interfaces/questionService/questionTestCase/object";
 import { decode64, encode64 } from "../util/base64";
-import { NotificationContext } from "./NotificationContext";
-import HistoryController from "../controllers/history/history.controller";
 import { useAuth } from "./AuthContext";
+import { NotificationContext } from "./NotificationContext";
 
 export type CodingLanguage = keyof typeof langs;
 
@@ -56,6 +57,7 @@ interface QuestionContextType {
   initialCode: string;
   runnerCode: string;
   solutionCodes: QuestionSolutionUpdateDTO[];
+  questionHistories: History[];
   controller: QuestionController;
   setSelectedLanguage: (selectedLanguage: CodingLanguage) => void;
   setSelectedTheme: (selectedTheme: CodingTheme) => void;
@@ -78,6 +80,7 @@ export const QuestionContext = createContext<QuestionContextType>({
   initialCode: defaultInitialCode,
   runnerCode: defaultRunnerCode,
   solutionCodes: [],
+  questionHistories: [],
   controller: null as unknown as QuestionController,
   setSelectedLanguage: (_selectedLanguage: CodingLanguage) => {},
   setSelectedTheme: (_selectedTheme: CodingTheme) => {},
@@ -94,6 +97,9 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
   const { addNotification } = useContext(NotificationContext);
   const [questions, setQuestions] = useState<FullQuestion[]>(
     [] as unknown as FullQuestion[],
+  );
+  const [questionHistories, setQuestionHistories] = useState<History[]>(
+    [] as unknown as History[],
   );
   const [question, setQuestion] = useState<FullQuestion>(
     null as unknown as FullQuestion,
@@ -122,19 +128,11 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
   const loadHistory = useCallback(async () => {
     if (currentUser) {
       const res = await historyController.getUserHistory(currentUser.uid);
-      if (res) {
-        const userHistories = res.data;
-        if (userHistories) {
-          setQuestions(
-            questions.map((x) => ({
-              ...x,
-              histories: userHistories.filter((y) => y.questionId === x.id),
-            })),
-          );
-        }
+      if (res && res.data) {
+        setQuestionHistories(res.data);
       }
     }
-  }, [historyController, currentUser, questions, setQuestions]);
+  }, [historyController, currentUser]);
 
   const loadQuestions = useCallback(async () => {
     console.log(questionQuery);
@@ -295,6 +293,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       initialCode,
       runnerCode,
       solutionCodes,
+      questionHistories,
       controller,
       setSelectedLanguage,
       setSelectedTheme,
@@ -314,6 +313,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
       initialCode,
       runnerCode,
       solutionCodes,
+      questionHistories,
       controller,
       setSelectedLanguage,
       setSelectedTheme,
@@ -384,7 +384,8 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
 
   useEffect(() => {
     loadQuestions();
-  }, [loadQuestions]);
+    loadHistory();
+  }, [loadQuestions, loadHistory]);
 
   useEffect(() => {
     loadSolutionCodes();

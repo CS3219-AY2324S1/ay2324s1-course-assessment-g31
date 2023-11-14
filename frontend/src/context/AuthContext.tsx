@@ -98,6 +98,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [currentUser],
   );
 
+  useEffect(() => {
+    if (currentUser) {
+      console.log(currentUser.uid);
+    }
+  }, [currentUser]);
+
   // async function getUserRole(user: User): Promise<string> {
   //   try {
   //     const response = await fetch(

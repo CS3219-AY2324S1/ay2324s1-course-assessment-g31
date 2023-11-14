@@ -7,6 +7,12 @@ export type ControllerParamsHeaders = {
   headers?: any;
 };
 
+export type ControllerResponse<Obj> = {
+  success: boolean;
+  errors: string[];
+  data?: Obj;
+};
+
 class GenericController {
   private mainUri: string;
 
@@ -36,15 +42,8 @@ class GenericController {
         ...paramsHeader?.headers,
       },
     };
-<<<<<<< HEAD
     console.log(options);
     const response = axios<T, R>(options);
-=======
-
-    console.log(options);
-
-    const response = await axios<T, R>(options);
->>>>>>> master
 
     return response;
   }

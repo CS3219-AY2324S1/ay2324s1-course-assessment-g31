@@ -8,6 +8,7 @@ import { Fragment, useContext, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import PageContainer from "../../../components/container/Page";
+import QuestionAttemptList from "../../../components/QuestionAttemptList";
 import { QuestionContext } from "../../../context/QuestionContext";
 import classNames from "../../../util/ClassNames";
 
@@ -301,341 +302,354 @@ function AllQuestionPage() {
         </div>
       </div>
 
-      {/* Filters */}
-      <section aria-labelledby="filter-heading">
-        <h2 id="filter-heading" className="sr-only">
-          Filters
-        </h2>
-
-        <div className="border-b border-gray-200  pb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-row">
-              <div className="p-4">
-                <label
-                  htmlFor="questionName"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Question Name
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    name="questionName"
-                    id="questionName"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    placeholder="Two Sum"
-                    onChange={(e) => {
-                      setQuestionQuery((prevState) => ({
-                        ...prevState,
-                        title: {
-                          value: e.target.value,
-                          order: "asc",
-                          sortBy: false,
-                        },
-                      }));
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="p-4">
-                <label
-                  htmlFor="difficulty"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Difficulty
-                </label>
-                <select
-                  id="difficulty"
-                  name="difficulty"
-                  className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  defaultValue="Easy"
-                  onChange={(e) => {
-                    setQuestionQuery((prevState) => ({
-                      ...prevState,
-                      difficulty: {
-                        value: e.target.value,
-                        order: "asc",
-                        sortBy: false,
-                      },
-                    }));
-                  }}
-                >
-                  <option>Easy</option>
-                  <option>Medium</option>
-                  <option>Hard</option>
-                </select>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="inline-block text-sm font-medium text-gray-700 hover:text-gray-900 sm:hidden"
-              onClick={() => setMobileFilterOpen(true)}
-            >
+      <div className="grid grid-cols-4 gap-8 py-12">
+        <div className="col-span-3">
+          {/* Filters */}
+          <section aria-labelledby="filter-heading" className="bg-gray-50 rounded-lg p-4">
+            <h2 id="filter-heading" className="sr-only">
               Filters
-            </button>
+            </h2>
 
-            <div className="hidden sm:block">
-              <div className="flow-root">
-                <Popover.Group className="-mx-4 flex items-center divide-x divide-gray-200">
-                  {filters.map((section) => (
-                    <Popover
-                      key={section.name}
-                      className="relative inline-block px-4 text-left"
+            <div className="border-b border-gray-200  pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-row">
+                  <div className="p-4">
+                    <label
+                      htmlFor="questionName"
+                      className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      <Popover.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                        <span>{section.name}</span>
-                        <ChevronDownIcon
-                          className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                          aria-hidden="true"
-                        />
-                      </Popover.Button>
-
-                      <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-100"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
-                      >
-                        <Popover.Panel className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                          <form className="space-y-4">
-                            {section.options.map((option, optionIdx) => (
-                              <div
-                                key={option.value}
-                                className="flex items-center"
-                              >
-                                <input
-                                  id={`filter-${section.id}-${optionIdx}`}
-                                  name={`${section.id}[]`}
-                                  defaultValue={option.value}
-                                  type="checkbox"
-                                  defaultChecked={option.checked}
-                                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                  onChange={() => {
-                                    handleCategoryChange(option.value);
-                                  }}
-                                />
-                                <label
-                                  htmlFor={`filter-${section.id}-${optionIdx}`}
-                                  className="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900"
-                                >
-                                  {option.label}
-                                </label>
-                              </div>
-                            ))}
-                          </form>
-                        </Popover.Panel>
-                      </Transition>
-                    </Popover>
-                  ))}
-                </Popover.Group>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Active filters */}
-        <div className="bg-gray-100">
-          <div className="mx-auto max-w-7xl px-4 py-3 sm:flex sm:items-center sm:px-6 lg:px-8">
-            <h3 className="text-sm font-medium text-gray-500">
-              Filters
-              <span className="sr-only">, active</span>
-            </h3>
-
-            <div
-              aria-hidden="true"
-              className="hidden h-5 w-px bg-gray-300 sm:ml-4 sm:block"
-            />
-
-            <div className="mt-2 sm:ml-4 sm:mt-0">
-              <div className="-m-1 flex flex-wrap items-center">
-                {activeFilters.map((activeFilter) => (
-                  <span
-                    key={activeFilter.value}
-                    className="m-1 inline-flex items-center rounded-full border border-gray-200 bg-white py-1.5 pl-3 pr-2 text-sm font-medium text-gray-900"
-                  >
-                    <span>{activeFilter.label}</span>
-                    <button
-                      type="button"
-                      className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-500"
-                      onClick={() => {
-                        handleCategoryChange(activeFilter.value);
+                      Question Name
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        name="questionName"
+                        id="questionName"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        placeholder="Two Sum"
+                        onChange={(e) => {
+                          setQuestionQuery((prevState) => ({
+                            ...prevState,
+                            title: {
+                              value: e.target.value,
+                              order: "asc",
+                              sortBy: false,
+                            },
+                          }));
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <label
+                      htmlFor="difficulty"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Difficulty
+                    </label>
+                    <select
+                      id="difficulty"
+                      name="difficulty"
+                      className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      defaultValue="Easy"
+                      onChange={(e) => {
+                        setQuestionQuery((prevState) => ({
+                          ...prevState,
+                          difficulty: {
+                            value: e.target.value,
+                            order: "asc",
+                            sortBy: false,
+                          },
+                        }));
                       }}
                     >
-                      <span className="sr-only">
-                        Remove filter for {activeFilter.label}
-                      </span>
-                      <svg
-                        className="h-2 w-2"
-                        stroke="currentColor"
-                        fill="none"
-                        viewBox="0 0 8 8"
+                      <option>Easy</option>
+                      <option>Medium</option>
+                      <option>Hard</option>
+                    </select>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="inline-block text-sm font-medium text-gray-700 hover:text-gray-900 sm:hidden"
+                  onClick={() => setMobileFilterOpen(true)}
+                >
+                  Filters
+                </button>
+
+                <div className="hidden sm:block">
+                  <div className="flow-root">
+                    <Popover.Group className="-mx-4 flex items-center divide-x divide-gray-200">
+                      {filters.map((section) => (
+                        <Popover
+                          key={section.name}
+                          className="relative inline-block px-4 text-left"
+                        >
+                          <Popover.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
+                            <span>{section.name}</span>
+                            <ChevronDownIcon
+                              className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                              aria-hidden="true"
+                            />
+                          </Popover.Button>
+
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                          >
+                            <Popover.Panel className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                              <form className="space-y-4">
+                                {section.options.map((option, optionIdx) => (
+                                  <div
+                                    key={option.value}
+                                    className="flex items-center"
+                                  >
+                                    <input
+                                      id={`filter-${section.id}-${optionIdx}`}
+                                      name={`${section.id}[]`}
+                                      defaultValue={option.value}
+                                      type="checkbox"
+                                      defaultChecked={option.checked}
+                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                      onChange={() => {
+                                        handleCategoryChange(option.value);
+                                      }}
+                                    />
+                                    <label
+                                      htmlFor={`filter-${section.id}-${optionIdx}`}
+                                      className="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900"
+                                    >
+                                      {option.label}
+                                    </label>
+                                  </div>
+                                ))}
+                              </form>
+                            </Popover.Panel>
+                          </Transition>
+                        </Popover>
+                      ))}
+                    </Popover.Group>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Active filters */}
+            <div className="bg-gray-100">
+              <div className="mx-auto max-w-7xl px-4 py-3 sm:flex sm:items-center sm:px-6 lg:px-8">
+                <h3 className="text-sm font-medium text-gray-500">
+                  Filters
+                  <span className="sr-only">, active</span>
+                </h3>
+
+                <div
+                  aria-hidden="true"
+                  className="hidden h-5 w-px bg-gray-300 sm:ml-4 sm:block"
+                />
+
+                <div className="mt-2 sm:ml-4 sm:mt-0">
+                  <div className="-m-1 flex flex-wrap items-center">
+                    {activeFilters.map((activeFilter) => (
+                      <span
+                        key={activeFilter.value}
+                        className="m-1 inline-flex items-center rounded-full border border-gray-200 bg-white py-1.5 pl-3 pr-2 text-sm font-medium text-gray-900"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeWidth="1.5"
-                          d="M1 1l6 6m0-6L1 7"
-                        />
-                      </svg>
-                    </button>
-                  </span>
-                ))}
+                        <span>{activeFilter.label}</span>
+                        <button
+                          type="button"
+                          className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-500"
+                          onClick={() => {
+                            handleCategoryChange(activeFilter.value);
+                          }}
+                        >
+                          <span className="sr-only">
+                            Remove filter for {activeFilter.label}
+                          </span>
+                          <svg
+                            className="h-2 w-2"
+                            stroke="currentColor"
+                            fill="none"
+                            viewBox="0 0 8 8"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeWidth="1.5"
+                              d="M1 1l6 6m0-6L1 7"
+                            />
+                          </svg>
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div className="mt-8 flow-root">
+            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+              <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                <table className="min-w-full divide-y divide-gray-300">
+                  <thead className="">
+                    <tr>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                      >
+                        <button type="button" className="group inline-flex">
+                          Status
+                          <span className="ml-2 flex-none rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 group-hover:bg-gray-200 dark:group-hover:bg-gray-800">
+                            {sortByStatus === SortBy.ASC ? (
+                              <ChevronUpIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                                onClick={() => setSortByStatus(SortBy.DESC)}
+                              />
+                            ) : (
+                              <ChevronDownIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                                onClick={() => setSortByStatus(SortBy.ASC)}
+                              />
+                            )}
+                          </span>
+                        </button>
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                      >
+                        <button type="button" className="group inline-flex">
+                          Title
+                          <span className="ml-2 flex-none rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 group-hover:bg-gray-200 dark:group-hover:bg-gray-800">
+                            {sortByTitle === SortBy.ASC ? (
+                              <ChevronUpIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                                onClick={() => setSortByTitle(SortBy.DESC)}
+                              />
+                            ) : (
+                              <ChevronDownIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                                onClick={() => setSortByTitle(SortBy.ASC)}
+                              />
+                            )}
+                          </span>
+                        </button>
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                      >
+                        <button type="button" className="group inline-flex">
+                          Difficulty
+                          <span className="ml-2 flex-none rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 group-hover:bg-gray-200 dark:group-hover:bg-gray-800">
+                            {sortByDifficulty === SortBy.ASC ? (
+                              <ChevronUpIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                                onClick={() => setSortByDifficulty(SortBy.DESC)}
+                              />
+                            ) : (
+                              <ChevronDownIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                                onClick={() => setSortByDifficulty(SortBy.ASC)}
+                              />
+                            )}
+                          </span>
+                        </button>
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3 text-left text-xs font-medium tracking-wide text-gray-500 dark:text-gray-400"
+                      >
+                        Categories
+                      </th>
+                      <th
+                        scope="col"
+                        className="relative py-3 pl-3 pr-4 sm:pr-0"
+                      >
+                        <span className="sr-only">Attempt</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-gray-100 dark:bg-gray-800">
+                    { questions.length > 0 ?
+                    questions
+                      .slice(
+                        pageNumber * PAGINATION_SIZE,
+                        (pageNumber + 1) * PAGINATION_SIZE,
+                      )
+                      .map((question) => (
+                        <tr key={question.id}>
+                          <td
+                            className={classNames(
+                              "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-0",
+                              "text-gray-700 dark:text-gray-300",
+                            )}
+                          >
+                            Not Done
+                          </td>
+                          <td
+                            className={classNames(
+                              "whitespace-nowrap px-3 py-4 text-sm",
+                              "text-gray-700 dark:text-gray-300",
+                            )}
+                          >
+                            {question.title}
+                          </td>
+                          <td
+                            className={classNames(
+                              "whitespace-nowrap px-3 py-4 text-sm",
+                              "text-gray-700 dark:text-gray-300",
+                            )}
+                          >
+                            {question.difficulty}
+                          </td>
+                          <td
+                            className={classNames(
+                              "whitespace-nowrap px-3 py-4 text-sm",
+                              "text-gray-700 dark:text-gray-300",
+                            )}
+                          >
+                            {question.categories.map((category) => (
+                              <span
+                                className={classNames(
+                                  "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset mr-3",
+                                  "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-500/10",
+                                )}
+                              >
+                                {category.name}
+                              </span>
+                            ))}
+                          </td>
+                          <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                            <Link
+                              to={`${question.id}`}
+                              className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-100"
+                            >
+                              Attempt
+                            </Link>
+                          </td>
+                        </tr>
+                      ))
+                      : <p>No Questions</p>
+                      }
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
-      </section>
-
-      <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <table className="min-w-full divide-y divide-gray-300">
-              <thead>
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                  >
-                    <button type="button" className="group inline-flex">
-                      Status
-                      <span className="ml-2 flex-none rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 group-hover:bg-gray-200 dark:group-hover:bg-gray-800">
-                        {sortByStatus === SortBy.ASC ? (
-                          <ChevronUpIcon
-                            className="h-4 w-4"
-                            aria-hidden="true"
-                            onClick={() => setSortByStatus(SortBy.DESC)}
-                          />
-                        ) : (
-                          <ChevronDownIcon
-                            className="h-4 w-4"
-                            aria-hidden="true"
-                            onClick={() => setSortByStatus(SortBy.ASC)}
-                          />
-                        )}
-                      </span>
-                    </button>
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                  >
-                    <button type="button" className="group inline-flex">
-                      Title
-                      <span className="ml-2 flex-none rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 group-hover:bg-gray-200 dark:group-hover:bg-gray-800">
-                        {sortByTitle === SortBy.ASC ? (
-                          <ChevronUpIcon
-                            className="h-4 w-4"
-                            aria-hidden="true"
-                            onClick={() => setSortByTitle(SortBy.DESC)}
-                          />
-                        ) : (
-                          <ChevronDownIcon
-                            className="h-4 w-4"
-                            aria-hidden="true"
-                            onClick={() => setSortByTitle(SortBy.ASC)}
-                          />
-                        )}
-                      </span>
-                    </button>
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                  >
-                    <button type="button" className="group inline-flex">
-                      Difficulty
-                      <span className="ml-2 flex-none rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 group-hover:bg-gray-200 dark:group-hover:bg-gray-800">
-                        {sortByDifficulty === SortBy.ASC ? (
-                          <ChevronUpIcon
-                            className="h-4 w-4"
-                            aria-hidden="true"
-                            onClick={() => setSortByDifficulty(SortBy.DESC)}
-                          />
-                        ) : (
-                          <ChevronDownIcon
-                            className="h-4 w-4"
-                            aria-hidden="true"
-                            onClick={() => setSortByDifficulty(SortBy.ASC)}
-                          />
-                        )}
-                      </span>
-                    </button>
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3 text-left text-xs font-medium tracking-wide text-gray-500 dark:text-gray-400"
-                  >
-                    Categories
-                  </th>
-                  <th scope="col" className="relative py-3 pl-3 pr-4 sm:pr-0">
-                    <span className="sr-only">Attempt</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 bg-gray-100 dark:bg-gray-800">
-                {questions
-                  .slice(
-                    pageNumber * PAGINATION_SIZE,
-                    (pageNumber + 1) * PAGINATION_SIZE,
-                  )
-                  .map((question) => (
-                    <tr key={question.id}>
-                      <td
-                        className={classNames(
-                          "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-0",
-                          "text-gray-700 dark:text-gray-300",
-                        )}
-                      >
-                        Not Done
-                      </td>
-                      <td
-                        className={classNames(
-                          "whitespace-nowrap px-3 py-4 text-sm",
-                          "text-gray-700 dark:text-gray-300",
-                        )}
-                      >
-                        {question.title}
-                      </td>
-                      <td
-                        className={classNames(
-                          "whitespace-nowrap px-3 py-4 text-sm",
-                          "text-gray-700 dark:text-gray-300",
-                        )}
-                      >
-                        {question.difficulty}
-                      </td>
-                      <td
-                        className={classNames(
-                          "whitespace-nowrap px-3 py-4 text-sm",
-                          "text-gray-700 dark:text-gray-300",
-                        )}
-                      >
-                        {question.categories.map((category) => (
-                          <span
-                            className={classNames(
-                              "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset mr-3",
-                              "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 ring-gray-500/10",
-                            )}
-                          >
-                            {category.name}
-                          </span>
-                        ))}
-                      </td>
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                        <Link
-                          to={`${question.id}`}
-                          className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-100"
-                        >
-                          Attempt
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="col-span-1">
+          <QuestionAttemptList />
         </div>
       </div>
 

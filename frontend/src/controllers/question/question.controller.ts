@@ -5,16 +5,11 @@ import { FullQuestionUpdateDTO } from "../../interfaces/questionService/fullQues
 import { Query } from "../../interfaces/questionService/query";
 import GenericController, {
   ControllerParamsHeaders,
+  ControllerResponse,
 } from "../generic.controller";
 
 const devServerUri = "http://localhost:5003";
 const prodServerUri = "https://question-service-qzxsy455sq-as.a.run.app";
-
-type ControllerResponse<Obj> = {
-  success: boolean;
-  errors: string[];
-  data?: Obj;
-};
 
 class QuestionController extends GenericController {
   constructor() {
