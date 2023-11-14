@@ -12,6 +12,8 @@ import Judge0Controller, {
 import { FullTestCase } from "../interfaces/questionService/questionTestCase/object";
 import { decode64, encode64 } from "../util/base64";
 import TestCase from "./TestCase";
+import AdminHoc from "./hocs/AdminHoc";
+import { useAuth } from "../context/AuthContext";
 
 function CodeResult() {
   const judge0Controller = useMemo(() => new Judge0Controller(), []);
@@ -23,6 +25,7 @@ function CodeResult() {
     useState<Submission[]>();
   const [fullTestCases, setFullTestCases] = useState<FullTestCase[]>();
   const navigate = useNavigate();
+  const { currentRole, currentUser } = useAuth();
 
   useEffect(() => {
     if (question) {
@@ -208,15 +211,17 @@ function CodeResult() {
         >
           Submit Code
         </button>
-        <button
-          type="button"
-          className="rounded-md bg-slate-600 dark:bg-slate-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 dark:bg-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 dark:focus-visible:outline-slate-400"
-          onClick={() => {
-            navigate(`/questions/${question.id}/edit`);
-          }}
-        >
-          Edit Question
-        </button>
+        <AdminHoc currentUser={currentUser} currentRole={currentRole}>
+          <button
+            type="button"
+            className="rounded-md bg-slate-600 dark:bg-slate-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 dark:bg-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 dark:focus-visible:outline-slate-400"
+            onClick={() => {
+              navigate(`/questions/${question.id}/edit`);
+            }}
+          >
+            Edit Question
+          </button>
+        </AdminHoc>
       </div>
       <div className="mt-5">
         <div className="border rounded-lg shadow p-5">

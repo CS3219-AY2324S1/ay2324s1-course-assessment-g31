@@ -99,7 +99,7 @@ export default function MainRouter() {
         <Route
           path="/questions/create"
           element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+            <ProtectedRoute user={currentUser} rolesNeeded={["admin"]}>
               <CreateSingleQuestionPage />
             </ProtectedRoute>
           }
@@ -117,7 +117,7 @@ export default function MainRouter() {
         <Route
           path="questions/:questionId/edit"
           element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+            <ProtectedRoute user={currentUser} rolesNeeded={["admin"]}>
               <EditSingleQuestionPage />
             </ProtectedRoute>
           }
@@ -180,7 +180,7 @@ export default function MainRouter() {
         <Route
           path="/matching/admin"
           element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+            <ProtectedRoute user={currentUser} rolesNeeded={["admin"]}>
               <MatchingControlPanelPage />
             </ProtectedRoute>
           }
