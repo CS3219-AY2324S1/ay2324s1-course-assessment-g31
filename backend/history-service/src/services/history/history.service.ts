@@ -114,6 +114,21 @@ class HistoryService
       throw new Error("Failed to delete history.");
     }
   }
+
+  // special function for kafka consumer.
+  public async deleteByQnId(questionId: number): Promise<number> {
+    try {
+      const deletedHistoriesBatch = await this.prismaClient.history.deleteMany({
+        where: {
+          questionId,
+        },
+      });
+
+      return deletedHistoriesBatch.count;
+    } catch (error) {
+      throw new Error("Failed to delete histories.");
+    }
+  }
 }
 
 export default HistoryService;

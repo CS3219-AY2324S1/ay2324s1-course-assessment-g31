@@ -1,8 +1,8 @@
-import { HistoryCreateDTO } from "../../../interfaces/history/createDTO";
-import { History } from "../../../interfaces/history/object";
-import { HistoryUpdateDTO } from "../../../interfaces/history/updateDTO";
-import HistoryService from "../../../services/history/history.service";
-import { prismaMock } from "../../../util/prisma/singleton";
+import { HistoryCreateDTO } from "../../../../interfaces/history/createDTO";
+import { History } from "../../../../interfaces/history/object";
+import { HistoryUpdateDTO } from "../../../../interfaces/history/updateDTO";
+import HistoryService from "../../../../services/history/history.service";
+import { prismaMock } from "../../../../util/prisma/singleton";
 
 jest.mock("kafkajs");
 jest.mock("@prisma/client");
@@ -122,5 +122,18 @@ describe("Test History service", () => {
     const result = await service.delete(testId);
 
     expect(result).toEqual(expectedHistory);
+  });
+
+  // Delete by QuestionID
+  test("Delete History by QuestionID, Valid Input To Prisma -> Return Count", async () => {
+    const testQuestionId: number = 1;
+
+    const expectedCount: number = 2;
+
+    prismaMock.history.deleteMany.mockResolvedValue({ count: expectedCount });
+    const service = new HistoryService(prismaMock);
+    const result = await service.deleteByQnId(testQuestionId);
+
+    expect(result).toEqual(expectedCount);
   });
 });
