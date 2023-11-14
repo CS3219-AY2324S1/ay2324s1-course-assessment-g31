@@ -76,7 +76,24 @@ export default function DeleteProfileModal({
       }
     } catch (error: any) {
       if (error instanceof FirebaseError) {
-        setMessage(error.code);
+        switch (error.code) {
+          case "auth/invalid-login-credentials":
+            setMessage("Wrong password entered");
+            break;
+
+          case "auth/too-many-requests":
+            setMessage("Too many attempts, try again later");
+            break;
+
+          case "auth/missing-password":
+            setMessage("No password entered");
+            break;
+
+          default:
+            setMessage("Network error, please try again later");
+            break;
+        }
+        console.error(error.message);
       } else if (error && error.message) {
         if (error.message === "Current user is not defined") {
           navigate(`/`);
@@ -164,7 +181,15 @@ export default function DeleteProfileModal({
                               />
                             </label>
                           </div>
-                          {message && <p className="text">{message}</p>}
+                          {/* {message && <p className="text">{message}</p>} */}
+                          {message && (
+                            <p
+                              className="relative flex justify-center mt-2 text-sm text-red-600"
+                              id="new-register-error"
+                            >
+                              {message}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
