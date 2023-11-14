@@ -4,6 +4,7 @@ import HistoryService from "../../services/history/history.service";
 import Controller from "../controller.abstract";
 import CRUDController from "../crudController.interface";
 import { validationResult } from "express-validator";
+import { HistoryUpdateDTO } from "../../interfaces/history/updateDTO";
 
 class HistoryController extends Controller implements CRUDController {
   constructor(
@@ -36,12 +37,19 @@ class HistoryController extends Controller implements CRUDController {
       return HistoryController.handleValidationError(res, errors);
     }
 
+    let parsedId: string;
+
     try {
-      const parsedId = this.parser.parseFindByIdInput(req.params.id);
+      parsedId = this.parser.parseFindByIdInput(req.params.id);
+    } catch (e: any) {
+      return HistoryController.handleBadRequest(res, e.message);
+    }
+
+    try {
       const history = await this.service.findById(parsedId);
       return HistoryController.handleSuccess(res, history);
     } catch (e: any) {
-      return HistoryController.handleBadRequest(res, e.message);
+      return HistoryController.handleError(res, e.message);
     }
   };
 
@@ -83,13 +91,22 @@ class HistoryController extends Controller implements CRUDController {
     if (!errors.isEmpty()) {
       return HistoryController.handleValidationError(res, errors);
     }
+
+    let parsedId: string;
+    let parsedUpdateInput: Partial<HistoryUpdateDTO>;
+
     try {
-      const parsedId = this.parser.parseFindByIdInput(req.params.id);
-      const parsedUpdateInput = this.parser.parseFindOneInput(req.body);
+      parsedId = this.parser.parseFindByIdInput(req.params.id);
+      parsedUpdateInput = this.parser.parseUpdateInput(req.body);
+    } catch (e: any) {
+      return HistoryController.handleBadRequest(res, e.message);
+    }
+
+    try {
       const history = await this.service.update(parsedId, parsedUpdateInput);
       return HistoryController.handleSuccess(res, history);
     } catch (e: any) {
-      return HistoryController.handleBadRequest(res, e.message);
+      return HistoryController.handleError(res, e.message);
     }
   };
 

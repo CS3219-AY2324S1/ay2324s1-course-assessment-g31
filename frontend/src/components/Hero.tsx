@@ -9,7 +9,7 @@ function Hero() {
           Collaborate. Code. Conquer.
         </h1>
         <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-400">
-          Master coding interviews together with our collaborative platform.
+          Master coding interviews together now with our collaborative platform.
         </p>
       </div>
       <div className="mt-16 flow-root sm:mt-24">

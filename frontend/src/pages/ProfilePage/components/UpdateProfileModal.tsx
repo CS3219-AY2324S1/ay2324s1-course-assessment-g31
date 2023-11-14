@@ -32,6 +32,11 @@ interface TabItem {
   current: boolean;
 }
 
+interface ErrorTabItem {
+  flag: boolean;
+  statement: string;
+}
+
 export default function UpdateProfileModal({
   isOpen,
   setOpen,
@@ -49,10 +54,14 @@ export default function UpdateProfileModal({
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isUsernameChangeFormOpen, setUsernameChangeFormOpen] = useState(false);
-  const [isEmailChangeFormOpen, setEmailChangeFormOpen] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [passwordForChangeEmail, setPasswordForChangeEmail] = useState("");
+  const [invalidUsernameFlag, setInvalidUsernameFlag] = useState(false);
+  const [weakNewPasswordFlag, setWeakNewPasswordFlag] = useState(false);
+  const [sameNewOldPasswordFlag, setSameNewOldPasswordFlag] = useState(false);
+  const [diffNewAndConfirmPasswordFlag, setDiffNewAndConfirmPasswordFlag] =
+    useState(false);
+  const [wrongPasswordFlag, setWrongPasswordFlag] = useState(false);
+  const [exceedPasswordResetFlag, setExceedPasswordResetFlag] = useState(false);
 
   const userController = useMemo(() => new UserController(), []);
 
@@ -61,13 +70,16 @@ export default function UpdateProfileModal({
     setNewPassword("");
     setConfirmNewPassword("");
     setNewUsername("");
-    setNewEmail("");
-    setPasswordForChangeEmail("");
     setMessage("");
+    setInvalidUsernameFlag(false);
+    setWeakNewPasswordFlag(false);
+    setDiffNewAndConfirmPasswordFlag(false);
+    setSameNewOldPasswordFlag(false);
+    setWrongPasswordFlag(false);
+    setExceedPasswordResetFlag(false);
   };
 
   const closeAllForms = () => {
-    setEmailChangeFormOpen(false);
     setUsernameChangeFormOpen(false);
     setPasswordChangeFormOpen(false);
   };
@@ -79,19 +91,7 @@ export default function UpdateProfileModal({
         resetAllFields();
         closeAllForms();
       },
-      current:
-        !isPasswordChangeFormOpen &&
-        !isEmailChangeFormOpen &&
-        !isUsernameChangeFormOpen,
-    },
-    {
-      name: "Update Email",
-      onClick: () => {
-        resetAllFields();
-        closeAllForms();
-        setEmailChangeFormOpen(true);
-      },
-      current: isEmailChangeFormOpen,
+      current: !isPasswordChangeFormOpen && !isUsernameChangeFormOpen,
     },
     {
       name: "Update Username",
@@ -113,8 +113,27 @@ export default function UpdateProfileModal({
     },
   ];
 
-  const { updateThePassword, verifyBeforeTheEmailUpdate, currentUser, logout } =
-    useAuth();
+  const passwordErrorTabs: ErrorTabItem[] = [
+    { flag: weakNewPasswordFlag, statement: "Weak password used" },
+    {
+      flag: sameNewOldPasswordFlag,
+      statement: "Same new and old password used",
+    },
+    {
+      flag: diffNewAndConfirmPasswordFlag,
+      statement: "Different new and confirm password",
+    },
+    {
+      flag: wrongPasswordFlag,
+      statement: "Wrong old password",
+    },
+    {
+      flag: exceedPasswordResetFlag,
+      statement: "Too many password reset attempts, try again later",
+    },
+  ];
+
+  const { updateThePassword, currentUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -126,33 +145,34 @@ export default function UpdateProfileModal({
     }
     if (!isOpen) {
       setMessage("");
+      setInvalidUsernameFlag(false);
+      setWeakNewPasswordFlag(false);
+      setDiffNewAndConfirmPasswordFlag(false);
+      setSameNewOldPasswordFlag(false);
+      setWrongPasswordFlag(false);
+      setExceedPasswordResetFlag(false);
     }
   }, [emailProp, usernameProp, isOpen]);
-
-  const handleLogout = () => {
-    logout()
-      .then(() => {
-        // Sign-out successful.
-        navigate("/");
-        console.log("Signed out successfully");
-      })
-      .catch((error) => {
-        setMessage(`Error, ${error}`);
-      });
-  };
 
   const handlePasswordChange = async () => {
     try {
       setMessage("");
+      setWeakNewPasswordFlag(false);
+      setDiffNewAndConfirmPasswordFlag(false);
+      setSameNewOldPasswordFlag(false);
+      setWrongPasswordFlag(false);
+      setExceedPasswordResetFlag(false);
       setIsLoading(true);
 
       if (newPassword !== confirmNewPassword) {
-        setMessage("New passwords do not match.");
+        // setMessage("New passwords do not match.");
+        setDiffNewAndConfirmPasswordFlag(true);
         return;
       }
 
       if (oldPassword === newPassword) {
-        setMessage("The same old password and new password have been entered");
+        // setMessage("The same old password and new password have been entered");
+        setSameNewOldPasswordFlag(true);
         return;
       }
 
@@ -166,7 +186,7 @@ export default function UpdateProfileModal({
       }
 
       setPasswordChangeFormOpen(false);
-      setMessage("");
+      // setMessage("");
       setOldPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
@@ -174,12 +194,30 @@ export default function UpdateProfileModal({
     } catch (error: any) {
       console.error("Error changing password:", error);
       if (error instanceof FirebaseError) {
-        setMessage(error.code);
+        console.error(error.code);
+        switch (error.code) {
+          case "auth/weak-password":
+            setWeakNewPasswordFlag(true);
+            break;
+
+          case "auth/invalid-login-credentials":
+            setWrongPasswordFlag(true);
+            break;
+
+          case "auth/too-many-requests":
+            setExceedPasswordResetFlag(true);
+            break;
+
+          // case "auth/user-not-found":
+          //   setNoUserFlag(true);
+          //   break;
+
+          default:
+            break;
+        }
       } else if (error && error.message) {
         if (error.message === "Current user is not defined") {
           navigate(`/`);
-        } else {
-          setMessage(error.message);
         }
       }
     } finally {
@@ -193,12 +231,14 @@ export default function UpdateProfileModal({
       setIsLoading(true);
 
       if (newUsername === username) {
-        setMessage("New Username same as old Username.");
+        // setMessage("New Username same as old Username.");
+        setInvalidUsernameFlag(true);
         return;
       }
 
       if (newUsername.trim() === "") {
-        setMessage("The new Username is invalid");
+        // setMessage("The new Username is invalid");
+        setInvalidUsernameFlag(true);
         return;
       }
 
@@ -214,75 +254,12 @@ export default function UpdateProfileModal({
       }
 
       setUsernameChangeFormOpen(false);
-      setMessage("");
       setUsernameCallback(newUsername);
       setNewUsername("");
       setMessage("Username changed successfully!");
     } catch (error: any) {
       console.error("Error changing usernmae:", error);
       setMessage(`Error changing username: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleEmailChange = async () => {
-    try {
-      setMessage("");
-      setIsLoading(true);
-
-      if (newEmail === email) {
-        setMessage("The email is the same");
-        return;
-      }
-
-      const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-
-      if (newEmail.trim() === "" || !emailRegex.test(newEmail)) {
-        setMessage("The new email is invalid");
-        return;
-      }
-
-      if (passwordForChangeEmail.trim() === "") {
-        setMessage("The email is the same");
-        return;
-      }
-
-      const credential = EmailAuthProvider.credential(
-        email,
-        passwordForChangeEmail,
-      );
-
-      console.log(currentUser);
-
-      if (currentUser) {
-        await reauthenticateWithCredential(currentUser, credential);
-        await verifyBeforeTheEmailUpdate(newEmail);
-        setTimeout(handleLogout, 3000);
-      }
-
-      setEmailChangeFormOpen(false);
-      setMessage("");
-      setEmail(newEmail);
-      setNewEmail("");
-      setPasswordForChangeEmail("");
-      setMessage(
-        "If new email is not already registered, you will receive a verification link in your new email. Click on it and login with new email.",
-      );
-      setTimeout(handleLogout, 8500);
-    } catch (error: any) {
-      console.error("Error changing email:", error);
-      if (error instanceof FirebaseError) {
-        if (error.code === "auth/invalid-login-credentials") {
-          setMessage("Wrong password provided");
-        } else {
-          setMessage(error.code);
-        }
-      } else if (error.message === "Current user is not defined") {
-        navigate(`/`);
-      } else {
-        setMessage(error.message);
-      }
     } finally {
       setIsLoading(false);
     }
@@ -453,6 +430,7 @@ export default function UpdateProfileModal({
                               />
                             </label>
                           </div>
+
                           <div className="mb-3">
                             <label
                               htmlFor="confirmNewPassword"
@@ -461,15 +439,35 @@ export default function UpdateProfileModal({
                               Confirm New Password
                               <input
                                 type="password"
-                                className="form-control"
+                                className={classNames(
+                                  "form-control",
+                                  passwordErrorTabs.some((tab) => tab.flag)
+                                    ? "ring-red-300 dark:ring-red-700"
+                                    : "ring-gray-300 dark:ring-gray-700",
+                                )}
                                 id="confirmNewPassword"
                                 value={confirmNewPassword}
                                 onChange={(e) =>
                                   setConfirmNewPassword(e.target.value)
                                 }
+                                aria-invalid={passwordErrorTabs.some(
+                                  (tab) => tab.flag,
+                                )}
+                                aria-describedby="new-password-error"
                               />
                             </label>
                           </div>
+                          {passwordErrorTabs.some((tab) => tab.flag) && (
+                            <p
+                              className="mt-2 text-sm text-red-600"
+                              id="new-password-error"
+                            >
+                              {
+                                passwordErrorTabs.find((tab) => tab.flag)
+                                  ?.statement
+                              }
+                            </p>
+                          )}
                           <div className="flex flex-row gap-2 justify-end">
                             <button
                               type="button"
@@ -493,67 +491,12 @@ export default function UpdateProfileModal({
                           </div>
                         </form>
                       )}
-                      {isEmailChangeFormOpen && (
-                        <form>
-                          <br />
-                          <div className="mb-3">
-                            <label
-                              htmlFor="newEmail"
-                              className={styles.formLabel}
-                            >
-                              New Email
-                              <input
-                                type="email"
-                                className="form-control"
-                                id="newEmail"
-                                value={newEmail}
-                                onChange={(e) => setNewEmail(e.target.value)}
-                              />
-                            </label>
-                          </div>
-                          <div className="mb-3">
-                            <label
-                              htmlFor="passwordForChangeEmail"
-                              className={styles.formLabel}
-                            >
-                              Password for Confirmation
-                              <input
-                                type="password"
-                                className="form-control"
-                                id="passwordForChangeEmail"
-                                value={passwordForChangeEmail}
-                                onChange={(e) =>
-                                  setPasswordForChangeEmail(e.target.value)
-                                }
-                              />
-                            </label>
-                          </div>
-                          <div className="flex flex-row gap-2 justify-end">
-                            <button
-                              type="button"
-                              onClick={handleEmailChange}
-                              className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
-                              disabled={isLoading}
-                            >
-                              Confirm Change Email
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setEmailChangeFormOpen(false);
-                                setMessage("");
-                              }}
-                              className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                              disabled={isLoading}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </form>
-                      )}
                       {isUsernameChangeFormOpen && (
-                        <form>
-                          <br />
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                          }}
+                        >
                           <div className="mb-3">
                             <label
                               htmlFor="newUsername"
@@ -562,13 +505,29 @@ export default function UpdateProfileModal({
                               New Username
                               <input
                                 type="text"
-                                className="form-control"
+                                className={classNames(
+                                  "block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6",
+                                  "focus:ring-indigo-600 dark:focus:ring-indigo-400",
+                                  invalidUsernameFlag
+                                    ? "ring-red-300 dark:ring-red-700"
+                                    : "ring-gray-300 dark:ring-gray-700",
+                                )}
                                 id="newUsername"
                                 value={newUsername}
                                 onChange={(e) => setNewUsername(e.target.value)}
+                                aria-invalid={invalidUsernameFlag}
+                                aria-describedby="username-error"
                               />
                             </label>
                           </div>
+                          {invalidUsernameFlag && (
+                            <p
+                              className="mt-2 text-sm text-red-600"
+                              id="username-error"
+                            >
+                              An invalid username is used
+                            </p>
+                          )}
                           <div className="flex flex-row gap-2 justify-end">
                             <button
                               type="button"
@@ -582,6 +541,7 @@ export default function UpdateProfileModal({
                               type="button"
                               onClick={() => {
                                 setUsernameChangeFormOpen(false);
+                                setInvalidUsernameFlag(false);
                                 setMessage("");
                               }}
                               className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
