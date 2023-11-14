@@ -8,20 +8,22 @@ import {
   ExclamationTriangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { useAuth } from "../../../context/AuthContext";
 import classNames from "../../../util/ClassNames";
 import styles from "./UpdateProfileModal.module.css";
+import UserController from "../../../controllers/user/user.controller";
 
 interface UpdateProfileModalProps {
   isOpen: boolean;
   setOpen: (open: boolean) => void;
   //   onClose: (username: string, email: string) => void;
-  userId: string | null;
+  userId: string;
   emailProp: string | null;
   usernameProp: string | null;
+  setUsernameCallback: (username: string) => void;
 }
 
 interface TabItem {
@@ -36,6 +38,7 @@ export default function UpdateProfileModal({
   userId,
   emailProp,
   usernameProp,
+  setUsernameCallback,
 }: UpdateProfileModalProps) {
   const [email, setEmail] = useState(emailProp || "");
   const [username, setUsername] = useState(usernameProp || "");
@@ -50,6 +53,8 @@ export default function UpdateProfileModal({
   const [newUsername, setNewUsername] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [passwordForChangeEmail, setPasswordForChangeEmail] = useState("");
+
+  const userController = useMemo(() => new UserController(), []);
 
   const resetAllFields = () => {
     setOldPassword("");
@@ -197,30 +202,20 @@ export default function UpdateProfileModal({
         return;
       }
 
-      const res = await fetch(
-        `http://localhost:5001/user-services/change-username/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            newUsername,
-          }),
-        },
-      );
+      const res = await userController.updateUser(userId, {
+        username: newUsername,
+      });
 
-      if (!res.ok) {
+      if (res.status !== 200) {
         // Username change failed
-        const data = await res.json();
-        console.error("Failed to change username:", data.message);
+        console.error("Failed to change username:", res.data);
         setMessage("Failed to change username, do try again");
         return;
       }
 
       setUsernameChangeFormOpen(false);
       setMessage("");
-      setUsername(newUsername);
+      setUsernameCallback(newUsername);
       setNewUsername("");
       setMessage("Username changed successfully!");
     } catch (error: any) {
@@ -319,7 +314,7 @@ export default function UpdateProfileModal({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg xl:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl xl:max-w-2xl sm:p-6">
                 <div className="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
                   <button
                     type="button"

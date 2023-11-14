@@ -36,8 +36,15 @@ class GenericController {
         ...paramsHeader?.headers,
       },
     };
+<<<<<<< HEAD
     console.log(options);
     const response = axios<T, R>(options);
+=======
+
+    console.log(options);
+
+    const response = await axios<T, R>(options);
+>>>>>>> master
 
     return response;
   }
@@ -57,7 +64,9 @@ class GenericController {
         ...paramsHeader?.headers,
       },
     };
-    const response = axios<T, R>(options);
+
+    console.log(options);
+    const response = await axios<T, R>(options);
 
     return response;
   }
@@ -76,7 +85,7 @@ class GenericController {
         ...headers,
       },
     };
-    const response = axios<T, R>(options);
+    const response = await axios<T, R>(options);
 
     return response;
   }
@@ -93,7 +102,7 @@ class GenericController {
         ...headers,
       },
     };
-    const response = axios<T, R>(options);
+    const response = await axios<T, R>(options);
 
     return response;
   }

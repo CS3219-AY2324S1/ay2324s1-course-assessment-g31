@@ -1,24 +1,77 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../../../util/auth";
+import { FirebaseError } from "@firebase/util";
+import { useAuth } from "../../../context/AuthContext";
+import { UserCreateDTO } from "../../../interfaces/userService/createDTO";
+import UserController from "../../../controllers/user/user.controller";
 
 function RegistrationPage() {
   const [email, setEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [password2, setPassword2] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
+  const userController = useMemo(() => new UserController(), []);
+  const { signUp } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   try {
+  //     // Send the email and password to firebase
+  //     const userCredential = await registerUser(email, password);
+
+  //     if (userCredential) {
+  //       navigate("/profile");
+  //     }
+  //   } catch (error: any) {
+  //     setMessage(error.message);
+  //     throw new Error(error);
+  //   }
+  // };
+
+  const handleSubmit = async () => {
+    // setIsLoading(true);
+
+    if (password !== password2) {
+      setMessage("Passwords do not match");
+      return;
+    }
+
     try {
-      // Send the email and password to firebase
-      const userCredential = await registerUser(email, password);
+      let dataUID = "";
+      await signUp(email, password).then((data) => {
+        if (data) {
+          console.log(data, "authData");
+          dataUID = data.user.uid;
+        }
+      });
 
-      if (userCredential) {
-        navigate("/profile");
+      const newUser: UserCreateDTO = {
+        id: dataUID,
+        username,
+        roles: ["user"],
+      };
+
+      const res = await userController.createUser(newUser);
+
+      if (!res || !res.data) {
+        console.log(
+          "Registration failed on user-service backend: ",
+          res.statusText,
+        );
+      } else {
+        console.log("Successfully resgistered: ", res.data);
       }
-    } catch (error: any) {
-      throw new Error(error);
+      navigate(`/questions`);
+    } catch (err: any) {
+      if (err instanceof FirebaseError) {
+        setMessage(`Error ${err.code}`);
+        console.error(`Error ${err.message}`);
+      } else {
+        console.error("Network error: ", err.message);
+        setMessage(`Network error: ${err.message}`);
+      }
     }
   };
 
@@ -48,7 +101,7 @@ function RegistrationPage() {
 
           <div className="mt-10">
             <div>
-              <form onSubmit={handleSubmit} method="POST" className="space-y-6">
+              <div className="space-y-6">
                 <div>
                   <label
                     htmlFor="email"
@@ -66,6 +119,27 @@ function RegistrationPage() {
                       className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-400 sm:text-sm sm:leading-6 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="username"
+                    className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100"
+                  >
+                    Username
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="username"
+                      name="username"
+                      type="username"
+                      autoComplete="username"
+                      required
+                      className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-400 sm:text-sm sm:leading-6 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                     />
                   </div>
                 </div>
@@ -134,13 +208,23 @@ function RegistrationPage() {
 
                 <div>
                   <button
-                    type="submit"
+                    type="button"
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    onClick={handleSubmit}
                   >
                     Register
                   </button>
                 </div>
-              </form>
+
+                <div>
+                  <label
+                    htmlFor="message"
+                    className="relative flex justify-center text-sm font-medium leading-6"
+                  >
+                    {message}
+                  </label>
+                </div>
+              </div>
             </div>
 
             <div className="mt-10">

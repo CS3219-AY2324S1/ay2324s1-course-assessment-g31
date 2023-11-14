@@ -26,7 +26,7 @@ class HistoryParser
     };
   }
 
-  public parseFindByIdInput(id: string): string {
+  public parseFindByIdInput(id: string | undefined): string {
     if (!id) throw new Error("Invalid Input");
     return id;
   }
@@ -41,9 +41,11 @@ class HistoryParser
       parsedInput.id = input.id;
     }
     if (input.questionId) {
-      parsedInput.questionId = input.questionId
-        ? parseInt(input.questionId, 10)
-        : undefined;
+      const questionIntId = parseInt(input.questionId, 10);
+      if (Number.isNaN(questionIntId)) {
+        throw new Error("Invalid question ID, must be integer");
+      }
+      parsedInput.questionId = questionIntId;
     }
     if (input.user1Id) {
       parsedInput.user1Id = input.user1Id;
@@ -68,9 +70,11 @@ class HistoryParser
       parsedInput.id = input.id;
     }
     if (input.questionId) {
-      parsedInput.questionId = input.questionId
-        ? parseInt(input.questionId, 10)
-        : undefined;
+      const questionIntId = parseInt(input.questionId, 10);
+      if (Number.isNaN(questionIntId)) {
+        throw new Error("Invalid question ID, must be integer");
+      }
+      parsedInput.questionId = questionIntId;
     }
     if (input.user1Id) {
       parsedInput.user1Id = input.user1Id;
@@ -91,8 +95,12 @@ class HistoryParser
     input: Partial<StringInterface<HistoryUpdateDTO>>
   ): Partial<HistoryUpdateDTO> {
     const parsedInput: Partial<HistoryUpdateDTO> = {};
-    parsedInput.code = input.code;
-    parsedInput.language = input.language;
+    if (input.code) {
+      parsedInput.code = input.code;
+    }
+    if (input.language) {
+      parsedInput.language = input.language;
+    }
     return parsedInput;
   }
 

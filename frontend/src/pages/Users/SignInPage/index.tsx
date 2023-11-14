@@ -16,14 +16,15 @@ function SignInPage() {
 
   const [wrongPasswordFlag, setWrongPasswordFlag] = useState<boolean>(false);
   const [noUserFlag, setNoUserFlag] = useState<boolean>(false);
+
+  const [noUserOrWrongPasswordFlag, setNoUserOrWrongPasswordFlag] =
+    useState<boolean>(false);
   const userController = new UserController();
   const { addNotification } = useContext(NotificationContext);
   const navigate = useNavigate();
 
   const { login } = useAuth();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     console.log("Form submitted with data");
     setLoading(true);
     setWrongPasswordFlag(false);
@@ -49,6 +50,10 @@ function SignInPage() {
         switch (err.code) {
           case "auth/wrong-password":
             setWrongPasswordFlag(true);
+            break;
+
+          case "auth/invalid-login-credentials":
+            setNoUserOrWrongPasswordFlag(true);
             break;
 
           case "auth/user-not-found":
@@ -129,7 +134,7 @@ function SignInPage() {
 
           <div className="mt-10">
             <div>
-              <form onSubmit={handleSubmit} method="POST" className="space-y-6">
+              <div className="space-y-6">
                 <div>
                   <label
                     htmlFor="email"
@@ -147,7 +152,7 @@ function SignInPage() {
                       className={classNames(
                         "block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6",
                         "focus:ring-indigo-600 dark:focus:ring-indigo-400",
-                        noUserFlag
+                        noUserFlag || noUserOrWrongPasswordFlag
                           ? "ring-red-300 dark:ring-red-700"
                           : "ring-gray-300 dark:ring-gray-700",
                       )}
@@ -166,7 +171,12 @@ function SignInPage() {
                   </div>
                   {noUserFlag && (
                     <p className="mt-2 text-sm text-red-600" id="user-error">
-                      Not User Exists
+                      No User Exists
+                    </p>
+                  )}
+                  {noUserOrWrongPasswordFlag && (
+                    <p className="mt-2 text-sm text-red-600" id="user-error">
+                      Invalid Username or Password
                     </p>
                   )}
                 </div>
@@ -246,10 +256,11 @@ function SignInPage() {
                 <div>
                   <button
                     name="sign-in"
-                    type="submit"
+                    type="button"
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-100 shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     disabled={loading}
                     data-testid="sign-in-page-sign-in-button"
+                    onClick={handleSubmit}
                   >
                     {loading ? (
                       <>
@@ -264,7 +275,7 @@ function SignInPage() {
                     )}
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
 
             <div className="mt-10">

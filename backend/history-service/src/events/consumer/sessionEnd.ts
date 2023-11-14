@@ -1,22 +1,18 @@
-import { SessionDetails, HistoryEntry } from "../../types/types";
-import prisma from "../../model/prismaClient";
 import { ConsumerFunction } from "./main.interface";
+import HistoryService from "../../services/history/history.service";
+import prismaClient from "../../util/prisma/client";
+import HistoryParser from "../../parsers/history/history.parser";
+
+const historyService = new HistoryService(prismaClient);
+const historyParser = new HistoryParser();
 
 export const sessionEndConsumer: ConsumerFunction = (message) => {
   if (message.value) {
-    const sessionDetails: SessionDetails = JSON.parse(message.value.toString());
+    const sessionDetails = JSON.parse(message.value.toString());
 
-    const questionAttempt: HistoryEntry = {
-      ...sessionDetails,
-      attemptDateTime: new Date(),
-    };
-
-    // add to db
-    prisma.history
-      .create({
-        data: questionAttempt,
-      })
-      .then(() => console.log("attempt created"))
-      .catch((err) => console.log(`Error creating attempt ${err.message}`));
+    const parsedInput = historyParser.parseCreateInput(sessionDetails);
+    historyService
+      .create(parsedInput)
+      .then(() => console.log("history created"));
   }
 };
