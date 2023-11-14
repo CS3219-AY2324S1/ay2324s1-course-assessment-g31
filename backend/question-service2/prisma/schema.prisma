@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Question {
+    id           Int                   @id @default(autoincrement())
+    title        String
+    description  String
+    difficulty   String
+    examples     String[]
+    constraints  String[]
+    createdAt    DateTime              @default(now())
+    updatedAt    DateTime              @updatedAt
+    authorId     String
+    popularity   Int                   @default(0)
+    initialCodes QuestionInitialCode[]
+    runnerCodes  QuestionRunnerCode[]
+    testCases    QuestionTestCase[]
+    categories   QuestionCategory[]
+    solutions    QuestionSolution[]
+}
+
+model QuestionInitialCode {
+    language   String
+    code       String
+    Question   Question @relation(fields: [questionId], references: [id])
+    questionId Int
+
+    @@unique([language, questionId])
+}
+
+model QuestionRunnerCode {
+    language   String
+    code       String
+    Question   Question @relation(fields: [questionId], references: [id])
+    questionId Int
+
+    @@unique([language, questionId])
+}
+
+model QuestionTestCase {
+    testCaseNumber Int
+    input          String
+    expectedOutput String[]
+    Question       Question @relation(fields: [questionId], references: [id])
+    questionId     Int
+
+    @@unique([testCaseNumber, questionId])
+}
+
+model QuestionCategory {
+    name       String
+    Question   Question @relation(fields: [questionId], references: [id])
+    questionId Int
+
+    @@unique([name, questionId])
+}
+
+model QuestionSolution {
+    id          String   @id @default(uuid())
+    title       String
+    description String
+    language    String
+    code        String
+    Question    Question @relation(fields: [questionId], references: [id])
+    questionId  Int
+}

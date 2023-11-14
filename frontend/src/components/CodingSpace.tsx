@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { MatchingContext } from "../context/MatchingContext";
 import {
@@ -7,6 +7,7 @@ import {
   QuestionContext,
 } from "../context/QuestionContext";
 import CodeEditor from "./CodeEditor";
+import CodeResult from "./CodeResult";
 
 function CodingSpace() {
   const languageOptions: CodingLanguage[] = useMemo(() => ["java", "cpp"], []);
@@ -100,6 +101,7 @@ function CodingSpace() {
         </div>
       </div>
       <CodeEditor />
+      <CodeResult />
     </div>
   );
 }

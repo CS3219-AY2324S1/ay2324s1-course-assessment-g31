@@ -3,11 +3,11 @@ import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import parse from "html-react-parser";
 import React from "react";
 
+import { FullQuestion } from "../interfaces/questionService/fullQuestion/object";
 import classNames from "../util/ClassNames";
-import { Question } from "../types/question";
 
 interface IQuestionProps {
-  question: Question;
+  question: FullQuestion;
 }
 
 // to replace Question
@@ -27,9 +27,12 @@ function QuestionNew({ question }: IQuestionProps) {
       <div className="mt-3">
         <h2 className="sr-only">Category</h2>
         <div className="flex flex-row gap-3">
-          {question.category.map((category) => (
-            <div key={category} className="text-gray-700 underline">
-              {parse(category)}
+          {question.categories.map((category) => (
+            <div
+              key={`${category.name}-${category.questionId}`}
+              className="text-gray-700 underline"
+            >
+              {parse(category.name)}
             </div>
           ))}
         </div>
@@ -83,7 +86,7 @@ function QuestionNew({ question }: IQuestionProps) {
                 </h3>
                 <Disclosure.Panel as="div" className="prose prose-sm pb-6">
                   <p className="text-gray-700 whitespace-pre">
-                    {question.example}
+                    {question.examples.join("")}
                   </p>
                 </Disclosure.Panel>
               </>
@@ -122,7 +125,7 @@ function QuestionNew({ question }: IQuestionProps) {
                 </h3>
                 <Disclosure.Panel as="div" className="prose prose-sm pb-6">
                   <p className="text-gray-700 whitespace-pre">
-                    {question.constraint}
+                    {question.constraints.join("")}
                   </p>
                 </Disclosure.Panel>
               </>

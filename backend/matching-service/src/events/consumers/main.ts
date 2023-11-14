@@ -35,14 +35,14 @@ const matchingEventConsumer = async () => {
     eachMessage: async ({ topic, message }: EachMessagePayload) => {
       // here, we just log the message to the standard output
       if (isInEnum(MatchingTopics, topic) && MATCHING_TOPIC_MAPPER.has(topic)) {
-        MATCHING_TOPIC_MAPPER.get(topic)!(message);
+        await MATCHING_TOPIC_MAPPER.get(topic)!(message);
       }
 
       if (
         isInEnum(MatchingRequestTopics, topic) &&
         MATCHING_REQUEST_TOPIC_MAPPER.has(topic)
       ) {
-        MATCHING_REQUEST_TOPIC_MAPPER.get(topic)!(message);
+        await MATCHING_REQUEST_TOPIC_MAPPER.get(topic)!(message);
       }
     },
   });

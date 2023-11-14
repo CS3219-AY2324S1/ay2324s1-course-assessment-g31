@@ -4,4 +4,6 @@ export type QuestionInitialCode = {
   questionId: number;
 };
 
-export type OptionalQuestionInitialCode = Partial<QuestionInitialCode>;
+export type QuestionInitialCodes = {
+  initialCodes: QuestionInitialCode[];
+};

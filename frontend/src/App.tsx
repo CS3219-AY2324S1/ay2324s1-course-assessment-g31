@@ -1,5 +1,6 @@
 import "./App.css";
 
+import Notifications from "./components/Notifications";
 import { AuthProvider } from "./context/AuthContext";
 import { CollaborationProvider } from "./context/CollaborationContext";
 import { DarkModeProvider } from "./context/DarkModeContext";
@@ -19,6 +20,7 @@ export default function App() {
               <CollaborationProvider>
                 <div className="App bg-gray-100 dark:bg-gray-800">
                   <MainRouter />
+                  <Notifications />
                 </div>
               </CollaborationProvider>
             </QuestionProvider>

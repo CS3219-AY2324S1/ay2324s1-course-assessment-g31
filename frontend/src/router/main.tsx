@@ -1,19 +1,21 @@
 import { User } from "@firebase/auth";
-import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import React, { useContext } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import { NotificationContext } from "../context/NotificationContext";
 import ForbiddenPage from "../pages/ForbiddenPage/ForbiddenPage";
 import LandingPage from "../pages/LandingPage";
 import Layout from "../pages/Layout/Layout";
 import MatchingControlPanelPage from "../pages/MatchingControlPanelPage/MatchingControlPanelPage";
-import MatchPage from "../pages/MatchingPage/MatchPage";
-import PageNotFoundPage from "../pages/PageNotFoundPage/PageNotFoundPage";
+import MatchPage from "../pages/MatchPage";
+import NotFoundPage from "../pages/NotFoundPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import QuestionForm from "../pages/QuestionForm/QuestionForm";
-import QuestionsList from "../pages/QuestionsList/QuestionsList";
-import QuestionsPage from "../pages/QuestionsPage/QuestionsPage";
-import SingleQuestionPage from "../pages/SingleQuestionPage";
+import AllQuestionPage from "../pages/Questions/AllQuestionsPage";
+import SingleQuestionPage from "../pages/Questions/SingleQuestionPage";
+import CreateSingleQuestionPage from "../pages/Questions/SingleQuestionPage/create";
+import EditSingleQuestionPage from "../pages/Questions/SingleQuestionPage/edit";
 import SolutionForm from "../pages/SolutionForm/SolutionForm";
 import RegistrationPage from "../pages/Users/RegistrationPage";
 import SignInPage from "../pages/Users/SignInPage";
@@ -32,23 +34,40 @@ interface ProtectedRouteProp extends RouterProps {
 
 function ProtectedRoute({ user, rolesNeeded, children }: ProtectedRouteProp) {
   const { currentRole } = useAuth();
+  const { addNotification } = useContext(NotificationContext);
+  const navigate = useNavigate();
 
   if (!user || Object.keys(user).length === 0) {
-    return <Navigate to="/" replace />;
+    addNotification({
+      type: "error",
+      message: "Please Sign In to View this Page.",
+    });
+    navigate("/");
   }
 
   if (
     !rolesNeeded.map((x) => x.toLowerCase()).includes(currentRole.toLowerCase())
   ) {
-    return <Navigate to="/forbidden" replace />;
+    addNotification({
+      type: "error",
+      message: "You are unauthorized to view this page.",
+    });
+    navigate("/forbidden");
   }
 
   return children;
 }
 
 function PostLoginNoAccessRoute({ user, children }: RouterProps) {
+  const { addNotification } = useContext(NotificationContext);
+  const navigate = useNavigate();
+
   if (user) {
-    return <Navigate to="/questions" replace />;
+    addNotification({
+      type: "error",
+      message: "You are not allowed to view this page after signing in.",
+    });
+    navigate("/questions");
   }
   return children;
 }
@@ -76,20 +95,39 @@ export default function MainRouter() {
             </PostLoginNoAccessRoute>
           }
         />
+
         <Route
-          path="/questions"
+          path="/questions/create"
           element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
-              <QuestionsList />
+            <ProtectedRoute user={currentUser} rolesNeeded={["admin"]}>
+              <CreateSingleQuestionPage />
             </ProtectedRoute>
           }
         />
 
         <Route
-          path="/questions/view/:id"
+          path="/questions"
           element={
             <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
-              <QuestionsPage />
+              <AllQuestionPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="questions/:questionId/edit"
+          element={
+            <ProtectedRoute user={currentUser} rolesNeeded={["admin"]}>
+              <EditSingleQuestionPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/questions/:questionId"
+          element={
+            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+              <SingleQuestionPage />
             </ProtectedRoute>
           }
         />
@@ -142,14 +180,14 @@ export default function MainRouter() {
         <Route
           path="/matching/admin"
           element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+            <ProtectedRoute user={currentUser} rolesNeeded={["admin"]}>
               <MatchingControlPanelPage />
             </ProtectedRoute>
           }
         />
 
         <Route path="/forbidden" element={<ForbiddenPage />} />
-        <Route path="*" element={<PageNotFoundPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );

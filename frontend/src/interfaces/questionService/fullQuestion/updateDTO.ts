@@ -1,12 +1,13 @@
 import { QuestionUpdateDTO } from "../question/updateDTO";
-import { QuestionInitialCodeUpdateDTO } from "../questionInitialCode/updateDTO";
-import { QuestionRunnerCodeUpdateDTO } from "../questionRunnerCode/updateDTO";
-import { QuestionTestCaseUpdateDTO } from "../questionTestCase/updateDTO";
+import { QuestionCategoryUpdateDTOs } from "../questionCategory/updateDTO";
+import { QuestionInitialCodeUpdateDTOs } from "../questionInitialCode/updateDTO";
+import { QuestionRunnerCodeUpdateDTOs } from "../questionRunnerCode/updateDTO";
+import { QuestionSolutionUpdateDTOs } from "../questionSolution/updateDTO";
+import { QuestionTestCaseUpdateDTOs } from "../questionTestCase/updateDTO";
 
-export type FullQuestionUpdateDTO = QuestionUpdateDTO & {
-  initialCodes: QuestionInitialCodeUpdateDTO[];
-} & {
-  runnerCodes: QuestionRunnerCodeUpdateDTO[];
-} & {
-  testCases: QuestionTestCaseUpdateDTO[];
-};
+export type FullQuestionUpdateDTO = QuestionUpdateDTO &
+  QuestionInitialCodeUpdateDTOs &
+  QuestionRunnerCodeUpdateDTOs &
+  QuestionTestCaseUpdateDTOs &
+  QuestionCategoryUpdateDTOs &
+  QuestionSolutionUpdateDTOs;

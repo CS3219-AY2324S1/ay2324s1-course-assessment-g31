@@ -1,5 +1,3 @@
-//
-
 export type QuestionTestCase = {
   testCaseNumber: number;
   input: string;
@@ -7,7 +5,9 @@ export type QuestionTestCase = {
   questionId: number;
 };
 
-export type OptionalQuestionTestCase = Partial<QuestionTestCase>;
+export type QuestionTestCases = {
+  testCases: QuestionTestCase[];
+};
 
 export type FullTestCase = QuestionTestCase & {
   resultsAvailable: boolean;

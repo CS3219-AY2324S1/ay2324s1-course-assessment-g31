@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 
+import MatchingProducer from "../../events/producers/matching/producer";
 import MatchingParser from "../../parsers/matching/matching.parser";
 import MatchingService from "../../services/matching/matching.service";
 import Controller from "../controller.abstract";
 import CRUDController from "../crudController.interface";
-import MatchingProducer from "../../events/producers/matching/producer";
 
 class MatchingController extends Controller implements CRUDController {
   constructor(
@@ -17,11 +17,6 @@ class MatchingController extends Controller implements CRUDController {
   }
 
   public create = async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return MatchingController.handleValidationError(res, errors);
-    }
     try {
       const parsedMatching = this.parser.parseCreateInput(req.body);
       const matching = await this.service.create(parsedMatching);

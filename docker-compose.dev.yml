@@ -137,6 +137,27 @@ services:
       - api-network
       - kafka-network
 
+  question2:
+    container_name: question-service2
+    build:
+      context: ./backend/question-service2
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5000"
+    environment:
+      - PORT=5000
+    env_file:
+      - ./backend/question-service2/.env
+    depends_on:
+      postgres_question_service:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    networks:
+      - question-service-network
+      - api-network
+      - kafka-network
+
   postgres_question_service:
     image: postgres:latest
     container_name: postgres-question-service

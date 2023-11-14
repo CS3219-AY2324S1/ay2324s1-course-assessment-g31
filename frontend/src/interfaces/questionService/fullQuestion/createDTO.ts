@@ -1,12 +1,13 @@
 import { QuestionCreateDTO } from "../question/createDTO";
-import { QuestionInitialCodeCreateDTO } from "../questionInitialCode/createDTO";
-import { QuestionRunnerCodeCreateDTO } from "../questionRunnerCode/createDTO";
-import { QuestionTestCaseCreateDTO } from "../questionTestCase/createDTO";
+import { QuestionCategoryCreateDTOs } from "../questionCategory/createDTO";
+import { QuestionInitialCodeCreateDTOs } from "../questionInitialCode/createDTO";
+import { QuestionRunnerCodeCreateDTOs } from "../questionRunnerCode/createDTO";
+import { QuestionSolutionCreateDTOs } from "../questionSolution/createDTO";
+import { QuestionTestCaseCreateDTOs } from "../questionTestCase/createDTO";
 
-export type FullQuestionCreateDTO = QuestionCreateDTO & {
-  initialCodes: QuestionInitialCodeCreateDTO[];
-} & {
-  runnerCodes: QuestionRunnerCodeCreateDTO[];
-} & {
-  testCases: QuestionTestCaseCreateDTO[];
-};
+export type FullQuestionCreateDTO = QuestionCreateDTO &
+  QuestionInitialCodeCreateDTOs &
+  QuestionRunnerCodeCreateDTOs &
+  QuestionTestCaseCreateDTOs &
+  QuestionCategoryCreateDTOs &
+  QuestionSolutionCreateDTOs;

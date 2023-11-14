@@ -15,6 +15,7 @@ import MatchingService from "./services/matching/matching.service";
 import MatchingRequestService from "./services/matchingRequest/matchingRequest.service";
 import prismaClient from "./util/prisma/client";
 import MatchingProducer from "./events/producers/matching/producer";
+import { Partitioners } from "kafkajs";
 
 dotenv.config();
 
@@ -26,10 +27,12 @@ const corsOptions = {
 };
 
 // Event Producer
-const matchingEventProducer = new MatchingProducer(kafka.producer());
+const matchingEventProducer = new MatchingProducer(
+  kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner }),
+);
 
 const matchingRequestEventProducer = new MatchingRequestProducer(
-  kafka.producer(),
+  kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner }),
 );
 
 // Services

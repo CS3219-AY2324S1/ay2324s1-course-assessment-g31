@@ -1,5 +1,5 @@
 import { History } from "../../interfaces/historyService/history/object";
-import GenericController from "../generic.controller";
+import GenericController, { ControllerResponse } from "../generic.controller";
 
 const devServerUri = "http://localhost:5007";
 const prodServerUri = "placeholder IDK what it is";
@@ -12,22 +12,64 @@ class HistoryController extends GenericController {
     );
   }
 
-  public async getUserHistory(userId: string) {
-    try {
-      return await this.get<History[]>(`history?user1Id=${userId}`);
-    } catch (error) {
-      return null;
+  public async getUserHistory(
+    userId: string,
+  ): Promise<ControllerResponse<History[]>> {
+    const res = await this.get<ControllerResponse<History[]>>(
+      `history?user1Id=${userId}`,
+    );
+    if (res.data.success && res.data.data) {
+      const result: ControllerResponse<History[]> = {
+        success: true,
+        errors: [],
+        data: res.data.data,
+      };
+      return result;
     }
+    const result: ControllerResponse<History[]> = {
+      success: false,
+      errors: res.data.errors,
+    };
+    return result;
   }
 
-  public async getUserQuestionHistory(userId: string, questionId: number) {
-    try {
-      return await this.get<History[]>(
-        `history?user1Id=${userId}&questionId=${questionId}`,
-      );
-    } catch (error) {
-      return null;
+  public async getUserQuestionHistory(
+    userId: string,
+    questionId: number,
+  ): Promise<ControllerResponse<History[]>> {
+    const res = await this.get<ControllerResponse<History[]>>(
+      `history?user1Id=${userId}&questionId=${questionId}`,
+    );
+    if (res.data.success && res.data.data) {
+      const result: ControllerResponse<History[]> = {
+        success: true,
+        errors: [],
+        data: res.data.data,
+      };
+      return result;
     }
+    const result: ControllerResponse<History[]> = {
+      success: false,
+      errors: res.data.errors,
+    };
+    return result;
+  }
+
+  public async getHistory(id: string): Promise<ControllerResponse<History>> {
+    const res = await this.get<ControllerResponse<History>>(`history/${id}`);
+    if (res.data.success && res.data.data) {
+      const result: ControllerResponse<History> = {
+        success: true,
+        errors: [],
+        data: res.data.data,
+      };
+      return result;
+    }
+    const result: ControllerResponse<History> = {
+      success: false,
+      errors: res.data.errors,
+    };
+    return result;
   }
 
   public async deleteHistory(id: string) {

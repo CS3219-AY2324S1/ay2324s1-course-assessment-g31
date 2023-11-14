@@ -3,8 +3,14 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import formatUrl from "../util/formatUrl";
 
 export type ControllerParamsHeaders = {
-  params?: Record<string, any | any[]>;
+  params?: Record<string, any>;
   headers?: any;
+};
+
+export type ControllerResponse<Obj> = {
+  success: boolean;
+  errors: string[];
+  data?: Obj;
 };
 
 class GenericController {
@@ -36,10 +42,8 @@ class GenericController {
         ...paramsHeader?.headers,
       },
     };
-
     console.log(options);
-
-    const response = await axios<T, R>(options);
+    const response = axios<T, R>(options);
 
     return response;
   }

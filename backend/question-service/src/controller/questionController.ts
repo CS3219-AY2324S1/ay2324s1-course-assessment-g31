@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Category, Difficulty } from "@prisma/client";
-import { getRandomInt } from "../util/util";
+import { getRandomInt } from "../util/randomInt";
 import prisma from "../model/prismaClient";
 import produceEvent, { ProducerTopics } from "../events/producer/producer";
 
@@ -20,18 +20,10 @@ export const getQuestion = async (req: Request, res: Response) => {
       throw Error("invalid question id");
     }
     const question = await prisma.question.findUnique({
-      select: {
-        id: true,
-        title: true,
-        category: true,
-        difficulty: true,
-        description: true,
-        example: true,
-        constraint: true,
-        popularity: true,
-        solutions: true,
-      },
       where: { id: questionId },
+      include: {
+        solutions: true
+      },
     });
     res.status(200).json(question);
   } catch (err: any) {
@@ -162,6 +154,7 @@ export const getRandomQuestion = async (
 
 export const createQuestion = async (req: Request, res: Response) => {
   const question: QuestionInput = req.body;
+  console.log("QUESTION", question)
   try {
     if (!question.title) {
       throw new Error("Title must not be empty");

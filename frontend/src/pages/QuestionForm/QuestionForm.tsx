@@ -1,152 +1,155 @@
-import React, { ChangeEvent, useState, useEffect } from "react";
-import { useNavigate } from "react-router";
-import { useSearchParams } from "react-router-dom";
-import {
-  Category,
-  CategoryMap,
-  Difficulties,
-  Difficulty,
-  Question,
-} from "../../types/question";
-import styles from "./QuestionForm.module.css";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 export default function QuestionForm() {
-  // fetching questionToEdit
-  const [searchParams] = useSearchParams();
-  const questionId = searchParams.get("id");
-  const [questionToEdit, setQuestionToEdit] = useState<Question>();
-  const [fetchError, setFetchError] = useState<boolean>(false);
-  const [isFetching, setIsFetching] = useState<boolean>(false);
+  //   const questionController = useMemo(() => new QuestionController(), []);
+  //   // fetching questionToEdit
+  //   const [searchParams] = useSearchParams();
+  //   const questionId = searchParams.get("id");
+  //   const [questionToEdit, setQuestionToEdit] = useState<FullQuestion>();
+  //   const [fetchError, setFetchError] = useState<boolean>(false);
+  //   const [isFetching, setIsFetching] = useState<boolean>(false);
 
-  // Form fields
-  const [title, setTitle] = useState<string>("");
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>(
-    Difficulties[0],
-  );
-  const [description, setDescription] = useState<string>("");
-  const [selectedCategory, setSelectedCategory] = useState<Category[]>([]);
-  const [example, setExample] = useState<string>("");
-  const [constraint, setConstraint] = useState<string>("");
+  //   // Form fields
+  //   const [title, setTitle] = useState<string>("");
+  //   const [selectedDifficulty, setSelectedDifficulty] = useState<string>(
+  //     Difficulties[0],
+  //   );
+  //   const [description, setDescription] = useState<string>("");
+  //   const [selectedCategories, setSelectedCategories] = useState<QuestionCategory[]>([]);
+  //   const [example, setExample] = useState<string>("");
+  //   const [constraint, setConstraint] = useState<string>("");
 
-  // submitting
-  const [submitError, setSubmitError] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const navigate = useNavigate();
+  //   // submitting
+  //   const [submitError, setSubmitError] = useState<string>("");
+  //   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  //   const navigate = useNavigate();
 
-  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedValue = event.target.value as Category;
-    if (selectedCategory.includes(selectedValue)) {
-      setSelectedCategory(
-        selectedCategory.filter((value) => value !== selectedValue),
-      );
-    } else {
-      setSelectedCategory([...selectedCategory, selectedValue]);
-    }
-  };
+  //   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //     const selectedValue = event.target.value
+  //     if (selectedCategories.map(x=>x.name).includes(selectedValue)) {
+  //       setSelectedCategories(
+  //         selectedCategories.filter((value) => value.name !== selectedValue),
+  //       );
+  //     } else {
+  //       setSelectedCategories([...selectedCategories, {name: selectedValue,questionId: parseInt(questionId!,10)}]);
+  //     }
+  //   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitError("");
-    setIsSubmitting(true);
-    try {
-      const response = await fetch(
-        questionToEdit
-          ? `http://localhost:5003/question/${questionToEdit.id}`
-          : "http://localhost:5003/question",
-        {
-          method: questionToEdit ? "PATCH" : "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title,
-            difficulty: selectedDifficulty,
-            category: selectedCategory,
-            description,
-            example,
-            constraint,
-          }),
-        },
-      );
+  //   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //     e.preventDefault();
+  //     setSubmitError("");
+  //     setIsSubmitting(true);
+  //     console.log(
+  //       JSON.stringify({
+  //         title,
+  //         difficulty: selectedDifficulty,
+  //         categories: selectedCategories,
+  //         description,
+  //         example,
+  //         constraint,
+  //       }),
+  //     );
+  //     try {
+  //       if (questionToEdit) {
+  //         const res = await questionController.updateQuestion(questionToEdit.id, {
+  //           title,
+  //           difficulty: selectedDifficulty,
+  //           categories: selectedCategories,
+  //           description,
+  //           examples: [example],
+  //           constraints: [constraint],
+  //         });
+  //         console.log(res);
+  //       } else {
+  //         const res = await questionController.createQuestion({
+  //           title,
+  //           difficulty: selectedDifficulty,
+  //           categories: selectedCategories,
+  //           description,
+  //           examples: [example],
+  //           constraints: [constraint],
+  //           authorId:'abc123',
+  //           initialCodes: [],
+  //           runnerCodes: [],
+  //           testCases: [],
+  //           solutions: []
+  //         });
+  //         console.log(res);
+  //       }
+  //       // TODO: Handle Errors
+  //       setIsSubmitting(false);
+  //       // Success
+  //       navigate("/questions");
+  //     } catch (err: any) {
+  //       setSubmitError(err.message);
+  //       setIsSubmitting(false);
+  //     }
+  //   };
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw Error(data.error);
-      }
-      setIsSubmitting(false);
-      // Success
-      navigate("/questions");
-    } catch (err: any) {
-      setSubmitError(err.message);
-      setIsSubmitting(false);
-    }
-  };
+  //   const fetchQuestion = async (id: number) => {
+  //     setFetchError(false);
+  //     setIsFetching(true);
+  //     try {
+  //       const res = await questionController.getQuestionById(id);
 
-  const fetchQuestion = async (id: number) => {
-    setFetchError(false);
-    setIsFetching(true);
-    try {
-      const response = await fetch(`http://localhost:5003/question/${id}`, {
-        method: "GET",
-      });
+  //       if (res.success && res.data) {
+  //         setQuestionToEdit(res.data.data);
+  //         setIsFetching(false);
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw Error(data.error);
-      } else {
-        setQuestionToEdit(data);
-        setIsFetching(false);
-      }
-    } catch (err: any) {
-      setFetchError(true);
-      setIsFetching(false);
-    }
-  };
+  //       } else {
+  //         throw Error(res.errors[0]);
 
-  useEffect(() => {
-    // fetch question from id in search params to edit
-    if (questionId) {
-      const id = parseInt(questionId, 10);
-      if (Number.isNaN(id)) {
-        setQuestionToEdit(undefined);
-      }
-      fetchQuestion(id);
-    } else {
-      setQuestionToEdit(undefined);
-    }
-  }, [questionId]);
+  //       }
+  //     } catch (err: any) {
+  //       setFetchError(true);
+  //       setIsFetching(false);
+  //     }
+  //   };
 
-  useEffect(() => {
-    if (questionToEdit) {
-      // prefill form with question to edit
-      setTitle(questionToEdit.title);
-      setSelectedDifficulty(questionToEdit.difficulty);
-      setSelectedCategory([...questionToEdit.category]);
-      setDescription(questionToEdit.description);
-      setExample(questionToEdit.example);
-      setConstraint(questionToEdit.constraint);
-    } else {
-      // return to default
-      setTitle("");
-      setSelectedDifficulty(Difficulties[0]);
-      setSelectedCategory([]);
-      setDescription("");
-      setExample("");
-      setConstraint("");
-    }
-  }, [questionToEdit]);
+  //   useEffect(() => {
+  //     // fetch question from id in search params to edit
+  //     if (questionId) {
+  //       const id = parseInt(questionId, 10);
+  //       if (Number.isNaN(id)) {
+  //         setQuestionToEdit(undefined);
+  //       }
+  //       fetchQuestion(id);
+  //     } else {
+  //       setQuestionToEdit(undefined);
+  //     }
+  //   }, [questionId]);
 
-  if (isFetching) {
-    return <h2>Loading</h2>;
-  }
+  //   useEffect(() => {
+  //     if (questionToEdit) {
+  //       // prefill form with question to edit
+  //       setTitle(questionToEdit.title);
+  //       setSelectedDifficulty(questionToEdit.difficulty);
+  //       setSelectedCategories([...questionToEdit.categories]);
+  //       setDescription(questionToEdit.description);
+  //       setExample(questionToEdit.example);
+  //       setConstraint(questionToEdit.constraint);
+  //     } else {
+  //       // return to default
+  //       setTitle("");
+  //       setSelectedDifficulty(Difficulties[0]);
+  //       setSelectedCategories([]);
+  //       setDescription("");
+  //       setExample("");
+  //       setConstraint("");
+  //     }
+  //   }, [questionToEdit]);
 
-  if (fetchError) {
-    return <h2>Error fetching question details</h2>;
-  }
+  //   if (isFetching) {
+  //     return <h2>Loading</h2>;
+  //   }
+
+  //   if (fetchError) {
+  //     return <h2>Error fetching question details</h2>;
+  //   }
 
   return (
     <div>
-      <h2>Editing: {!!questionToEdit}</h2>
+      {/* <h2>Editing: {!!questionToEdit}</h2>
       <form onSubmit={handleSubmit} className={styles.formContainer}>
         <label htmlFor="title">
           Question Title:
@@ -172,18 +175,18 @@ export default function QuestionForm() {
             </div>
           ))}
         </div>
-        <span>Category:</span>
-        <div className={styles.categoryContainer}>
-          {Object.values(CategoryMap).map((category) => (
-            <div key={category}>
+        <span>Categories:</span>
+        <div className={styles.categoriesContainer}>
+          {Object.values(CategoriesMap).map((categories) => (
+            <div key={categories}>
               <input
                 type="checkbox"
-                id={category}
-                value={category}
+                id={categories}
+                value={categories}
                 onChange={handleCheckboxChange}
-                checked={selectedCategory.includes(category)}
+                checked={selectedCategories.includes(categories)}
               />
-              <label htmlFor={category}>{category}</label>
+              <label htmlFor={categories}>{categories}</label>
             </div>
           ))}
         </div>
@@ -217,7 +220,7 @@ export default function QuestionForm() {
           </button>
         </div>
       </form>
-      {submitError && <span>{submitError}</span>}
+      {submitError && <span>{submitError}</span>} */}
     </div>
   );
 }

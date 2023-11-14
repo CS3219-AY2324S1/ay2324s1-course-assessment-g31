@@ -11,6 +11,8 @@ const MatchingRequestSuccess: ConsumerFunction = (message) => {
       `YOU HAVE A MATCH User: ${matching.user1Id}, IT IS USER: ${matching.user2Id}`,
     );
   }
+
+  return Promise.resolve();
 };
 
 export default MatchingRequestSuccess;
