@@ -145,9 +145,22 @@ function CodeResult() {
                   break;
 
                 default:
-                  passed = testCase.expectedOutput.includes(
-                    decode64(foundSubmission.stdout).trim(),
-                  );
+                  // passed = testCase.expectedOutput.includes(
+                  //   decode64(foundSubmission.stdout).trim(),
+                  // );
+                  passed = testCase.expectedOutput.some((exptout) => {
+                    const parsedExpected = JSON.parse(exptout);
+                    const parsedActual = JSON.parse(
+                      decode64(foundSubmission.stdout).trim().toString(),
+                    );
+
+                    return (
+                      parsedExpected.length === parsedActual.length &&
+                      parsedExpected.every(
+                        (v: any, i: any) => v === parsedActual[i],
+                      )
+                    );
+                  });
                   actualOutput = decode64(foundSubmission.stdout);
               }
               return {
