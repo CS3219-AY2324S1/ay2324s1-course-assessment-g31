@@ -1,14 +1,15 @@
 import { User } from "@firebase/auth";
-import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import React, { useContext } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import { NotificationContext } from "../context/NotificationContext";
 import ForbiddenPage from "../pages/ForbiddenPage/ForbiddenPage";
 import LandingPage from "../pages/LandingPage";
 import Layout from "../pages/Layout/Layout";
 import MatchingControlPanelPage from "../pages/MatchingControlPanelPage/MatchingControlPanelPage";
 import MatchPage from "../pages/MatchPage";
-import PageNotFoundPage from "../pages/PageNotFoundPage/PageNotFoundPage";
+import NotFoundPage from "../pages/NotFoundPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import QuestionForm from "../pages/QuestionForm/QuestionForm";
 import AllQuestionPage from "../pages/Questions/AllQuestionsPage";
@@ -33,23 +34,40 @@ interface ProtectedRouteProp extends RouterProps {
 
 function ProtectedRoute({ user, rolesNeeded, children }: ProtectedRouteProp) {
   const { currentRole } = useAuth();
+  const { addNotification } = useContext(NotificationContext);
+  const navigate = useNavigate();
 
   if (!user || Object.keys(user).length === 0) {
-    return <Navigate to="/" replace />;
+    addNotification({
+      type: "error",
+      message: "Please Sign In to View this Page.",
+    });
+    navigate("/");
   }
 
   if (
     !rolesNeeded.map((x) => x.toLowerCase()).includes(currentRole.toLowerCase())
   ) {
-    return <Navigate to="/forbidden" replace />;
+    addNotification({
+      type: "error",
+      message: "You are unauthorized to view this page.",
+    });
+    navigate("/forbidden");
   }
 
   return children;
 }
 
 function PostLoginNoAccessRoute({ user, children }: RouterProps) {
+  const { addNotification } = useContext(NotificationContext);
+  const navigate = useNavigate();
+
   if (user) {
-    return <Navigate to="/questions" replace />;
+    addNotification({
+      type: "error",
+      message: "You are not allowed to view this page after signing in.",
+    });
+    navigate("/questions");
   }
   return children;
 }
@@ -77,20 +95,21 @@ export default function MainRouter() {
             </PostLoginNoAccessRoute>
           }
         />
-        <Route
-          path="/questions"
-          element={
-            // <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
-            <AllQuestionPage />
-            // </ProtectedRoute>
-          }
-        />
 
         <Route
           path="/questions/create"
           element={
             <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
               <CreateSingleQuestionPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/questions"
+          element={
+            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+              <AllQuestionPage />
             </ProtectedRoute>
           }
         />
@@ -168,7 +187,7 @@ export default function MainRouter() {
         />
 
         <Route path="/forbidden" element={<ForbiddenPage />} />
-        <Route path="*" element={<PageNotFoundPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );

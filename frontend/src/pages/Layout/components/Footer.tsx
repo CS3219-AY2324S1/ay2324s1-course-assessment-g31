@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import titleCase from '../../../util/titleCase';
+import { Link } from "react-router-dom";
+import titleCase from "../../../util/titleCase";
 
 function Footer() {
   const footerNavigation = {
