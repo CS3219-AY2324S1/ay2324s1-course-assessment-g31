@@ -1,5 +1,18 @@
 version: "3"
 services:
+  chat:
+    container_name: chat-service
+    build:
+      context: ./backend/chat-service
+      dockerfile: Dockerfile.prod
+    ports:
+      - "9000:9000"
+    env_file:
+      - ./backend/chat-service/.env
+    networks:
+      - chat_service_network
+      - api_network
+
   socket:
     container_name: socket-service
     build:
@@ -130,6 +143,8 @@ volumes:
   frontend:
 
 networks:
+  chat_service_network:
+    driver: bridge
   api_network:
     driver: bridge
   socket_service_network:

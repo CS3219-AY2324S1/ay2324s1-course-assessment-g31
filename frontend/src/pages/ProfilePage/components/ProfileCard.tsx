@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../../context/AuthContext";
 import UserController from "../../../controllers/user/user.controller";
@@ -8,8 +7,7 @@ import styles from "./ProfileCard.module.css";
 import UpdateProfileModal from "./UpdateProfileModal";
 
 export default function ProfileCard() {
-  const navigate = useNavigate();
-  const { logout, currentUser } = useAuth();
+  const { currentUser } = useAuth();
 
   const userController = useMemo(() => new UserController(), []);
 
@@ -25,17 +23,6 @@ export default function ProfileCard() {
     useState(false);
   const [isUpdateProfileModalOpen, setIsUpdateProfileModalOpen] =
     useState(false);
-
-  const handleLogout = () => {
-    logout()
-      .then(() => {
-        navigate("/");
-        console.log("Signed out successfully");
-      })
-      .catch((error) => {
-        setMessage(`Error, ${error.message}`);
-      });
-  };
 
   const openUpdateProfileModal = () => {
     setIsUpdateProfileModalOpen(true);
@@ -123,13 +110,6 @@ export default function ProfileCard() {
             onClick={() => setIsDeleteProfileModalOpen(true)}
           >
             Delete Account
-          </button>
-          <button
-            type="button"
-            className="rounded-md bg-slate-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
-            onClick={handleLogout}
-          >
-            Logout
           </button>
         </div>
         <h2>Profile Card</h2>

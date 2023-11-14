@@ -5,6 +5,25 @@
 
 version: "3"
 services:
+  chat:
+    container_name: chat-service
+    build:
+      context: ./backend/chat-service
+      dockerfile: Dockerfile.dev
+    ports:
+      - "9000:9000"
+    environment:
+      - PORT=9000
+    env_file:
+      - ./backend/chat-service/.env
+    depends_on:
+      broker:
+        condition: service_healthy
+    networks:
+      - chat-service-network
+      - api-network
+      - kafka-network
+
   user:
     container_name: user-service
     build:
@@ -241,6 +260,9 @@ services:
       retries: 3
 
 networks:
+  chat-service-network:
+    driver: bridge
+  
   user-service-network:
     driver: bridge
 
