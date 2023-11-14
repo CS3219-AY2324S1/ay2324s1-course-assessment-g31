@@ -12,9 +12,12 @@ import PageContainer from "../../../components/container/Page";
 import QuestionAttemptList from "../../../components/QuestionAttemptList";
 import { QuestionContext } from "../../../context/QuestionContext";
 import classNames from "../../../util/ClassNames";
+import AdminHoc from "../../../components/hocs/AdminHoc";
+import { useAuth } from "../../../context/AuthContext";
 
 function AllQuestionPage() {
   const { questions, setQuestionQuery } = useContext(QuestionContext);
+  const { currentUser, currentRole } = useAuth();
 
   const PAGINATION_SIZE = 10;
 
@@ -289,17 +292,19 @@ function AllQuestionPage() {
               Random Question
             </button>
           </div>
-          <div className="mt-4">
-            <button
-              type="button"
-              className="block rounded-md bg-slate-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
-              onClick={() => {
-                navigate("/questions/create");
-              }}
-            >
-              Create Question
-            </button>
-          </div>
+          <AdminHoc currentUser={currentUser} currentRole={currentRole}>
+            <div className="mt-4">
+              <button
+                type="button"
+                className="block rounded-md bg-slate-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
+                onClick={() => {
+                  navigate("/questions/create");
+                }}
+              >
+                Create Question
+              </button>
+            </div>
+          </AdminHoc>
         </div>
       </div>
 
@@ -666,21 +671,26 @@ function AllQuestionPage() {
                             <h3 className="mt-2 text-sm font-semibold text-gray-900">
                               No Questions
                             </h3>
-                            <p className="mt-1 text-sm text-gray-500">
-                              Get started by creating a new question.
-                            </p>
-                            <div className="mt-6">
-                              <button
-                                type="button"
-                                className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                              >
-                                <PlusIcon
-                                  className="-ml-0.5 mr-1.5 h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                                New Question
-                              </button>
-                            </div>
+                            <AdminHoc
+                              currentUser={currentUser}
+                              currentRole={currentRole}
+                            >
+                              <p className="mt-1 text-sm text-gray-500">
+                                Get started by creating a new question.
+                              </p>
+                              <div className="mt-6">
+                                <button
+                                  type="button"
+                                  className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                >
+                                  <PlusIcon
+                                    className="-ml-0.5 mr-1.5 h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                  Create Question
+                                </button>
+                              </div>
+                            </AdminHoc>
                           </div>
                         </td>
                       </tr>
