@@ -104,32 +104,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [currentUser]);
 
-  // async function getUserRole(user: User): Promise<string> {
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:3000/user-services/userRole/${user.uid}`,
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       },
-  //     );
-
-  //     const data = await response.json();
-
-  //     if (!response.ok) {
-  //       console.error("Failed to fetch role:", data.message);
-  //       return "user";
-  //     }
-  //     console.log("Successfully fetched role: ", data.user_role);
-  //     return data.user_role;
-  //   } catch (error: any) {
-  //     console.log("Error fetching profile data:", error.message);
-  //     return "user";
-  //   }
-  // }
-
   async function getUserRole(user: User): Promise<string> {
     try {
       // Check if firebase has this user

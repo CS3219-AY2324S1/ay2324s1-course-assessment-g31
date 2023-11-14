@@ -80,9 +80,9 @@ export default function MainRouter() {
         <Route
           path="/questions"
           element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
-              <AllQuestionPage />
-            </ProtectedRoute>
+            // <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+            <AllQuestionPage />
+            // </ProtectedRoute>
           }
         />
 
