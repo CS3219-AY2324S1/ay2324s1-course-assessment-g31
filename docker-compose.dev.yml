@@ -28,13 +28,33 @@ services:
     container_name: user-service
     build:
       context: ./backend/user-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - "5001:5000"
     environment:
       - PORT=5000
     env_file:
       - ./backend/user-service/.env
+    depends_on:
+      postgres_user_service:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    networks:
+      - user-service-network
+      - api-network
+      - kafka-network
+  user2:
+    container_name: user-service2
+    build:
+      context: ./backend/user-service2
+      dockerfile: Dockerfile
+    ports:
+      - "5008:5000"
+    environment:
+      - PORT=5000
+    env_file:
+      - ./backend/user-service2/.env
     depends_on:
       postgres_user_service:
         condition: service_healthy
@@ -51,7 +71,7 @@ services:
     volumes:
       - progresDB:/data/postgres/user-service
     env_file:
-      - ./backend/user-service/.env
+      - ./backend/user-service2/.env
     networks:
       - user-service-network
     healthcheck:
