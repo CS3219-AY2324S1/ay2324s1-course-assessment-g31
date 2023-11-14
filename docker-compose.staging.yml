@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   user:
     container_name: user-service2
@@ -6,7 +6,7 @@ services:
       context: ./backend/user-service2
       dockerfile: Dockerfile.staging
     ports:
-      - '5001:5000'
+      - "5001:5000"
     environment:
       - PORT=5000
       - NODE_ENV=production
@@ -19,10 +19,10 @@ services:
       - user-service-network
       - api-network
   postgres_user_service:
-    image: 'postgres:latest'
+    image: "postgres:latest"
     container_name: postgres-user-service
     volumes:
-      - 'progresDB:/data/postgres/user-service'
+      - "progresDB:/data/postgres/user-service"
     env_file:
       - ./backend/user-service2/.env
     networks:
@@ -40,7 +40,7 @@ services:
       context: ./backend/matching-service
       dockerfile: Dockerfile.staging
     ports:
-      - '5002:5000'
+      - "5002:5000"
     environment:
       - PORT=5000
       - NODE_ENV=production
@@ -53,10 +53,10 @@ services:
       - matching-service-network
       - api-network
   postgres_matching_service:
-    image: 'postgres:latest'
+    image: "postgres:latest"
     container_name: postgres-matching-service
     volumes:
-      - 'progresDB:/data/postgres/matching-service'
+      - "progresDB:/data/postgres/matching-service"
     env_file:
       - ./backend/matching-service/.env
     networks:
@@ -74,7 +74,7 @@ services:
       context: ./backend/question-service
       dockerfile: Dockerfile.staging
     ports:
-      - '5003:5000'
+      - "5003:5000"
     environment:
       - PORT=5000
       - NODE_ENV=production
@@ -87,10 +87,10 @@ services:
       - question-service-network
       - api-network
   postgres_question_service:
-    image: 'postgres:latest'
+    image: "postgres:latest"
     container_name: postgres-question-service
     volumes:
-      - 'progresDB:/data/postgres/question-service'
+      - "progresDB:/data/postgres/question-service"
     env_file:
       - ./backend/question-service/.env
     networks:
@@ -108,7 +108,7 @@ services:
       context: ./backend/history-service
       dockerfile: Dockerfile.staging
     ports:
-      - '5007:5000'
+      - "5007:5000"
     environment:
       - PORT=5000
       - NODE_ENV=production
@@ -121,10 +121,10 @@ services:
       - history-service-network
       - api-network
   postgres_history_service:
-    image: 'postgres:latest'
+    image: "postgres:latest"
     container_name: postgres-history-service
     volumes:
-      - 'progresDB:/data/postgres/history-service'
+      - "progresDB:/data/postgres/history-service"
     env_file:
       - ./backend/history-service/.env
     networks:
@@ -143,7 +143,7 @@ services:
       context: ./backend/socket-service
       dockerfile: Dockerfile.staging
     ports:
-      - '5004:5000'
+      - "5004:5000"
     environment:
       - PORT=5000
       - NODE_ENV=production
@@ -152,7 +152,22 @@ services:
     networks:
       - socket-service-network
       - api-network
+  chat:
+    container_name: chat-service
+    build:
+      context: ./backend/chat-service
+      dockerfile: Dockerfile.dev
+    ports:
+      - "9000:9000"
+    environment:
+      - PORT=9000
+    env_file:
+      - ./backend/chat-service/.env
+    networks:
+      - chat-service-network
 networks:
+  chat-service-network:
+    driver: bridge
   user-service-network:
     driver: bridge
   matching-service-network:
