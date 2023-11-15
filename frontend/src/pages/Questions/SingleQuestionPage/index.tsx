@@ -104,7 +104,7 @@ export default function SingleQuestionPage() {
                 )}
               </div>
             </div>
-            <ChatRoomAdd matchingId={ matchingId } />
+            <ChatRoomAdd matchingId={matchingId} />
           </div>
         </InMatchingHoc>
       </div>

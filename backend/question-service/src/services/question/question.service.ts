@@ -150,12 +150,16 @@ class QuestionService
                   categories: {
                     every: {
                       name: {
-                        in: query.categories.map((x) => x.value.name),
+                        in: query.categories
+                          .filter((x) => x.value !== undefined)
+                          .map((y) => y.value!.name),
                       },
                     },
                     some: {
                       name: {
-                        in: query.categories.map((x) => x.value.name),
+                        in: query.categories
+                          .filter((x) => x.value !== undefined)
+                          .map((y) => y.value!.name),
                       },
                     },
                   },
@@ -167,6 +171,11 @@ class QuestionService
           query.title
             ? {
                 title: query.title.order,
+              }
+            : {},
+          query.difficulty
+            ? {
+                difficulty: query.difficulty.order,
               }
             : {},
           query.popularity

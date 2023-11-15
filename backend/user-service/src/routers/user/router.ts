@@ -1,7 +1,7 @@
-import express from 'express';
+import express from "express";
 
-import UserController from '../../controllers/user/user.controller';
-import BaseRouter from '../router.abstract';
+import UserController from "../../controllers/user/user.controller";
+import BaseRouter from "../router.abstract";
 
 class UserRouter extends BaseRouter<UserController> {
   override registerRoutes(): express.Router {

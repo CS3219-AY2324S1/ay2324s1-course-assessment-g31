@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { QuestionContext } from "../../context/QuestionContext";
 import classNames from "../../util/ClassNames";

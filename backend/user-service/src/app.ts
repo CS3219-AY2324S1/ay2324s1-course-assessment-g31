@@ -18,8 +18,8 @@ const app: Express = express();
 
 // Event Producer
 const producerConfig: ProducerConfig = {
-    createPartitioner: Partitioners.LegacyPartitioner
-}
+  createPartitioner: Partitioners.LegacyPartitioner,
+};
 
 const userEventProducer = new UserProducer(kafka.producer(producerConfig));
 

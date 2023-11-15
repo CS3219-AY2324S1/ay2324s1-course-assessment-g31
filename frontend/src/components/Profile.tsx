@@ -57,8 +57,7 @@ function Profile() {
     }
   };
 
-  const handleChangePassword = async (
-  ) => {
+  const handleChangePassword = async () => {
     if (!currentUser) {
       return;
     }
@@ -70,8 +69,7 @@ function Profile() {
     changePassword(currentUser, newPassword);
   };
 
-  const handleDeleteAccount = async (
-  ) => {
+  const handleDeleteAccount = async () => {
     if (!currentUser) {
       return;
     }

@@ -8,8 +8,8 @@ import UserProducer from "../../producers/user/producer";
 import { ConsumerFunction } from "../main.interface";
 
 const producerConfig: ProducerConfig = {
-    createPartitioner: Partitioners.LegacyPartitioner
-}
+  createPartitioner: Partitioners.LegacyPartitioner,
+};
 
 const userEventProducer = new UserProducer(kafka.producer(producerConfig));
 const userService = new UserService(prismaClient);
