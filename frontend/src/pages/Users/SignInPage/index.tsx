@@ -221,7 +221,6 @@ function SignInPage() {
                   )}
                 </div>
 
-
                 <div>
                   <button
                     name="sign-in"
@@ -246,7 +245,6 @@ function SignInPage() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
