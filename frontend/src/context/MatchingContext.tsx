@@ -9,7 +9,6 @@ import React, {
 import { useNavigate } from "react-router-dom";
 
 import socket from "../util/socket";
-import { CodingLanguage } from "./QuestionContext";
 import { useAuth } from "./AuthContext";
 
 interface MatchingProviderProps {
@@ -19,8 +18,6 @@ interface MatchingProviderProps {
 interface MatchingContextType {
   matchingId: string;
   matchedUserId: string;
-  socketCode: string;
-  socketLanguage: CodingLanguage;
   establishedConnection: boolean;
   foundMatch: boolean;
   connectionLoading: boolean;
@@ -29,15 +26,11 @@ interface MatchingContextType {
   setMatchingId: React.Dispatch<React.SetStateAction<string>>;
   beginCollaboration: () => void;
   cancelCollaboration: () => void;
-  changeCode: (code: string) => void;
-  changeLanguage: (language: string) => void;
 }
 
 export const MatchingContext = createContext<MatchingContextType>({
   matchingId: "",
   matchedUserId: "",
-  socketCode: "",
-  socketLanguage: "java",
   establishedConnection: false,
   foundMatch: false,
   connectionLoading: true,
@@ -46,8 +39,6 @@ export const MatchingContext = createContext<MatchingContextType>({
   setMatchingId: () => {},
   beginCollaboration: () => {},
   cancelCollaboration: () => {},
-  changeCode: () => {},
-  changeLanguage: () => {},
 });
 
 export function MatchingProvider({ children }: MatchingProviderProps) {
@@ -63,14 +54,15 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
   const [matchedUserId, setMatchedUserId] = useState<string>("");
   const [matchingId, setMatchingId] = useState<string>("");
 
-  const [socketCode, setSocketCode] = useState<string>("");
-  const [socketLanguage, setSocketLanguage] = useState<CodingLanguage>("java");
-
   const navigate = useNavigate();
 
   const emitSocketEvent = useCallback(
     (eventName: string, data: Record<string, any> = {}) => {
       if (!currentUser) return;
+      console.log("Matching Context", eventName, {
+        userId: currentUser.uid,
+        ...data,
+      });
       socket.emit(eventName, {
         userId: currentUser.uid,
         ...data,
@@ -91,6 +83,7 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     });
     setMatchedUserId("");
     setMatchingId("");
+    setFoundMatch(false);
   }, [emitSocketEvent, matchingId]);
 
   const beginCollaboration = useCallback(() => {
@@ -99,28 +92,6 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       requestId: matchingId,
     });
   }, [emitSocketEvent, currentUser, matchingId]);
-
-  const changeCode = useCallback(
-    (code: string) => {
-      if (!currentUser || !matchingId) return;
-      emitSocketEvent("change-code", {
-        requestId: matchingId,
-        code,
-      });
-    },
-    [emitSocketEvent, currentUser, matchingId],
-  );
-
-  const changeLanguage = useCallback(
-    (language: string) => {
-      if (!currentUser || !matchingId) return;
-      emitSocketEvent("change-language", {
-        requestId: matchingId,
-        language,
-      });
-    },
-    [emitSocketEvent, currentUser, matchingId],
-  );
 
   const onJoined = useCallback(() => {
     setEstablishedConnection(true);
@@ -142,30 +113,6 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     [currentUser],
   );
 
-  const onCodeChanged = useCallback(
-    (value: any) => {
-      const valString = JSON.stringify(value);
-      const obj = JSON.parse(valString);
-      const { userId, requestId, code } = obj;
-      if (!currentUser || !matchingId) return;
-      if (userId === currentUser.uid || requestId !== matchingId) return;
-      setSocketCode(code);
-    },
-    [currentUser, matchingId],
-  );
-
-  const onLanguageChanged = useCallback(
-    (value: any) => {
-      const valString = JSON.stringify(value);
-      const obj = JSON.parse(valString);
-      const { userId, requestId, language } = obj;
-      if (!currentUser || !matchingId) return;
-      if (userId === currentUser.uid || requestId !== matchingId) return;
-      setSocketLanguage(language);
-    },
-    [currentUser, matchingId],
-  );
-
   const onCollaborationCancelled = useCallback(
     (value: any) => {
       const valString = JSON.stringify(value);
@@ -175,6 +122,7 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       if (userId === currentUser.uid || requestId !== matchingId) return;
       setMatchedUserId("");
       setMatchingId("");
+      setFoundMatch(false);
       navigate("/match");
     },
     [currentUser, matchingId, navigate],
@@ -206,32 +154,18 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       join();
     }
 
-    socket.on("code-changed", onCodeChanged);
-    socket.on("language-changed", onLanguageChanged);
     socket.on("collaboration-cancelled", onCollaborationCancelled);
 
     return () => {
-      socket.off("code-changed", onCodeChanged);
-      socket.off("language-changed", onLanguageChanged);
       socket.off("collaboration-cancelled", onCollaborationCancelled);
       socket.disconnect();
     };
-  }, [
-    currentUser,
-    matchedUserId,
-    matchingId,
-    join,
-    onCodeChanged,
-    onLanguageChanged,
-    onCollaborationCancelled,
-  ]);
+  }, [currentUser, matchedUserId, matchingId, join, onCollaborationCancelled]);
 
   const value = useMemo(
     () => ({
       matchingId,
       matchedUserId,
-      socketCode,
-      socketLanguage,
       establishedConnection,
       foundMatch,
       connectionLoading,
@@ -240,14 +174,10 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       setMatchingId,
       beginCollaboration,
       cancelCollaboration,
-      changeCode,
-      changeLanguage,
     }),
     [
       matchingId,
       matchedUserId,
-      socketCode,
-      socketLanguage,
       establishedConnection,
       foundMatch,
       connectionLoading,
@@ -256,8 +186,6 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       setMatchingId,
       beginCollaboration,
       cancelCollaboration,
-      changeCode,
-      changeLanguage,
     ],
   );
 

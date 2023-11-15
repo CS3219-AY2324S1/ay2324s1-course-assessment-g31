@@ -1,12 +1,12 @@
 import { useCallback, useContext, useEffect, useMemo } from "react";
 
-import { MatchingContext } from "../context/MatchingContext";
 import {
   CodingLanguage,
   CodingTheme,
   QuestionContext,
 } from "../context/QuestionContext";
 import CodeEditor from "./CodeEditor";
+import { CollaborationContext } from "../context/CollaborationContext";
 
 function CodingSpace() {
   const languageOptions: CodingLanguage[] = useMemo(() => ["java", "cpp"], []);
@@ -29,7 +29,7 @@ function CodingSpace() {
     selectedTheme,
     setSelectedTheme,
   } = useContext(QuestionContext);
-  const { socketLanguage, changeLanguage } = useContext(MatchingContext);
+  const { socketLanguage, changeLanguage } = useContext(CollaborationContext);
 
   const handleLanguageChange = useCallback(
     (newLanguage: CodingLanguage) => {
@@ -47,7 +47,7 @@ function CodingSpace() {
   );
 
   useEffect(() => {
-    setSelectedLanguage(socketLanguage);
+    setSelectedLanguage(socketLanguage as CodingLanguage);
   }, [socketLanguage, setSelectedLanguage]);
 
   return (

@@ -22,7 +22,8 @@ function MatchPage() {
 
   const [difficulty, setDifficulty] = useState<string>("");
   const [open, setOpen] = useState(false);
-  const [currentMatchingRequestId, setCurrentMatchingRequestId] = useState<string>("");
+  const [currentMatchingRequestId, setCurrentMatchingRequestId] =
+    useState<string>("");
 
   const navigate = useNavigate();
 
@@ -38,7 +39,9 @@ function MatchPage() {
     setOpen(false);
     setDifficulty("");
     stopTimer();
-    await matchingController.current.cancelMatchingRequest(currentMatchingRequestId);
+    await matchingController.current.cancelMatchingRequest(
+      currentMatchingRequestId,
+    );
   }, [currentUser, stopTimer, currentMatchingRequestId]);
 
   const startMatching = useCallback(
@@ -60,7 +63,7 @@ function MatchPage() {
       };
       console.log(obj);
       const res = await matchingController.current.createMatchingRequest(obj);
-      if(res && res.data) {
+      if (res && res.data) {
         setCurrentMatchingRequestId(res.data.id.toString());
       }
     },
@@ -68,7 +71,6 @@ function MatchPage() {
   );
 
   useEffect(() => {
-    console.log(time);
     if (!isActive) {
       cancelMatch();
     }

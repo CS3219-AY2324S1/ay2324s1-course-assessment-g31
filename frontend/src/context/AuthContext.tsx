@@ -97,7 +97,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 
   async function getUserRole(user: User): Promise<string> {
-    console.log(user)
     return "user";
   }
 

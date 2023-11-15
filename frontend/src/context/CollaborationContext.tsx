@@ -49,6 +49,10 @@ export function CollaborationProvider({
   const emitSocketEvent = useCallback(
     (eventName: string, data: Record<string, any> = {}) => {
       if (!currentUser) return;
+      console.log("Collaboration Context", eventName, {
+        userId: currentUser.uid,
+        ...data,
+      });
       socket.emit(eventName, {
         userId: currentUser.uid,
         ...data,
@@ -64,6 +68,7 @@ export function CollaborationProvider({
 
   const changeCode = useCallback(
     (code: string) => {
+        console.log("Collaboration Context","Change Code Flag:",!currentUser || !matchingId)
       if (!currentUser || !matchingId) return;
       emitSocketEvent("change-code", {
         requestId: matchingId,

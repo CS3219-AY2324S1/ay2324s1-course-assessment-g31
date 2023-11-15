@@ -18,7 +18,10 @@ class MatchingController extends GenericController {
 
   public async createMatchingRequest(data: MatchingRequestCreateDTO) {
     try {
-      return await this.post<MatchingRequest,MatchingRequestCreateDTO>("matchingRequest", data);
+      return await this.post<MatchingRequest, MatchingRequestCreateDTO>(
+        "matchingRequest",
+        data,
+      );
     } catch (error) {
       return null;
     }
