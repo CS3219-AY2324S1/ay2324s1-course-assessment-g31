@@ -13,17 +13,17 @@ services:
       - chat_service_network
       - api_network
 
-  socket:
-    container_name: socket-service
+  collaboration:
+    container_name: collaboration-service
     build:
-      context: ./backend/socket-service
+      context: ./backend/collaboration-service
       dockerfile: Dockerfile.prod
     ports:
       - "5006:5000"
     env_file:
-      - ./backend/socket-service/.env
+      - ./backend/collaboration-service/.env
     networks:
-      - socket_service_network
+      - collaboration_service_network
       - api_network
 
   matching:
@@ -147,7 +147,7 @@ networks:
     driver: bridge
   api_network:
     driver: bridge
-  socket_service_network:
+  collaboration_service_network:
     driver: bridge
   matching_service_network:
     driver: bridge

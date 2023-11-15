@@ -137,10 +137,10 @@ services:
       timeout: 15s
       start_period: 90s
       retries: 3
-  socket:
-    container_name: socket-service
+  collaboration:
+    container_name: collaboration-service
     build:
-      context: ./backend/socket-service
+      context: ./backend/collaboration-service
       dockerfile: Dockerfile.staging
     ports:
       - "5004:5000"
@@ -148,9 +148,9 @@ services:
       - PORT=5000
       - NODE_ENV=production
     env_file:
-      - ./backend/socket-service/.env
+      - ./backend/collaboration-service/.env
     networks:
-      - socket-service-network
+      - collaboration-service-network
       - api-network
   chat:
     container_name: chat-service
@@ -174,7 +174,7 @@ networks:
     driver: bridge
   question-service-network:
     driver: bridge
-  socket-service-network:
+  collaboration-service-network:
     driver: bridge
   history-service-network:
     driver: bridge

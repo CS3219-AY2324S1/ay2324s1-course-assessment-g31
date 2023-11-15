@@ -104,11 +104,18 @@ class QuestionService
       testCases,
       categories,
       solutions,
+      difficulty,
       ...rest
     } = body;
     try {
       const question = await this.prismaClient.question.findFirst({
-        where: rest,
+        where: {
+            ...rest,
+            difficulty: {
+                equals: difficulty,
+                mode: 'insensitive'
+            }
+        },
         include: {
           initialCodes: true,
           runnerCodes: true,

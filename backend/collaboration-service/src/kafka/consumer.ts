@@ -9,7 +9,7 @@ const SubscribedTopics: ConsumerSubscribeTopics = {
   fromBeginning: false,
 };
 
-const consumer = kafka.consumer({ groupId: "socket-service" });
+const consumer = kafka.consumer({ groupId: "collaboration-service" });
 
 const questionEventConsumer = async (io: Server) => {
   logger.info("Question Service Starting to Listen");
