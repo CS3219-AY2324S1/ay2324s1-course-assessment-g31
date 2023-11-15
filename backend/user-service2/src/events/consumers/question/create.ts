@@ -1,3 +1,4 @@
+import { ProducerConfig, Partitioners } from "kafkajs";
 import Question from "../../../interfaces/question/object";
 import UserService from "../../../services/user/user.service";
 import logger from "../../../util/logger";
@@ -6,7 +7,11 @@ import kafka from "../../kafka";
 import UserProducer from "../../producers/user/producer";
 import { ConsumerFunction } from "../main.interface";
 
-const userEventProducer = new UserProducer(kafka.producer());
+const producerConfig: ProducerConfig = {
+    createPartitioner: Partitioners.LegacyPartitioner
+}
+
+const userEventProducer = new UserProducer(kafka.producer(producerConfig));
 const userService = new UserService(prismaClient);
 
 const createQuestionConsumer: ConsumerFunction = async (message) => {

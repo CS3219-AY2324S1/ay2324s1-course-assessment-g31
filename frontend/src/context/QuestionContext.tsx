@@ -355,6 +355,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
     const foundCode = question.initialCodes.find(
       (x) => x.language === selectedLanguage,
     );
+    console.log(selectedLanguage);
     if (historyId) {
       const history = await historyController.getHistory(historyId);
       if (history.success && history.data) {

@@ -8,12 +8,16 @@ abstract class EventProducer<Obj> {
   }
 
   sendEvent = async (topic: string, messages: Message[]): Promise<void> => {
-    await this.producer.connect();
-    await this.producer.send({
-      topic,
-      messages,
-    });
-    await this.producer.disconnect();
+    try {
+      await this.producer.connect();
+      await this.producer.send({
+        topic,
+        messages,
+      });
+      await this.producer.disconnect();
+    } catch (error) {
+      await this.producer.disconnect();
+    }
   };
 
   abstract create(object: Obj): void;
