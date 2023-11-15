@@ -11,12 +11,10 @@ import MatchingControlPanelPage from "../pages/MatchingControlPanelPage/Matching
 import MatchPage from "../pages/MatchPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
-import QuestionForm from "../pages/QuestionForm/QuestionForm";
 import AllQuestionPage from "../pages/Questions/AllQuestionsPage";
 import SingleQuestionPage from "../pages/Questions/SingleQuestionPage";
 import CreateSingleQuestionPage from "../pages/Questions/SingleQuestionPage/create";
 import EditSingleQuestionPage from "../pages/Questions/SingleQuestionPage/edit";
-import SolutionForm from "../pages/SolutionForm/SolutionForm";
 import RegistrationPage from "../pages/Users/RegistrationPage";
 import SignInPage from "../pages/Users/SignInPage";
 
@@ -133,24 +131,6 @@ export default function MainRouter() {
         />
 
         <Route
-          path="/questions/form"
-          element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
-              <QuestionForm />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/questions/solution/form"
-          element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
-              <SolutionForm />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
           path="/profile"
           element={
             <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
@@ -164,15 +144,6 @@ export default function MainRouter() {
           element={
             <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
               <MatchPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/questions/:id"
-          element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
-              <SingleQuestionPage />
             </ProtectedRoute>
           }
         />

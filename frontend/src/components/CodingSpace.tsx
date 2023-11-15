@@ -1,6 +1,6 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
 
-import { MatchingContext } from "../context/MatchingContext";
+import { CollaborationContext } from "../context/CollaborationContext";
 import {
   CodingLanguage,
   CodingTheme,
@@ -8,7 +8,6 @@ import {
 } from "../context/QuestionContext";
 import CodeEditor from "./CodeEditor";
 import CodeResult from "./CodeResult";
-import { CollaborationContext } from "../context/CollaborationContext";
 
 function CodingSpace() {
   const languageOptions: CodingLanguage[] = useMemo(() => ["java", "cpp"], []);

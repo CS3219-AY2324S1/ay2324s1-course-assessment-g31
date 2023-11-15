@@ -128,7 +128,6 @@ export default function ProfileCard() {
           <DeleteProfileModal
             isOpen={isDeleteProfileModalOpen}
             setOpen={setIsDeleteProfileModalOpen}
-            userId={currentUser.uid}
           />
           <UpdateProfileModal
             isOpen={isUpdateProfileModalOpen}
