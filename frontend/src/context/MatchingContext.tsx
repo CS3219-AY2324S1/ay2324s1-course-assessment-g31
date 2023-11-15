@@ -18,8 +18,6 @@ interface MatchingProviderProps {
 interface MatchingContextType {
   matchingId: string;
   matchedUserId: string;
-  socketCode: string;
-  socketLanguage: string;
   establishedConnection: boolean;
   foundMatch: boolean;
   connectionLoading: boolean;
@@ -28,16 +26,13 @@ interface MatchingContextType {
   setMatchedUserId: React.Dispatch<React.SetStateAction<string>>;
   setMatchingId: React.Dispatch<React.SetStateAction<string>>;
   beginCollaboration: () => void;
-  cancelCollaboration: (code: string, language: string) => void;
-  changeCode: (code: string) => void;
-  changeLanguage: (language: string) => void;
+  cancelCollaboration: () => void;
+  resetMatch: () => void;
 }
 
 export const MatchingContext = createContext<MatchingContextType>({
   matchingId: "",
   matchedUserId: "",
-  socketCode: "",
-  socketLanguage: "",
   establishedConnection: false,
   foundMatch: false,
   connectionLoading: true,
@@ -47,8 +42,7 @@ export const MatchingContext = createContext<MatchingContextType>({
   setMatchingId: () => {},
   beginCollaboration: () => {},
   cancelCollaboration: () => {},
-  changeCode: () => {},
-  changeLanguage: () => {},
+  resetMatch: () => {},
 });
 
 export function MatchingProvider({ children }: MatchingProviderProps) {
@@ -64,12 +58,16 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
   const [matchedUserId, setMatchedUserId] = useState<string>("");
   const [matchingId, setMatchingId] = useState<string>("");
 
-  const [socketCode, setSocketCode] = useState<string>("");
-  const [socketLanguage, setSocketLanguage] = useState<string>("");
-
   const [matchedQuestionId, setMatchedQuestionId] = useState<number>(0);
 
   const navigate = useNavigate();
+
+  const resetMatch = useCallback(() => {
+    setMatchedUserId("");
+    setMatchingId("");
+    setFoundMatch(false);
+    setMatchLoading(true);
+  }, []);
 
   const emitSocketEvent = useCallback(
     (eventName: string, data: Record<string, any> = {}) => {
@@ -112,28 +110,6 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     });
   }, [emitSocketEvent, currentUser, matchingId]);
 
-  const changeCode = useCallback(
-    (code: string) => {
-      if (!currentUser || !matchingId) return;
-      emitSocketEvent("change-code", {
-        requestId: matchingId,
-        code,
-      });
-    },
-    [emitSocketEvent, currentUser, matchingId],
-  );
-
-  const changeLanguage = useCallback(
-    (language: string) => {
-      if (!currentUser || !matchingId) return;
-      emitSocketEvent("change-language", {
-        requestId: matchingId,
-        language,
-      });
-    },
-    [emitSocketEvent, currentUser, matchingId],
-  );
-
   const onJoined = useCallback(() => {
     setEstablishedConnection(true);
     setConnectionLoading(false);
@@ -159,39 +135,17 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     [currentUser],
   );
 
-  const onCodeChanged = useCallback(
-    (value: any) => {
-      const valString = JSON.stringify(value);
-      const obj = JSON.parse(valString);
-      const { userId, requestId, code } = obj;
-      if (userId === currentUser!.uid || requestId !== matchingId) return;
-      setSocketCode(code);
-    },
-    [currentUser, matchingId],
-  );
-
-  const onLanguageChanged = useCallback(
-    (value: any) => {
-      const valString = JSON.stringify(value);
-      const obj = JSON.parse(valString);
-      const { userId, requestId, language } = obj;
-      if (userId === currentUser!.uid || requestId !== matchingId) return;
-      setSocketLanguage(language);
-    },
-    [currentUser, matchingId],
-  );
-
   const onCollaborationCancelled = useCallback(
     (value: any) => {
       const valString = JSON.stringify(value);
       const obj = JSON.parse(valString);
       const { userId, requestId } = obj;
-      if (userId === currentUser!.uid || requestId !== matchingId) return;
-      setMatchedUserId("");
-      setMatchingId("");
+      if (!currentUser || !matchingId) return;
+      if (userId === currentUser.uid || requestId !== matchingId) return;
+      resetMatch();
       navigate("/match");
     },
-    [currentUser, matchingId, navigate],
+    [currentUser, matchingId, navigate, resetMatch],
   );
 
   useEffect(() => {
@@ -220,32 +174,18 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       join();
     }
 
-    socket.on("code-changed", onCodeChanged);
-    socket.on("language-changed", onLanguageChanged);
     socket.on("collaboration-cancelled", onCollaborationCancelled);
 
     return () => {
-      socket.off("code-changed", onCodeChanged);
-      socket.off("language-changed", onLanguageChanged);
       socket.off("collaboration-cancelled", onCollaborationCancelled);
       socket.disconnect();
     };
-  }, [
-    currentUser,
-    matchedUserId,
-    matchingId,
-    join,
-    onCodeChanged,
-    onLanguageChanged,
-    onCollaborationCancelled,
-  ]);
+  }, [currentUser, matchedUserId, matchingId, join, onCollaborationCancelled]);
 
-  const value = useMemo(() => {
-    return {
+  const value = useMemo(
+    () => ({
       matchingId,
       matchedUserId,
-      socketCode,
-      socketLanguage,
       establishedConnection,
       foundMatch,
       connectionLoading,

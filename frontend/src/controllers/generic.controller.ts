@@ -1,72 +1,109 @@
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+
+import formatUrl from "../util/formatUrl";
+
+export type ControllerParamsHeaders = {
+  params?: Record<string, any>;
+  headers?: any;
+};
+
+export type ControllerResponse<Obj> = {
+  success: boolean;
+  errors: string[];
+  data?: Obj;
+};
+
 class GenericController {
   private mainUri: string;
 
   private servicePath: string;
 
-  constructor(mainUri: string, servicePath: string) {
-    this.mainUri = mainUri;
-    this.servicePath = servicePath;
+  constructor(mainUri: string, servicePath?: string) {
+    this.mainUri = formatUrl(mainUri);
+    this.servicePath = servicePath ? formatUrl(servicePath) : "";
   }
 
   private getUri(routePath: string): string {
-    return `${this.mainUri}/${this.servicePath}/${routePath}`;
+    return this.servicePath === ""
+      ? `${this.mainUri}/${routePath}`
+      : `${this.mainUri}/${this.servicePath}/${routePath}`;
   }
 
-  public async get(routePath: string) {
-    const response = await fetch(this.getUri(routePath), {
-      method: "GET",
-    });
+  public async get<T, R = AxiosResponse<T>>(
+    routePath: string,
+    paramsHeader?: ControllerParamsHeaders,
+  ): Promise<R> {
+    const options: AxiosRequestConfig = {
+      url: this.getUri(routePath),
+      method: "get",
+      params: paramsHeader?.params,
+      headers: {
+        "Content-Type": "application/json",
+        ...paramsHeader?.headers,
+      },
+    };
+    console.log(options);
+    const response = axios<T, R>(options);
 
-    return response.json();
+    return response;
   }
 
-  public async post(routePath: string, data: any, headers?: any) {
-    const response = await fetch(this.getUri(routePath), {
-      body: JSON.stringify(data),
+  public async post<T, B, R = AxiosResponse<T>>(
+    routePath: string,
+    data: B,
+    paramsHeader?: ControllerParamsHeaders,
+  ): Promise<R> {
+    const options: AxiosRequestConfig = {
+      url: this.getUri(routePath),
+      method: "post",
+      data,
+      params: paramsHeader?.params,
+      headers: {
+        "Content-Type": "application/json",
+        ...paramsHeader?.headers,
+      },
+    };
+
+    console.log(options);
+    const response = await axios<T, R>(options);
+
+    return response;
+  }
+
+  public async put<T, B, R = AxiosResponse<T>>(
+    routePath: string,
+    data: B,
+    headers?: any,
+  ): Promise<R> {
+    const options: AxiosRequestConfig = {
+      url: this.getUri(routePath),
+      method: "put",
+      data,
       headers: {
         "Content-Type": "application/json",
         ...headers,
       },
-      method: "POST",
-    });
+    };
+    const response = await axios<T, R>(options);
 
-    if (response.status === 400) {
-      console.error(response);
-    }
-
-    return response.json();
+    return response;
   }
 
-  public async put(routePath: string, data: any) {
-    const response = await fetch(this.getUri(routePath), {
-      body: JSON.stringify(data),
+  public async delete<T, R = AxiosResponse<T>>(
+    routePath: string,
+    headers?: any,
+  ): Promise<R> {
+    const options: AxiosRequestConfig = {
+      url: this.getUri(routePath),
+      method: "delete",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
-      method: "PUT",
-    });
+    };
+    const response = await axios<T, R>(options);
 
-    if (response.status === 400) {
-      console.error(response);
-    }
-
-    return response.json();
-  }
-
-  public async delete(routePath: string, data: any) {
-    const response = await fetch(this.getUri(routePath), {
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "DELETE",
-    });
-
-    if (response.status === 400) {
-      console.error(response);
-    }
-
-    return response.json();
+    return response;
   }
 }
 

@@ -34,6 +34,7 @@ export interface Question {
   category: Category[];
   description: string;
   example: string;
+  constraint: string;
   popularity: number;
   id: number;
   solutions: TSolution[];

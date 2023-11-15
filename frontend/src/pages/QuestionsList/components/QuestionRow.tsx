@@ -27,18 +27,20 @@ export default function QuestionRow({
           tabIndex={index}
           onKeyDown={handleSelect}
           onClick={handleSelect}
-          className="underline text-blue-700 font-bold"
+          className="underline text-indigo-700 font-semibold"
         >
           {question.title}
         </span>
       </td>
-      <td>{question.difficulty}</td>
-      <td>
-        {question.category.map((cat) => (
-          <span key={cat}>{cat}</span>
+      <td className="text-center font-bold">{question.difficulty}</td>
+      <td className="flex flex-row gap-2">
+        {question.category.sort().map((cat) => (
+          <span className="underline text-slate-600" key={cat}>
+            {cat}
+          </span>
         ))}
       </td>
-      <td>{question.popularity}</td>
+      <td className="text-center">{question.popularity}</td>
       <td>{numAttempts}</td>
     </tr>
   );

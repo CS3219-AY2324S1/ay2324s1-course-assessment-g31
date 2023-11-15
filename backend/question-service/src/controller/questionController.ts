@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { Category, Difficulty } from "@prisma/client";
-import { getRandomInt } from "../util/util";
+import { getRandomInt } from "../util/randomInt";
 import prisma from "../model/prismaClient";
+import produceEvent, { ProducerTopics } from "../events/producer/producer";
 
 type QuestionInput = {
   title: string;
@@ -9,6 +10,7 @@ type QuestionInput = {
   category: Category[];
   description: string;
   example: string;
+  constraint: string;
 };
 
 export const getQuestion = async (req: Request, res: Response) => {
@@ -18,17 +20,10 @@ export const getQuestion = async (req: Request, res: Response) => {
       throw Error("invalid question id");
     }
     const question = await prisma.question.findUnique({
-      select: {
-        id: true,
-        title: true,
-        category: true,
-        difficulty: true,
-        description: true,
-        example: true,
-        popularity: true,
-        solutions: true,
-      },
       where: { id: questionId },
+      include: {
+        solutions: true
+      },
     });
     res.status(200).json(question);
   } catch (err: any) {
@@ -42,8 +37,8 @@ interface IReqQueryGetAllQuestions {
   title: string;
   difficulty: Difficulty;
   category: Category[];
-  limit: number;
-  offset: number;
+  limit: string;
+  offset: string;
 }
 
 export const getAllQuestions = async (
@@ -56,15 +51,22 @@ export const getAllQuestions = async (
     title: titleFilter,
     difficulty: difficultyFilter,
     category: categoryFilter = [],
-    limit = 50,
-    offset = 0,
+    limit = "50",
+    offset = "0",
   } = req.query;
+
+  const limitNum = parseInt(limit, 10);
+  const offsetNum = parseInt(offset, 10);
 
   if (!Array.isArray(categoryFilter)) {
     categoryFilter = [categoryFilter];
   }
 
   try {
+    if (Number.isNaN(limitNum) || Number.isNaN(offsetNum)) {
+      throw new Error("Invalid offset or limit");
+    }
+
     const count = await prisma.question.count({
       where: {
         AND: [
@@ -100,8 +102,8 @@ export const getAllQuestions = async (
           : sortBy === "popularity"
           ? { popularity: order }
           : {},
-      skip: offset,
-      take: limit,
+      skip: offsetNum,
+      take: limitNum,
     });
 
     const result = {
@@ -152,13 +154,74 @@ export const getRandomQuestion = async (
 
 export const createQuestion = async (req: Request, res: Response) => {
   const question: QuestionInput = req.body;
+  console.log("QUESTION", question)
   try {
+    if (!question.title) {
+      throw new Error("Title must not be empty");
+    }
+    if (question.category.length === 0) {
+      throw new Error("must select at least 1 Category");
+    }
+    if (!question.description) {
+      throw new Error("Description must not be empty");
+    }
+
     const questionResult = await prisma.question.create({
       data: question,
     });
     res.status(201).json({ questionResult });
   } catch (err: any) {
     res.status(500).json({ error: `Error creating question: ${err.message}` });
+  }
+};
+
+interface ISolutionInput {
+  title: string;
+  description: string;
+  code: string;
+  language: string;
+}
+
+interface IQuestionSolutions {
+  title: string;
+  difficulty: Difficulty;
+  category: Category[];
+  description: string;
+  example: string;
+  constraint: string;
+  solutions: ISolutionInput[];
+}
+
+export const uploadManyQuestions = async (
+  req: Request<{}, {}, { questions: IQuestionSolutions[] }, {}>,
+  res: Response
+) => {
+  const { questions } = req.body;
+  console.log(questions);
+  var count = 0;
+  try {
+    await Promise.all(
+      questions.map(async (questionInput) => {
+        await prisma.question.create({
+          data: {
+            title: questionInput.title,
+            difficulty: questionInput.difficulty,
+            category: questionInput.category,
+            description: questionInput.description,
+            example: questionInput.example,
+            constraint: questionInput.constraint,
+            solutions: {
+              create: questionInput.solutions,
+            },
+          },
+        });
+        count += 1;
+      })
+    );
+
+    res.status(201).json({ results: `${count} questions added successfully` });
+  } catch (err: any) {
+    res.status(500).json({ error: `Error creating questions: ${err.message}` });
   }
 };
 
@@ -196,7 +259,6 @@ export const deleteQuestion = async (req: Request, res: Response) => {
       res.status(404).json({ error: "Question Not Found" });
     }
 
-    /*
     // produce deleted event
     produceEvent(ProducerTopics.QUESTION_DELETED, [
       {
@@ -205,7 +267,7 @@ export const deleteQuestion = async (req: Request, res: Response) => {
           questionId,
         }),
       },
-    ]);*/
+    ]);
 
     res.status(201).json({ question });
   } catch (err: any) {

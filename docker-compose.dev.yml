@@ -5,17 +5,56 @@
 
 version: "3"
 services:
+  chat:
+    container_name: chat-service
+    build:
+      context: ./backend/chat-service
+      dockerfile: Dockerfile.dev
+    ports:
+      - "9000:9000"
+    environment:
+      - PORT=9000
+    env_file:
+      - ./backend/chat-service/.env
+    depends_on:
+      broker:
+        condition: service_healthy
+    networks:
+      - chat-service-network
+      - api-network
+      - kafka-network
+
   user:
     container_name: user-service
     build:
       context: ./backend/user-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - "5001:5000"
     environment:
       - PORT=5000
     env_file:
       - ./backend/user-service/.env
+    depends_on:
+      postgres_user_service:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    networks:
+      - user-service-network
+      - api-network
+      - kafka-network
+  user2:
+    container_name: user-service2
+    build:
+      context: ./backend/user-service2
+      dockerfile: Dockerfile
+    ports:
+      - "5008:5000"
+    environment:
+      - PORT=5000
+    env_file:
+      - ./backend/user-service2/.env
     depends_on:
       postgres_user_service:
         condition: service_healthy
@@ -32,7 +71,7 @@ services:
     volumes:
       - progresDB:/data/postgres/user-service
     env_file:
-      - ./backend/user-service/.env
+      - ./backend/user-service2/.env
     networks:
       - user-service-network
     healthcheck:
@@ -98,6 +137,27 @@ services:
       - api-network
       - kafka-network
 
+  question2:
+    container_name: question-service2
+    build:
+      context: ./backend/question-service2
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5000"
+    environment:
+      - PORT=5000
+    env_file:
+      - ./backend/question-service2/.env
+    depends_on:
+      postgres_question_service:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    networks:
+      - question-service-network
+      - api-network
+      - kafka-network
+
   postgres_question_service:
     image: postgres:latest
     container_name: postgres-question-service
@@ -145,8 +205,9 @@ services:
       - history-service-network
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready'"]
-      interval: 10s
-      timeout: 3s
+      interval: 15s
+      timeout: 15s
+      start_period: 90s
       retries: 3
 
   socket:
@@ -183,8 +244,9 @@ services:
       - kafka-network
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "2181"]
-      interval: 10s
-      timeout: 5s
+      interval: 15s
+      timeout: 15s
+      start_period: 90s
       retries: 3
 
   broker:
@@ -213,11 +275,15 @@ services:
       - kafka-network
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "9092"]
-      interval: 10s
-      timeout: 5s
+      interval: 15s
+      timeout: 15s
+      start_period: 90s
       retries: 3
 
 networks:
+  chat-service-network:
+    driver: bridge
+  
   user-service-network:
     driver: bridge
 

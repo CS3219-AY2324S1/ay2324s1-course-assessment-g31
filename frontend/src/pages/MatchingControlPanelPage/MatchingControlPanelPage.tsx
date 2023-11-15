@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+
 import PageContainer from "../../components/container/Page";
 import MatchingController from "../../controllers/matching/matching.controller";
 
@@ -103,17 +104,21 @@ function MatchingControlPanelPage() {
 
   const [matchings, setMatchings] = useState<Matching[]>([]);
 
-  const matchingController = new MatchingController();
+  const matchingController = useMemo(() => new MatchingController(), []);
 
   useEffect(() => {
     matchingController.getMatchingRequests().then((res) => {
-      setRequests(res);
+      if (res && res.data) {
+        setRequests(res.data);
+      }
     });
   }, [matchingController]);
 
   useEffect(() => {
     matchingController.getMatchings().then((res) => {
-      setMatchings(res);
+      if (res && res.data) {
+        setMatchings(res.data);
+      }
     });
   }, [matchingController]);
 

@@ -8,10 +8,11 @@ import {
   ExclamationTriangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../../context/AuthContext";
+import UserController from "../../../controllers/user/user.controller";
 
 interface DeleteProfileModalProps {
   isOpen: boolean;
@@ -42,9 +43,10 @@ export default function DeleteProfileModal({
     console.log(password);
   };
 
-  const handleDeleteAccount = async (e: React.FormEvent) => {
+  const userController = useMemo(() => new UserController(), []);
+
+  const handleDeleteAccount = async () => {
     try {
-      e.preventDefault();
       setIsLoading(true);
 
       if (currentUser) {
@@ -56,23 +58,42 @@ export default function DeleteProfileModal({
         await reauthenticateWithCredential(currentUser, credential);
         // If reauthentication is successful, delete user from firebase
         await deleteTheUser();
-        const response = await fetch(
-          `http://localhost:3000/user-services/delete/${userId}`,
-          {
-            method: "DELETE",
-          },
-        );
 
-        if (!response.ok) {
-          // Account deletion from psql failed
-          const data = await response.json();
-          console.error("Failed to delete account from psql:", data.message);
+        try {
+          const res = await userController.deleteUser(currentUser.uid);
+          console.log(res);
+          if (res.status !== 200) {
+            // Account deletion from psql failed
+            console.error(
+              "Failed to delete account from psql:",
+              res.statusText,
+            );
+          }
+          navigate(`/`);
+        } catch (err: any) {
+          console.log(err);
         }
-        navigate(`/`);
       }
     } catch (error: any) {
       if (error instanceof FirebaseError) {
-        setMessage(error.code);
+        switch (error.code) {
+          case "auth/invalid-login-credentials":
+            setMessage("Wrong password entered");
+            break;
+
+          case "auth/too-many-requests":
+            setMessage("Too many attempts, try again later");
+            break;
+
+          case "auth/missing-password":
+            setMessage("No password entered");
+            break;
+
+          default:
+            setMessage("Network error, please try again later");
+            break;
+        }
+        console.error(error.message);
       } else if (error && error.message) {
         if (error.message === "Current user is not defined") {
           navigate(`/`);
@@ -143,7 +164,7 @@ export default function DeleteProfileModal({
                       </p>
                     </div>
                     <div className="mt-2">
-                      <form onSubmit={handleDeleteAccount}>
+                      <div>
                         <div>
                           <p className="text-sm text-gray-500">
                             Enter password to confirm account deletion
@@ -160,17 +181,26 @@ export default function DeleteProfileModal({
                               />
                             </label>
                           </div>
-                          {message && <p className="text">{message}</p>}
+                          {/* {message && <p className="text">{message}</p>} */}
+                          {message && (
+                            <p
+                              className="relative flex justify-center mt-2 text-sm text-red-600"
+                              id="new-register-error"
+                            >
+                              {message}
+                            </p>
+                          )}
                         </div>
-                      </form>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                   <button
-                    type="submit"
+                    type="button"
                     className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                     disabled={isLoading}
+                    onClick={handleDeleteAccount}
                   >
                     Delete
                   </button>

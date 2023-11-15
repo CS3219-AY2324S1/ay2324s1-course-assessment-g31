@@ -1,6 +1,7 @@
 import { MatchingCreateDTO } from "../../interfaces/matching/createDTO";
 import { Matching } from "../../interfaces/matching/object";
 import { MatchingUpdateDTO } from "../../interfaces/matching/updateDTO";
+import logger from "../../util/logger";
 
 import { StringInterface } from "../../util/stringInterface";
 import Parser from "../parser.interface";
@@ -14,7 +15,7 @@ class MatchingParser
     if (!input.user1Id || !input.user2Id || !input.requestId) {
       throw new Error("Invalid Input");
     }
-    let parsedData: MatchingUpdateDTO = {
+    let parsedData: MatchingCreateDTO = {
       user1Id: input.user1Id,
       user2Id: input.user2Id,
       requestId: parseInt(input.requestId, 10),
@@ -24,6 +25,7 @@ class MatchingParser
     if (input.questionIdRequested) {
       parsedData.questionIdRequested = parseInt(input.questionIdRequested, 10);
     }
+    logger.info("Parsed" + parsedData);
     return parsedData;
   }
 

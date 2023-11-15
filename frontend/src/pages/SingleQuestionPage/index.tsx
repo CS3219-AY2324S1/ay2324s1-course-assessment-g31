@@ -1,87 +1,42 @@
-import { useContext, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-import Chat from "../../components/Chat";
 import CodingSpace from "../../components/CodingSpace";
 import PageContainer from "../../components/container/Page";
-import Question, { IQuestion } from "../../components/Question";
-import { MatchingContext } from "../../context/MatchingContext";
-import QuestionLanguageContext from "../../context/QuestionLanguageContext";
+import Question from "../../components/Question";
 import { useAuth } from "../../context/AuthContext";
-import CodeContext from "../../context/CodeContext";
+import { MatchingContext } from "../../context/MatchingContext";
+import { QuestionContext } from "../../context/QuestionContext";
+import ChatRoomAdd from "../../components/chat/ChatRoomAdd";
 
 export default function SingleQuestionPage() {
+  const navigate = useNavigate();
+  const { questionId } = useParams();
   const { matchedUserId, matchingId, cancelCollaboration } =
     useContext(MatchingContext);
   const { currentUser } = useAuth();
+  const { setQuestionId } = useContext(QuestionContext);
 
-  const [searchParams] = useSearchParams();
-  const selectedLanguage = searchParams.get("lang");
-  const navigate = useNavigate();
-
-  const [currentCode, setCurrentCode] = useState<string>("");
-  const codeContextValue = useMemo(() => {
-    return { currentCode, setCurrentCode };
-  }, [currentCode, setCurrentCode]);
-
-  const question: IQuestion = {
-    name: "Two Sum",
-    difficulty: "Easy",
-    description: `
-          <p>
-          Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
-          You may assume that each input would have exactly one solution, and you may not use the same element twice.
-          You can return the answer in any order.
-          </p>
-        `,
-    details: [
-      {
-        name: "Examples",
-        items: [
-          `<p>Input: nums = [2,7,11,15], target = 9</p>
-                    <p>Output: [0,1]</p>
-                    <p>Explanation: Because nums[0] + nums[1] == 9, we return [0, 1]</p>`,
-          `<p>Input: nums = [3,2,4], target = 6</p>
-                    <p>Output: [1,2]</p>`,
-          `<p>Input: nums = [3,3], target = 6</p>
-                    <p>Output: [0,1]</p>`,
-        ],
-      },
-      {
-        name: "Constraints",
-        items: [
-          "2 <= nums.length <= 104",
-          "-10^9 <= nums[i] <= 10^9",
-          "-10^9 <= target <= 10^9",
-          "Only one valid answer exists",
-        ],
-      },
-      // More sections...
-    ],
-  };
+  useEffect(() => {
+    if (questionId) {
+      setQuestionId(parseInt(questionId, 10));
+    }
+  }, [questionId, setQuestionId]);
 
   const handleCancelCollaboration = () => {
     if (!currentUser) return;
-    cancelCollaboration(currentCode, selectedLanguage!);
+    cancelCollaboration();
     navigate("/match");
   };
 
   return (
     <PageContainer>
       <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8 xl:grid-cols-3 xl:gap-x-12">
-        {/* Product info */}
         <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0 xl:col-span-2">
-          {currentUser && (
-            <QuestionLanguageContext.Provider value={selectedLanguage}>
-              <Question question={question} />
-              <CodeContext.Provider value={codeContextValue}>
-                <CodingSpace />
-              </CodeContext.Provider>
-            </QuestionLanguageContext.Provider>
-          )}
+          <Question />
+          <CodingSpace />
         </div>
 
-        {/* Image gallery */}
         <div className="flex flex-col">
           <div className="flex mb-4">
             <div className="mr-4 flex-shrink-0">
@@ -103,21 +58,25 @@ export default function SingleQuestionPage() {
             <div className="flex flex-col">
               <div className="flex">
                 {matchedUserId === "" ? (
-                  <div className="animate-pulse h-5 bg-gray-700 rounded col-span-3" />
+                  <div className="animate-pulse h-5 bg-gray-700 dark:bg-gray-300 rounded col-span-3" />
                 ) : (
                   <h4 className="text-lg font-bold">{matchedUserId}</h4>
                 )}
 
-                <p className="text-gray-900">Current Match</p>
+                <p className="text-gray-900 dark:text-gray-100">
+                  Current Match
+                </p>
               </div>
               <div className="flex">
                 {matchingId === "" ? (
-                  <div className="animate-pulse h-5 bg-gray-700 rounded col-span-3" />
+                  <div className="animate-pulse h-5 bg-gray-700 dark:bg-gray-300 rounded col-span-3" />
                 ) : (
                   <h4 className="text-lg font-bold">{matchingId}</h4>
                 )}
 
-                <p className="col-span-2 mt-1 text-gray-900">Match Id</p>
+                <p className="col-span-2 mt-1 text-gray-900 dark:text-gray-100">
+                  Match Id
+                </p>
               </div>
               {matchedUserId && matchingId && (
                 <div className="flex">
@@ -132,7 +91,7 @@ export default function SingleQuestionPage() {
               )}
             </div>
           </div>
-          <Chat />
+          <ChatRoomAdd matchingId={matchingId} />
         </div>
       </div>
     </PageContainer>

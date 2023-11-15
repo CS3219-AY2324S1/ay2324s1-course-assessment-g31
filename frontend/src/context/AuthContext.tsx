@@ -1,4 +1,10 @@
-import React, { useContext, useState, useEffect, useMemo } from "react";
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -12,12 +18,13 @@ import {
 } from "@firebase/auth";
 import database from "./FirebaseConfig";
 import LoadingPage from "../pages/LoadingPage/LoadingPage";
+import UserController from "../controllers/user/user.controller";
 
 interface AuthContextType {
   currentUser: User | null;
   currentRole: string;
   login: (email: string, password: string) => Promise<UserCredential | void>;
-  signup: (email: string, password: string) => Promise<UserCredential | void>;
+  signUp: (email: string, password: string) => Promise<UserCredential | void>;
   logout: () => Promise<void>;
   updateThePassword: (password: string) => Promise<void | Error>;
   verifyBeforeTheEmailUpdate: (email: string) => Promise<void | Error>;
@@ -29,7 +36,7 @@ const AuthContext = React.createContext<AuthContextType>({
   currentUser: {} as User | null,
   currentRole: "user",
   login: () => Promise.resolve(),
-  signup: () => Promise.resolve(),
+  signUp: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   updateThePassword: () => Promise.resolve(),
   verifyBeforeTheEmailUpdate: () => Promise.resolve(),
@@ -48,60 +55,72 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentRole, setCurrentRole] = useState<string>("user");
+  const userController = useMemo(() => new UserController(), []);
 
-  function signup(email: string, password: string) {
-    return createUserWithEmailAndPassword(database, email, password);
-  }
+  const signUp = useCallback(
+    (email: string, password: string) =>
+      createUserWithEmailAndPassword(database, email, password),
+    [],
+  );
 
-  function login(email: string, password: string) {
-    return signInWithEmailAndPassword(database, email, password);
-  }
+  const login = useCallback(
+    (email: string, password: string) =>
+      signInWithEmailAndPassword(database, email, password),
+    [],
+  );
 
-  function logout() {
-    return signOut(database);
-  }
+  const logout = useCallback(() => signOut(database), []);
 
-  function deleteTheUser() {
+  const deleteTheUser = useCallback(() => {
     if (currentUser) {
       return deleteUser(currentUser);
     }
     return Promise.resolve(new Error("Current user is not defined"));
-  }
+  }, [currentUser]);
 
-  function updateThePassword(password: string) {
-    if (currentUser) {
-      return updatePassword(currentUser, password);
-    }
-    return Promise.resolve(new Error("Current user is not defined"));
-  }
+  const updateThePassword = useCallback(
+    (password: string) => {
+      if (currentUser) {
+        return updatePassword(currentUser, password);
+      }
+      return Promise.resolve(new Error("Current user is not defined"));
+    },
+    [currentUser],
+  );
 
-  function verifyBeforeTheEmailUpdate(email: string) {
+  const verifyBeforeTheEmailUpdate = useCallback(
+    (email: string) => {
+      if (currentUser) {
+        return verifyBeforeUpdateEmail(currentUser, email);
+      }
+      return Promise.resolve(new Error("Current user is not defined"));
+    },
+    [currentUser],
+  );
+
+  useEffect(() => {
     if (currentUser) {
-      return verifyBeforeUpdateEmail(currentUser, email);
+      console.log(currentUser.uid);
     }
-    return Promise.resolve(new Error("Current user is not defined"));
-  }
+  }, [currentUser]);
 
   async function getUserRole(user: User): Promise<string> {
     try {
-      const response = await fetch(
-        `http://localhost:3000/user-services/userRole/${user.uid}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.error("Failed to fetch role:", data.message);
-        return "user";
+      // Check if firebase has this user
+      if (user !== null) {
+        const res = await userController.getUser(user.uid);
+        if (!res || !res.data) {
+          console.error("Failed to fetch role: ", res.statusText);
+        } else {
+          console.log("Successfully fetched role: ", res.data.roles.length);
+          if (res.data.roles.length > 1) {
+            return "admin";
+          }
+        }
+      } else {
+        console.log("Current user is not defined");
       }
-      console.log("Successfully fetched role: ", data.user_role);
-      return data.user_role;
+      return "user";
     } catch (error: any) {
       console.log("Error fetching profile data:", error.message);
       return "user";
@@ -109,11 +128,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(database, async (user) => {
+    const unsubscribe = onAuthStateChanged(database, (user) => {
       if (user) {
         setCurrentUser(user);
-        const role = await getUserRole(user);
-        setCurrentRole(role);
+        getUserRole(user).then((role) => {
+          setCurrentRole(role);
+        });
       } else {
         setCurrentUser(null);
         setCurrentRole("user");
@@ -121,29 +141,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(false);
     });
     return unsubscribe;
-  }, []);
+  });
 
-  const value = useMemo(() => {
-    return {
+  const value = useMemo(
+    () => ({
       currentUser,
       currentRole,
       login,
-      signup,
+      signUp,
       logout,
       updateThePassword,
       deleteTheUser,
       verifyBeforeTheEmailUpdate,
-    };
-  }, [
-    currentUser,
-    currentRole,
-    login,
-    signup,
-    logout,
-    updateThePassword,
-    deleteTheUser,
-    verifyBeforeTheEmailUpdate,
-  ]);
+    }),
+    [
+      currentUser,
+      currentRole,
+      login,
+      signUp,
+      logout,
+      updateThePassword,
+      deleteTheUser,
+      verifyBeforeTheEmailUpdate,
+    ],
+  );
 
   return (
     <AuthContext.Provider value={value}>

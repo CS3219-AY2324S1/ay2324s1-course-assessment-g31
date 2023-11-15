@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router";
 import { Attempt } from "../../../types/history";
-
 import { useAuth } from "../../../context/AuthContext";
 
 export default function History() {
@@ -15,7 +14,7 @@ export default function History() {
 
   const { currentUser } = useAuth();
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     if (currentUser) {
       setHistory([]);
       setError("");
@@ -39,56 +38,96 @@ export default function History() {
         setIsLoading(false);
       }
     }
+  }, [currentUser, questionId]);
+
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const handleDeleteAttempt = async (id: string) => {
+    if (!isDeleting) {
+      setIsDeleting(true);
+      if (window.confirm("Are you sure you want to delete this question")) {
+        try {
+          const response = await fetch(`http://localhost:5007/${id}`, {
+            method: "DELETE",
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw Error(data.error);
+          } else {
+            setIsDeleting(false);
+            fetchHistory();
+          }
+        } catch (err: any) {
+          window.alert(err.message);
+        }
+      }
+      setIsDeleting(false);
+    }
   };
 
   useEffect(() => {
     fetchHistory();
-  }, [currentUser, questionId]);
-
-  if (error) return <div>Error loading history: {error}</div>;
-
-  if (isLoading) return <div>Loading history</div>;
-
-  if (history.length === 0) {
-    return <h2 className="font-bold text-2xl">No attempts</h2>;
-  }
+  }, [fetchHistory]);
 
   return (
-    <div>
+    <div className="flex flex-col border border-2 rounded-xl border-indigo-700 p-2 w-[calc(50%-2px)] bg-white">
       <h2 className="font-bold text-2xl">Attempt History</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Language</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {history.map((attempt, index) => {
-            const selected: boolean = !!(selectedAttempt?.id === attempt.id);
-            console.log(selectedAttempt?.id, attempt);
-            return (
-              <tr className={`${selected ? "bg-red-500" : "bg-white"}`}>
-                <td>{index}</td>
-                <td>
-                  <span
+      {error && <h2>Error loading history: {error}</h2>}
+      {!error && isLoading && <h2>Loading history</h2>}
+      {!error && !isLoading && history.length === 0 && (
+        <h2 className="font-bold text-2xl">No attempts</h2>
+      )}
+      {!error && !isLoading && history.length !== 0 && (
+        <div className="flex flex-col">
+          <table className="my-3 border-2 border-indigo-600">
+            <thead className="bg-indigo-600 text-white">
+              <tr>
+                <th>Id</th>
+                <th>Language</th>
+                <th>Date</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map((attempt, index) => {
+                const selected: boolean = !!(
+                  selectedAttempt?.id === attempt.id
+                );
+                return (
+                  <tr
+                    className={`${selected ? "bg-slate-300" : ""}`}
                     role="button"
                     tabIndex={index}
                     onClick={() => setSelectedAttempt(attempt)}
                     onKeyDown={() => setSelectedAttempt(attempt)}
-                    className="underline text-blue-700"
                   >
-                    {attempt.language}
-                  </span>
-                </td>
-                <td>{attempt.attemptDateTime.toLocaleString()}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <p>{selectedAttempt?.code}</p>
+                    <td>{index}</td>
+                    <td className="font-semibold text-indigo-700">
+                      {attempt.language}
+                    </td>
+                    <td>{attempt.attemptDateTime.toLocaleString()}</td>
+                    <td>
+                      <span
+                        role="button"
+                        tabIndex={index}
+                        onClick={() => handleDeleteAttempt(attempt.id)}
+                        onKeyDown={() => handleDeleteAttempt(attempt.id)}
+                        className="underline text-indigo-700 font-semibold"
+                      >
+                        Delete
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <h2 className="text-lg font-semibold">{selectedAttempt?.language}</h2>
+          <p className="whitespace-pre bg-gray-100 font-mono my-2">
+            {selectedAttempt?.code}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Message } from "kafkajs";
+import { Message, Partitioners } from "kafkajs";
 import kafka from "../kafka";
 
 export enum ProducerTopics {
@@ -6,7 +6,7 @@ export enum ProducerTopics {
   MATCHING_FULFILLED = "matching-fulfilled",
 }
 
-const producer = kafka.producer();
+const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
 
 const produceEvent = async (
   topic: ProducerTopics,

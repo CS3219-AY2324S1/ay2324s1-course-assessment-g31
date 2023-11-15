@@ -1,16 +1,15 @@
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import DeleteProfileModal from "./DeleteProfileModal";
-import UpdateProfileModal from "./UpdateProfileModal";
-import styles from "./ProfileCard.module.css";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
 import { useAuth } from "../../../context/AuthContext";
+import UserController from "../../../controllers/user/user.controller";
+import DeleteProfileModal from "./DeleteProfileModal";
+import styles from "./ProfileCard.module.css";
+import UpdateProfileModal from "./UpdateProfileModal";
 
 export default function ProfileCard() {
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const userId = searchParams.get("userId");
-  const navigate = useNavigate();
-  const { logout, currentUser } = useAuth();
+  const { currentUser } = useAuth();
+
+  const userController = useMemo(() => new UserController(), []);
 
   const [profileData, setProfileData] = useState({
     username: "",
@@ -25,19 +24,12 @@ export default function ProfileCard() {
   const [isUpdateProfileModalOpen, setIsUpdateProfileModalOpen] =
     useState(false);
 
-  const handleLogout = () => {
-    logout()
-      .then(() => {
-        navigate("/");
-        console.log("Signed out successfully");
-      })
-      .catch((error) => {
-        setMessage(`Error, ${error.message}`);
-      });
-  };
-
   const openUpdateProfileModal = () => {
     setIsUpdateProfileModalOpen(true);
+  };
+
+  const setUsernameCallback = (username: string) => {
+    setProfileData({ ...profileData, username });
   };
 
   //   const closeUpdateProfileModal = (username: string, email: string) => {
@@ -56,49 +48,49 @@ export default function ProfileCard() {
   //     setIsDeleteProfileModalOpen(false);
   //   };
 
-  useEffect(() => {
-    async function fetchProfileData() {
-      try {
-        // Check if firebase has this user
-        if (currentUser !== null) {
-          const response = await fetch(
-            `http://localhost:3000/user-services/profile/${userId}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            },
-          );
+  const fetchProfileData = useCallback(async () => {
+    try {
+      // Check if firebase has this user
+      if (currentUser !== null) {
+        const res = await userController.getUser(currentUser.uid);
+        // const response = await fetch(
+        //   `http://localhost:5001/user-services/profile/${userId}`,
+        //   {
+        //     method: "GET",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //   },
+        // );
 
-          const data = await response.json();
+        // const data = await response.json();
 
-          if (!response.ok) {
-            console.error("Failed to fetch profile:", data.message);
+        if (!res || !res.data) {
+          console.error("Failed to fetch profile: ", res.statusText);
 
-            setMessage(`Error fetching profile data: ${data.message}`);
-          } else {
-            console.log("Successfully fetched username: ", data);
-            setProfileData({
-              ...profileData,
-              username: data.username,
-              email: currentUser.email ? currentUser.email : "",
-            });
-            setMessage("Profile fetched successfully");
-            setDisableUpdateProfileModal(false);
-          }
+          setMessage(`Error fetching profile data: ${res.statusText}`);
         } else {
-          console.log("Unauthenticated access");
-          setMessage("Unauthenticated user access");
+          console.log("Successfully fetched username: ", res.data.username);
+          setProfileData({
+            username: res.data.username,
+            email: currentUser.email ? currentUser.email : "",
+          });
+          setMessage("Profile fetched successfully");
+          setDisableUpdateProfileModal(false);
         }
-      } catch (error: any) {
-        console.log("Error fetching profile data:", error.message);
-        setMessage(`Error fetching profile data ${error.message}`);
+      } else {
+        console.log("Unauthenticated access");
+        setMessage("Unauthenticated user access");
       }
+    } catch (error: any) {
+      console.log("Error fetching profile data:", error.message);
+      setMessage(`Error fetching profile data ${error.message}`);
     }
+  }, [currentUser, userController]);
 
+  useEffect(() => {
     fetchProfileData();
-  }, [userId, currentUser]);
+  }, [fetchProfileData]);
 
   return (
     <div className="bg-gray-400/5 m-5 rounded">
@@ -119,13 +111,6 @@ export default function ProfileCard() {
           >
             Delete Account
           </button>
-          <button
-            type="button"
-            className="rounded-md bg-slate-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
         </div>
         <h2>Profile Card</h2>
         <div>
@@ -138,18 +123,23 @@ export default function ProfileCard() {
         </div>
         {message && <p>{message}</p>}
       </div>
-      <DeleteProfileModal
-        isOpen={isDeleteProfileModalOpen}
-        setOpen={setIsDeleteProfileModalOpen}
-        userId={userId}
-      />
-      <UpdateProfileModal
-        isOpen={isUpdateProfileModalOpen}
-        setOpen={setIsUpdateProfileModalOpen}
-        userId={userId}
-        emailProp={profileData.email}
-        usernameProp={profileData.username}
-      />
+      {currentUser && (
+        <>
+          <DeleteProfileModal
+            isOpen={isDeleteProfileModalOpen}
+            setOpen={setIsDeleteProfileModalOpen}
+            userId={currentUser.uid}
+          />
+          <UpdateProfileModal
+            isOpen={isUpdateProfileModalOpen}
+            setOpen={setIsUpdateProfileModalOpen}
+            userId={currentUser.uid}
+            emailProp={profileData.email}
+            usernameProp={profileData.username}
+            setUsernameCallback={setUsernameCallback}
+          />
+        </>
+      )}
     </div>
   );
 }

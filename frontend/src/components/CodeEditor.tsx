@@ -1,76 +1,123 @@
 import { langs } from "@uiw/codemirror-extensions-langs";
-import CodeMirror, { Extension } from "@uiw/react-codemirror";
+import { basicDark, basicLight } from "@uiw/codemirror-theme-basic";
+import { duotoneDark, duotoneLight } from "@uiw/codemirror-theme-duotone";
+import { githubDark, githubLight } from "@uiw/codemirror-theme-github";
+import { materialDark, materialLight } from "@uiw/codemirror-theme-material";
+import { solarizedDark, solarizedLight } from "@uiw/codemirror-theme-solarized";
+import { whiteDark, whiteLight } from "@uiw/codemirror-theme-white";
+import { xcodeDark, xcodeLight } from "@uiw/codemirror-theme-xcode";
+import CodeMirror, {
+  BasicSetupOptions,
+  Extension,
+  ViewUpdate,
+} from "@uiw/react-codemirror";
 import { useCallback, useContext, useEffect, useState } from "react";
 
-import { MatchingContext } from "../context/MatchingContext";
-import CodeResult from "./CodeResult";
-import CodeContext from "../context/CodeContext";
+import { CollaborationContext } from "../context/CollaborationContext";
+import { DarkModeContext } from "../context/DarkModeContext";
+import { CodingTheme, QuestionContext } from "../context/QuestionContext";
+import { useAuth } from "../context/AuthContext";
 
-interface ICodeEditorProps {
-  selectedLanguage: string;
-}
+function CodeEditor() {
+  const { initialCode, selectedLanguage, selectedTheme } =
+    useContext(QuestionContext);
+  const { socketCode, currentCode, changeCode, setCurrentCode } =
+    useContext(CollaborationContext);
+  const { currentUser } = useAuth();
+  const { isDarkMode } = useContext(DarkModeContext);
 
-function CodeEditor({ selectedLanguage }: ICodeEditorProps) {
-  const [codeSubmitted, setCodeSubmitted] = useState<boolean>(false);
-  const [codeResult, setCodeResult] = useState<string>("");
+  const [initializing, setInitializing] = useState<boolean>(true);
+  const [_codeSubmitted, setCodeSubmitted] = useState<boolean>(false);
   const [extensions, setExtensions] = useState<Extension[]>();
-  const { socketCode, changeCode } = useContext(MatchingContext);
-  const { currentCode, setCurrentCode } = useContext(CodeContext);
 
-  const onChange = useCallback((value: string) => {
-    setCurrentCode(value);
-  }, []);
-
-  const handleSubmit = () => {
-    setCodeResult("hello world!");
-    setCodeSubmitted(true);
-  };
+  const onChange = useCallback(
+    (value: string, _viewUpdate: ViewUpdate) => {
+      setCurrentCode(value);
+    },
+    [setCurrentCode],
+  );
 
   useEffect(() => {
-    const lang = selectedLanguage.toLowerCase() as keyof typeof langs;
-    if (langs[lang]) {
-      setExtensions([langs[lang]()]);
+    if (langs[selectedLanguage]) {
+      setExtensions([langs[selectedLanguage]()]);
     } else {
       setExtensions([]);
     }
   }, [selectedLanguage]);
 
   useEffect(() => {
-    if (currentCode === socketCode) return;
-    changeCode(currentCode);
-  }, [currentCode]);
+    if (!currentUser) return;
+    // if (socketCode === "") return;
+    setCurrentCode(socketCode);
+  }, [socketCode, currentUser, initialCode, setCurrentCode]);
 
   useEffect(() => {
-    if (currentCode === socketCode) return;
-    setCurrentCode(socketCode);
-  }, [socketCode]);
+    if (!currentUser) return;
+    if (initializing) return;
+    changeCode(currentCode);
+  }, [currentCode, changeCode, currentUser, initialCode, initializing]);
+
+  useEffect(() => {
+    setCurrentCode(initialCode);
+    setInitializing(false);
+  }, [initialCode, setCurrentCode]);
+
+  const codeMirrorOptions: BasicSetupOptions = {
+    indentOnInput: true,
+    autocompletion: true,
+    lineNumbers: true,
+    highlightActiveLine: true,
+  };
+
+  type themeValue = {
+    light: Extension;
+    dark: Extension;
+  };
+
+  const themes = new Map<CodingTheme, themeValue>();
+  themes.set("basic", {
+    light: basicLight,
+    dark: basicDark,
+  });
+  themes.set("duotone", {
+    light: duotoneLight,
+    dark: duotoneDark,
+  });
+  themes.set("github", {
+    light: githubLight,
+    dark: githubDark,
+  });
+  themes.set("material", {
+    light: materialLight,
+    dark: materialDark,
+  });
+  themes.set("solarized", {
+    light: solarizedLight,
+    dark: solarizedDark,
+  });
+  themes.set("white", {
+    light: whiteLight,
+    dark: whiteDark,
+  });
+  themes.set("xcode", {
+    light: xcodeLight,
+    dark: xcodeDark,
+  });
 
   return (
-    <div>
-      <div className="h-144 border rounded-lg shadow">
-        <CodeMirror
-          value={currentCode}
-          height="576px"
-          extensions={extensions}
-          onChange={onChange}
-        />
-      </div>
-      <div className="flex flex-row-reverse mt-5">
-        {codeSubmitted ? (
-          <p>Code Submitted</p>
-        ) : (
-          <button
-            type="button"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={handleSubmit}
-          >
-            Submit Code
-          </button>
-        )}
-      </div>
-      <div className="mt-5">
-        <CodeResult result={codeResult} />
-      </div>
+    <div className="h-144 border rounded-lg shadow">
+      <CodeMirror
+        value={currentCode}
+        height="500px"
+        extensions={extensions}
+        onChange={onChange}
+        theme={
+          isDarkMode
+            ? themes.get(selectedTheme)!.dark
+            : themes.get(selectedTheme)!.light
+        }
+        basicSetup={codeMirrorOptions}
+      />
     </div>
   );
 }

@@ -1,31 +1,27 @@
+import { Matching } from "../../interfaces/matchingService/matching/object";
+import { MatchingRequestCreateDTO } from "../../interfaces/matchingService/matchingRequest/createDTO";
+import { MatchingRequest } from "../../interfaces/matchingService/matchingRequest/object";
 import GenericController from "../generic.controller";
-
-interface ICreateMatchingRequest {
-  userId: string;
-  difficulty: string;
-  questionId?: string;
-}
-
-interface ICancelMatchingRequest {
-  userId: string;
-}
 
 class MatchingController extends GenericController {
   constructor() {
     super("http://localhost:5002", "api");
   }
 
-  public async cancelMatchingRequest(data: ICancelMatchingRequest) {
+  public async cancelMatchingRequest(id: string) {
     try {
-      return await this.delete(`matchingRequest/${data.userId}`, data);
+      return await this.delete(`matchingRequest/${id}`);
     } catch (error) {
       return null;
     }
   }
 
-  public async createMatchingRequest(data: ICreateMatchingRequest) {
+  public async createMatchingRequest(data: MatchingRequestCreateDTO) {
     try {
-      return await this.post("matchingRequest", data);
+      return await this.post<MatchingRequest, MatchingRequestCreateDTO>(
+        "matchingRequest",
+        data,
+      );
     } catch (error) {
       return null;
     }
@@ -33,7 +29,7 @@ class MatchingController extends GenericController {
 
   public async getMatchingRequests() {
     try {
-      return await this.get("matchingRequest");
+      return await this.get<MatchingRequest[]>("matchingRequest");
     } catch (error) {
       return null;
     }
@@ -41,7 +37,7 @@ class MatchingController extends GenericController {
 
   public async getMatchings() {
     try {
-      return await this.get("matching");
+      return await this.get<Matching[]>("matching");
     } catch (error) {
       return null;
     }

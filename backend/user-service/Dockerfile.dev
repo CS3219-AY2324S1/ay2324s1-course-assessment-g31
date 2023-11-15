@@ -23,6 +23,6 @@ COPY --from=base /dist /dist
 COPY package.json ./
 
 # Expose port 5000
-EXPOSE 3000
+EXPOSE 5000
 
 CMD yarn run start

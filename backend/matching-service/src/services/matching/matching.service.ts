@@ -18,6 +18,7 @@ class MatchingService
       });
       return matching;
     } catch (error) {
+      console.log(error);
       throw new Error("Failed to create matching.");
     }
   }
