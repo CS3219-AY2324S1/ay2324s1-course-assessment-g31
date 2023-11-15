@@ -17,6 +17,7 @@ import CreateSingleQuestionPage from "../pages/Questions/SingleQuestionPage/crea
 import EditSingleQuestionPage from "../pages/Questions/SingleQuestionPage/edit";
 import RegistrationPage from "../pages/Users/RegistrationPage";
 import SignInPage from "../pages/Users/SignInPage";
+import SolutionsPage from "../pages/SolutionsPage";
 
 // import RegisterPage from "./pages/RegisterPage/RegisterPage";
 // import LoginPage from "./pages/LoginPage/LoginPage";
@@ -126,6 +127,15 @@ export default function MainRouter() {
           element={
             <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
               <SingleQuestionPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/solutions/:questionId"
+          element={
+            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+              <SolutionsPage />
             </ProtectedRoute>
           }
         />
