@@ -5,7 +5,7 @@ import logger from "../util/logger";
 import kafka from "./kafka";
 
 const SubscribedTopics: ConsumerSubscribeTopics = {
-  topics: ["matching-created"],
+  topics: ["matching-fulfilled"],
   fromBeginning: false,
 };
 

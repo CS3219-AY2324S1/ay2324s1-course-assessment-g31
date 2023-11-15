@@ -34,9 +34,7 @@ function Profile() {
     setName(currentUser.displayName ? currentUser.displayName : "Anonymous");
   }, [currentUser]);
 
-  const handleUpdateProfile = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+  const handleUpdateProfile = async () => {
     if (!currentUser) {
       return;
     }
@@ -47,9 +45,9 @@ function Profile() {
 
     userController
       .updateUser(currentUser.uid, {
-        name,
+        username: name,
       })
-      .then((res) => {
+      .then(() => {
         // setName(res.name);
         setShowUpdateProfileToast(true);
       });
@@ -60,7 +58,6 @@ function Profile() {
   };
 
   const handleChangePassword = async (
-    e: React.MouseEvent<HTMLButtonElement>,
   ) => {
     if (!currentUser) {
       return;
@@ -74,7 +71,6 @@ function Profile() {
   };
 
   const handleDeleteAccount = async (
-    e: React.MouseEvent<HTMLButtonElement>,
   ) => {
     if (!currentUser) {
       return;

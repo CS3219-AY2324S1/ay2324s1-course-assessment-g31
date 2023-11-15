@@ -3,3 +3,7 @@ export type QuestionTestCaseUpdateDTO = {
   input: string;
   expectedOutput: string[];
 };
+
+export type QuestionTestCaseUpdateDTOs = {
+  testCases: QuestionTestCaseUpdateDTO[];
+};

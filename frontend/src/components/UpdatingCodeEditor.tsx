@@ -27,8 +27,8 @@ function UpdateCodeEditor() {
   } = useContext(QuestionContext);
   const { isDarkMode } = useContext(DarkModeContext);
 
-  const [initializing, setInitializing] = useState<boolean>(true);
-  const [_codeSubmitted, setCodeSubmitted] = useState<boolean>(false);
+  const [_initializing, setInitializing] = useState<boolean>(true);
+  const [_codeSubmitted, _setCodeSubmitted] = useState<boolean>(false);
   const [extensions, setExtensions] = useState<Extension[]>();
   const [localInitialCode, setLocalInitialCode] = useState<string>("");
   const [localRunnerCode, setLocalRunnerCode] = useState<string>("");

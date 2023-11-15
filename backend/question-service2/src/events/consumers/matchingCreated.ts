@@ -33,12 +33,13 @@ export const matchingCreatedConsumer: ConsumerFunction = async (message) => {
       });
 
       if (!selectedQuestion.data) {
-        throw new Error(`No questions found at ${matching.difficulty}`);
+        logger.info(`No questions found at ${matching.difficulty}`);
+      } else {
+        fullQuestionEventProducer.fulfil({
+            ...matching,
+            questionIdRequested: selectedQuestion.data.id,
+          });
       }
-      fullQuestionEventProducer.fulfil({
-        ...matching,
-        questionIdRequested: selectedQuestion.data.id,
-      });
     }
 
     // Backpressure

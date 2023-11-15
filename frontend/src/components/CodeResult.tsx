@@ -244,7 +244,7 @@ function CodeResult() {
           </h1>
           <div className="flex flex-row flex-wrap gap-2">
             {fullTestCases &&
-              fullTestCases.map((testCase, idx) => (
+              fullTestCases.map((testCase) => (
                 <TestCase
                   key={`testCase-${testCase.questionId}-${testCase.testCaseNumber}`}
                   testCasePassed={testCase.passed}

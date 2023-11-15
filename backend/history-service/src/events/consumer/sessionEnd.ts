@@ -10,9 +10,13 @@ export const sessionEndConsumer: ConsumerFunction = (message) => {
   if (message.value) {
     const sessionDetails = JSON.parse(message.value.toString());
 
-    const parsedInput = historyParser.parseCreateInput(sessionDetails);
-    historyService
-      .create(parsedInput)
-      .then(() => console.log("history created"));
+    try {
+      const parsedInput = historyParser.parseCreateInput(sessionDetails);
+      historyService
+        .create(parsedInput)
+        .then(() => console.log("history created"));
+    } catch (error) {
+      console.log(error);
+    }
   }
 };

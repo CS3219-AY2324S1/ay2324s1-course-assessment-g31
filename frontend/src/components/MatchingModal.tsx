@@ -5,9 +5,8 @@ import {
   WifiIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment } from "react";
 
-import { MatchingContext } from "../context/MatchingContext";
 import classNames from "../util/ClassNames";
 import titleCase from "../util/titleCase";
 

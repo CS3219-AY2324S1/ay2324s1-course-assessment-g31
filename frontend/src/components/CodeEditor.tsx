@@ -27,7 +27,7 @@ function CodeEditor() {
   const { isDarkMode } = useContext(DarkModeContext);
 
   const [initializing, setInitializing] = useState<boolean>(true);
-  const [_codeSubmitted, setCodeSubmitted] = useState<boolean>(false);
+  const [_codeSubmitted, _setCodeSubmitted] = useState<boolean>(false);
   const [extensions, setExtensions] = useState<Extension[]>();
 
   const onChange = useCallback(

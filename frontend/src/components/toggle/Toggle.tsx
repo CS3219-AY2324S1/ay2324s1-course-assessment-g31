@@ -1,5 +1,4 @@
 import { Switch } from "@headlessui/react";
-import { useState } from "react";
 
 import classNames from "../../util/ClassNames";
 import ToggleProps from "./Toggle.interface";

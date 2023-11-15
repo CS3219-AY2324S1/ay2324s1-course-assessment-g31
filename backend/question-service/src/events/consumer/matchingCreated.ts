@@ -5,9 +5,10 @@ import { ConsumerFunction } from "./main.interface";
 
 export const matchingCreatedConsumer: ConsumerFunction = async (message) => {
   if (message.value) {
-    const { difficulty, questionId, user1Id, user2Id, requestId } = JSON.parse(
+    const { difficulty, questionId, user1Id, user2Id, id } = JSON.parse(
       message.value.toString()
     );
+    const matchingId = id;
 
     if (questionId) {
       // check if questionId exists
@@ -19,9 +20,9 @@ export const matchingCreatedConsumer: ConsumerFunction = async (message) => {
       if (questionExists) {
         produceEvent(ProducerTopics.MATCHING_FULFILLED, [
           {
-            key: requestId,
+            key: matchingId,
             value: JSON.stringify({
-              requestId,
+              matchingId,
               user1Id,
               user2Id,
               questionId,
@@ -44,9 +45,9 @@ export const matchingCreatedConsumer: ConsumerFunction = async (message) => {
       )?.id;
       produceEvent(ProducerTopics.MATCHING_FULFILLED, [
         {
-          key: requestId,
+          key: matchingId,
           value: JSON.stringify({
-            requestId,
+            matchingId,
             user1Id,
             user2Id,
             questionId: idToGet,
