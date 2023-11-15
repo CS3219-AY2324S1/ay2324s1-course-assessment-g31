@@ -117,7 +117,7 @@ export default function MainRouter() {
         <Route
           path="questions/:questionId/edit"
           element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["admin"]}>
+            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
               <EditSingleQuestionPage />
             </ProtectedRoute>
           }
@@ -126,7 +126,7 @@ export default function MainRouter() {
         <Route
           path="/questions/:questionId"
           element={
-            <ProtectedRoute user={currentUser} rolesNeeded={["user"]}>
+            <ProtectedRoute user={currentUser} rolesNeeded={["admin"]}>
               <SingleQuestionPage />
             </ProtectedRoute>
           }

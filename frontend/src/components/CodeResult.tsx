@@ -164,6 +164,12 @@ function CodeResult() {
                     const parsedActual = JSON.parse(
                       decode64(foundSubmission.stdout).trim().toString(),
                     );
+                    console.log(typeof parsedExpected);
+                    console.log(typeof parsedActual);
+
+                    if (typeof parsedExpected !== "object") {
+                      return parsedExpected === parsedActual;
+                    }
 
                     return (
                       parsedExpected.length === parsedActual.length &&
