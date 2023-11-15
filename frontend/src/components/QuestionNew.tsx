@@ -1,10 +1,9 @@
-import { Disclosure } from "@headlessui/react";
-import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
-import parse from "html-react-parser";
-import React from "react";
+import { Disclosure } from '@headlessui/react';
+import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
+import parse from 'html-react-parser';
 
-import { FullQuestion } from "../interfaces/questionService/fullQuestion/object";
-import classNames from "../util/ClassNames";
+import { FullQuestion } from '../interfaces/questionService/fullQuestion/object';
+import classNames from '../util/ClassNames';
 
 interface IQuestionProps {
   question: FullQuestion;

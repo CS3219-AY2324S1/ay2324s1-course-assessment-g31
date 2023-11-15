@@ -19,7 +19,7 @@ type questionConstraint = {
 };
 
 function CreateQuestionForm() {
-  const { question, controller } = useContext(QuestionContext);
+  const { controller } = useContext(QuestionContext);
   const { addNotification } = useContext(NotificationContext);
   const { currentUser } = useAuth();
   const [title, setTitle] = useState<string>("");

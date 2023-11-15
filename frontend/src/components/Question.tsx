@@ -1,6 +1,6 @@
 import { Disclosure } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
-import React, { useContext } from "react";
+import { useContext } from "react";
 
 import { QuestionContext } from "../context/QuestionContext";
 import classNames from "../util/ClassNames";

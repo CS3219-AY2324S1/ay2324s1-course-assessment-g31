@@ -341,7 +341,9 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
           setQuestion(res.data.data);
         }
       })
-      .catch((err) => {});
+      .catch((err: any) => {
+        console.log(err)
+      });
   }, [controller, questionId]);
 
   useEffect(() => {

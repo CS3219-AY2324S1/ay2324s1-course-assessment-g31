@@ -11,7 +11,6 @@ import classNames from "../../../util/ClassNames";
 function SignInPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const [wrongPasswordFlag, setWrongPasswordFlag] = useState<boolean>(false);

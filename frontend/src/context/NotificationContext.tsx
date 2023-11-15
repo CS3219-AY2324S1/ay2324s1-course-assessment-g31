@@ -24,8 +24,8 @@ interface NotificationContextType {
 
 export const NotificationContext = createContext<NotificationContextType>({
   notifications: [],
-  removeNotification: (idx) => {},
-  addNotification: (noti: Notification) => {},
+  removeNotification: (_idx) => {},
+  addNotification: (_noti: Notification) => {},
 });
 
 export function NotificationProvider({ children }: NotificationProviderProps) {
@@ -33,7 +33,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
 
   const removeNotification = useCallback(
     (targetIdx: number) => {
-      setNotifications(notifications.filter((curr, idx) => idx !== targetIdx));
+      setNotifications(notifications.filter((_curr, idx) => idx !== targetIdx));
     },
     [notifications],
   );
@@ -55,7 +55,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
     let intervalId: any;
     if (notifications.length > 0) {
       intervalId = setInterval(() => {
-        setNotifications(notifications.filter((v, idx) => idx > 0));
+        setNotifications(notifications.filter((_v, idx) => idx > 0));
       }, 1000);
     }
 

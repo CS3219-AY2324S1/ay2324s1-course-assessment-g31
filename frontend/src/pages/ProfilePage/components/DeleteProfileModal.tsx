@@ -17,13 +17,11 @@ import UserController from "../../../controllers/user/user.controller";
 interface DeleteProfileModalProps {
   isOpen: boolean;
   setOpen: (open: boolean) => void;
-  userId: string | null;
 }
 
 export default function DeleteProfileModal({
   isOpen,
   setOpen,
-  userId,
 }: DeleteProfileModalProps) {
   const navigate = useNavigate();
   const { currentUser, deleteTheUser } = useAuth();

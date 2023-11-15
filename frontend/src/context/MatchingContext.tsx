@@ -1,15 +1,8 @@
-import React, {
-  createContext,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useNavigate } from "react-router-dom";
+import React, { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import socket from "../util/socket";
-import { useAuth } from "./AuthContext";
+import socket from '../util/socket';
+import { useAuth } from './AuthContext';
 
 interface MatchingProviderProps {
   children: ReactNode;
@@ -87,19 +80,27 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
 
   const cancelCollaboration = useCallback(
     (code: string, language: string) => {
-      if (!matchingId) return;
-      emitSocketEvent("cancel-collaboration", {
-        requestId: matchingId,
-        matchedUserId,
-        // placeholder
-        questionId: matchedQuestionId,
-        // add collaboration details
-        code,
-        language,
-      });
+      if (!matchingId || !currentUser) return;
+      type cancelCollaborationData = {
+        requestId: string
+          questionId: string;
+          userId: string
+          matchedUserId: string
+          code: string
+          language: string
+      }
+      const data: cancelCollaborationData = {
+          requestId: matchingId,
+          questionId: matchedQuestionId.toString(),
+          userId: currentUser.uid,
+          matchedUserId,
+          code,
+          language,
+      }
+      emitSocketEvent("cancel-collaboration", data);
       resetMatch();
     },
-    [emitSocketEvent, resetMatch, matchingId, matchedUserId],
+    [emitSocketEvent, resetMatch, currentUser,matchingId, matchedUserId, matchedQuestionId],
   );
 
   const beginCollaboration = useCallback(() => {
@@ -119,11 +120,11 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     (value: any) => {
       if (!currentUser) return;
       const obj = JSON.parse(value);
-      const { matchingId, user1Id, user2Id, questionId } = obj;
+      const { matchingIdFromSocket, user1Id, user2Id, questionId } = obj;
 
       const newMatchedUserId = user1Id === currentUser.uid ? user2Id : user1Id;
       setMatchedUserId(() => newMatchedUserId);
-      setMatchingId(() => matchingId);
+      setMatchingId(() => matchingIdFromSocket);
       setMatchedQuestionId(questionId);
       setMatchLoading(false);
       setFoundMatch(true);

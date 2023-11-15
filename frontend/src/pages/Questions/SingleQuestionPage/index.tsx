@@ -8,8 +8,8 @@ import Question from "../../../components/Question";
 import { useAuth } from "../../../context/AuthContext";
 import { MatchingContext } from "../../../context/MatchingContext";
 import { QuestionContext } from "../../../context/QuestionContext";
-import UserHoc from "../../../components/hocs/UserHoc";
 import InMatchingHoc from "../../../components/hocs/InMatchingHoc";
+import { CollaborationContext } from "../../../context/CollaborationContext";
 
 export default function SingleQuestionPage() {
   const navigate = useNavigate();
@@ -17,7 +17,9 @@ export default function SingleQuestionPage() {
   const { matchedUserId, matchingId, cancelCollaboration } =
     useContext(MatchingContext);
   const { currentUser } = useAuth();
-  const { setQuestionId, setHistoryId } = useContext(QuestionContext);
+  const { setQuestionId, setHistoryId, selectedLanguage } =
+    useContext(QuestionContext);
+  const { currentCode } = useContext(CollaborationContext);
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
@@ -35,7 +37,7 @@ export default function SingleQuestionPage() {
 
   const handleCancelCollaboration = () => {
     if (!currentUser) return;
-    cancelCollaboration();
+    cancelCollaboration(currentCode, selectedLanguage);
     navigate("/match");
   };
 
@@ -108,7 +110,4 @@ export default function SingleQuestionPage() {
       </div>
     </PageContainer>
   );
-}
-function useQuery() {
-  throw new Error("Function not implemented.");
 }
