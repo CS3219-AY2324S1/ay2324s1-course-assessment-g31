@@ -1,7 +1,6 @@
 import { useContext, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import Chat from "../../../components/Chat";
 import CodingSpace from "../../../components/CodingSpace";
 import PageContainer from "../../../components/container/Page";
 import Question from "../../../components/Question";
@@ -10,6 +9,7 @@ import { MatchingContext } from "../../../context/MatchingContext";
 import { QuestionContext } from "../../../context/QuestionContext";
 import InMatchingHoc from "../../../components/hocs/InMatchingHoc";
 import { CollaborationContext } from "../../../context/CollaborationContext";
+import ChatRoomAdd from "../../../components/chat/ChatRoomAdd";
 
 export default function SingleQuestionPage() {
   const navigate = useNavigate();
@@ -104,7 +104,7 @@ export default function SingleQuestionPage() {
                 )}
               </div>
             </div>
-            <Chat />
+            <ChatRoomAdd matchingId={ matchingId } />
           </div>
         </InMatchingHoc>
       </div>
