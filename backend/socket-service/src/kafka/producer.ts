@@ -1,11 +1,15 @@
-import { Message } from "kafkajs";
+import { Message, Partitioners, ProducerConfig } from "kafkajs";
 import kafka from "./kafka";
 
 export enum ProducerTopics {
   COLLABORATION_END = "collaboration-ended",
 }
 
-const producer = kafka.producer();
+const producerConfig: ProducerConfig = {
+    createPartitioner: Partitioners.LegacyPartitioner
+}
+
+const producer = kafka.producer(producerConfig);
 
 const produceEvent = async (
   topic: ProducerTopics,
