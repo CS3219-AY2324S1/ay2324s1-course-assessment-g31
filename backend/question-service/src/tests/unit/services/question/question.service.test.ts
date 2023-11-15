@@ -32,6 +32,18 @@ describe("Test question service", () => {
     ],
     createdAt: new Date(),
     updatedAt: new Date(),
+    popularity: 4,
+    categories: [{ name: "Strings", questionId: 1 }],
+    solutions: [
+      {
+        id: "1",
+        title: "abc",
+        description: "qwe",
+        language: "java",
+        code: "console.log();",
+        questionId: 1,
+      },
+    ],
   };
 
   // Create
@@ -52,6 +64,15 @@ describe("Test question service", () => {
           expectedOutput: ["1"],
         },
       ],
+      categories: [{ name: "Strings" }],
+      solutions: [
+        {
+          title: "abc",
+          description: "qwe",
+          language: "java",
+          code: "console.log();",
+        },
+      ],
     };
 
     const expectedQuestion: FullQuestion = {
@@ -63,6 +84,13 @@ describe("Test question service", () => {
       testCases: input.testCases.map((x) => ({ ...x, questionId: 1 })),
       createdAt: new Date(),
       updatedAt: new Date(),
+      popularity: 4,
+      solutions: input.solutions.map((x) => ({
+        ...x,
+        id: "123",
+        questionId: 1,
+      })),
+      categories: input.categories.map((x) => ({ ...x, questionId: 1 })),
     };
 
     prismaMock.question.create.mockResolvedValue(expectedQuestion);
@@ -119,6 +147,18 @@ describe("Test question service", () => {
       ],
       createdAt: new Date(),
       updatedAt: new Date(),
+      popularity: 4,
+      categories: [{ name: "Strings", questionId: 2 }],
+      solutions: [
+        {
+          id: "1",
+          title: "abc",
+          description: "qwe",
+          language: "java",
+          code: "console.log();",
+          questionId: 2,
+        },
+      ],
     };
 
     const expectedQuestions = [expectedQuestion, expectedQuestion2];
@@ -126,7 +166,7 @@ describe("Test question service", () => {
     prismaMock.question.findMany.mockResolvedValue(expectedQuestions);
 
     const service = new QuestionService(prismaMock);
-    const result = await service.findAll();
+    const result = await service.findAll({});
 
     expect(result).toEqual(expectedQuestions);
   });
@@ -150,6 +190,17 @@ describe("Test question service", () => {
           expectedOutput: ["2"],
         },
       ],
+      popularity: 4,
+      categories: [{ name: "Strings" }],
+      solutions: [
+        {
+          id: "1",
+          title: "abc",
+          description: "qwe",
+          language: "java",
+          code: "console.log();",
+        },
+      ],
     };
 
     const expectedQuestion: FullQuestion = {
@@ -159,6 +210,8 @@ describe("Test question service", () => {
       initialCodes: input.initialCodes.map((x) => ({ ...x, questionId: 1 })),
       runnerCodes: input.runnerCodes.map((x) => ({ ...x, questionId: 1 })),
       testCases: input.testCases.map((x) => ({ ...x, questionId: 1 })),
+      solutions: input.solutions.map((x) => ({ ...x, questionId: 1 })),
+      categories: input.categories.map((x) => ({ ...x, questionId: 1 })),
       createdAt: new Date(),
       updatedAt: new Date(),
     };

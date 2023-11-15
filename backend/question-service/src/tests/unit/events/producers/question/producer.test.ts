@@ -30,6 +30,18 @@ const obj: FullQuestion = {
   ],
   createdAt: new Date(),
   updatedAt: new Date(),
+  popularity: 1,
+  categories: [{ name: "Strings", questionId: 1 }],
+  solutions: [
+    {
+      id: "1",
+      title: "abc",
+      description: "qwe",
+      language: "java",
+      code: "console.log",
+      questionId: 1,
+    },
+  ],
 };
 
 describe("Test Question Event Producer", () => {

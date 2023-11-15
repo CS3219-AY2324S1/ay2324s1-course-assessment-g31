@@ -110,11 +110,11 @@ class QuestionService
     try {
       const question = await this.prismaClient.question.findFirst({
         where: {
-            ...rest,
-            difficulty: {
-                equals: difficulty,
-                mode: 'insensitive'
-            }
+          ...rest,
+          difficulty: {
+            equals: difficulty,
+            mode: "insensitive",
+          },
         },
         include: {
           initialCodes: true,

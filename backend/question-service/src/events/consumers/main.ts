@@ -24,13 +24,13 @@ const questionEventConsumer = async () => {
   // first, we wait for the client to connect and subscribe to the given topic
   await consumer.connect();
 
-  const topics: string[] = Array.from(SubscribedCollaborationTopics.keys()).concat(
-    Array.from(SubscribedMatchingTopics.keys()),
-  )
+  const topics: string[] = Array.from(
+    SubscribedCollaborationTopics.keys(),
+  ).concat(Array.from(SubscribedMatchingTopics.keys()));
 
-  logger.info("Subscribed Topics: "+ topics)
+  logger.info("Subscribed Topics: " + topics);
   await consumer.subscribe({
-    topics
+    topics,
   });
 
   await consumer.run({

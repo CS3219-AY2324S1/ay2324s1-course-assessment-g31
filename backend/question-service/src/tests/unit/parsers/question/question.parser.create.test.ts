@@ -7,7 +7,6 @@ import QuestionParser from "../../../../parsers/question/question.parser";
 const allFieldsInput: StringInterface<FullQuestionCreateDTO> = {
   title: "New Question",
   description: "This is the new question",
-  authorId: "abc123",
   difficulty: "easy",
   examples: ["1,2,3"],
   constraints: ["No Constraints"],
@@ -16,10 +15,20 @@ const allFieldsInput: StringInterface<FullQuestionCreateDTO> = {
   testCases: [
     {
       testCaseNumber: "1",
-      input: "1",
-      expectedOutput: ["1"],
+      input: "2",
+      expectedOutput: ["2"],
     },
   ],
+  categories: [{ name: "Strings" }],
+  solutions: [
+    {
+      title: "abc",
+      description: "qwe",
+      language: "java",
+      code: "console.log();",
+    },
+  ],
+  authorId: "abc123",
 };
 
 describe("Test Question Parser Parse Create Input", () => {

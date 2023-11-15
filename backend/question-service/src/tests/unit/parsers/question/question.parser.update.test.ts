@@ -19,6 +19,17 @@ const allFieldsInput: StringInterface<FullQuestionUpdateDTO> = {
       expectedOutput: ["2"],
     },
   ],
+  popularity: "4",
+  categories: [{ name: "Strings" }],
+  solutions: [
+    {
+      id: "1",
+      title: "abc",
+      description: "qwe",
+      language: "java",
+      code: "console.log();",
+    },
+  ],
 };
 
 describe("Test Question Parser Parse Update Input", () => {
@@ -27,6 +38,7 @@ describe("Test Question Parser Parse Update Input", () => {
 
     const expectedOutput: FullQuestionUpdateDTO = {
       ...allFieldsInput,
+      popularity: parseInt(allFieldsInput.popularity),
       testCases: allFieldsInput.testCases.map((x) => ({
         ...x,
         testCaseNumber: parseInt(x.testCaseNumber, 10),

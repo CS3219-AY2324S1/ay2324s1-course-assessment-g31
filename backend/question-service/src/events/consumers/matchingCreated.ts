@@ -36,9 +36,9 @@ export const matchingCreatedConsumer: ConsumerFunction = async (message) => {
         logger.info(`No questions found at ${matching.difficulty}`);
       } else {
         fullQuestionEventProducer.fulfil({
-            ...matching,
-            questionIdRequested: selectedQuestion.data.id,
-          });
+          ...matching,
+          questionIdRequested: selectedQuestion.data.id,
+        });
       }
     }
 
