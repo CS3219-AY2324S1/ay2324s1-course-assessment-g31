@@ -19,7 +19,7 @@ import { CodingTheme, QuestionContext } from "../context/QuestionContext";
 import { useAuth } from "../context/AuthContext";
 
 function CodeEditor() {
-  const { initialCode, selectedLanguage, selectedTheme } =
+  const { selectedLanguage, selectedTheme } =
     useContext(QuestionContext);
   const { socketCode, currentCode, changeCode, setCurrentCode } =
     useContext(CollaborationContext);
@@ -49,18 +49,13 @@ function CodeEditor() {
     if (!currentUser) return;
     if (socketCode === "") return;
     setCurrentCode(socketCode);
-  }, [socketCode, currentUser, initialCode, setCurrentCode]);
+  }, [socketCode, currentUser, , setCurrentCode]);
 
   useEffect(() => {
     if (!currentUser) return;
     if (initializing) return;
     changeCode(currentCode);
-  }, [currentCode, changeCode, currentUser, initialCode, initializing]);
-
-  useEffect(() => {
-    setCurrentCode(initialCode);
-    setInitializing(false);
-  }, [initialCode, setCurrentCode]);
+  }, [currentCode, changeCode, currentUser, , initializing]);
 
   const codeMirrorOptions: BasicSetupOptions = {
     indentOnInput: true,
