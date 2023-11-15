@@ -91,10 +91,7 @@ export default function SingleQuestionPage() {
               )}
             </div>
           </div>
-          <ChatRoomAdd
-            matchingId={matchingId}
-            username={currentUser?.email || "Guest"}
-          />
+          <ChatRoomAdd matchingId={matchingId} />
         </div>
       </div>
     </PageContainer>
