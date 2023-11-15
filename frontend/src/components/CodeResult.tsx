@@ -131,6 +131,7 @@ function CodeResult() {
               const foundSubmission = acceptedSubmissions.find(
                 (sub) => sub.token === executionToken,
               )!;
+              console.log("FOUND SUBS HERE");
               console.log(foundSubmission);
               let passed: boolean = false;
               let actualOutput: string = "";
@@ -152,6 +153,13 @@ function CodeResult() {
                   //   decode64(foundSubmission.stdout).trim(),
                   // );
                   passed = testCase.expectedOutput.some((exptout) => {
+                    if (!foundSubmission.stdout) {
+                      return (
+                        JSON.parse(exptout) ===
+                        JSON.parse(decode64(foundSubmission.stdout))
+                      );
+                    }
+
                     const parsedExpected = JSON.parse(exptout);
                     const parsedActual = JSON.parse(
                       decode64(foundSubmission.stdout).trim().toString(),
