@@ -26,7 +26,7 @@ interface MatchingContextType {
   setMatchedUserId: React.Dispatch<React.SetStateAction<string>>;
   setMatchingId: React.Dispatch<React.SetStateAction<string>>;
   beginCollaboration: () => void;
-  cancelCollaboration: () => void;
+  cancelCollaboration: (code: string, language: string) => void;
   resetMatch: () => void;
 }
 
@@ -41,7 +41,7 @@ export const MatchingContext = createContext<MatchingContextType>({
   setMatchedUserId: () => {},
   setMatchingId: () => {},
   beginCollaboration: () => {},
-  cancelCollaboration: () => {},
+  cancelCollaboration: (_code: string, _language: string) => {},
   resetMatch: () => {},
 });
 
@@ -97,10 +97,9 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
         code,
         language,
       });
-      setMatchedUserId("");
-      setMatchingId("");
+      resetMatch();
     },
-    [emitSocketEvent, matchingId, matchedUserId],
+    [emitSocketEvent, resetMatch, matchingId, matchedUserId],
   );
 
   const beginCollaboration = useCallback(() => {
@@ -120,10 +119,7 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     (value: any) => {
       if (!currentUser) return;
       const obj = JSON.parse(value);
-      const { matchingId,
-        user1Id,
-        user2Id,
-        questionId, } = obj;
+      const { matchingId, user1Id, user2Id, questionId } = obj;
 
       const newMatchedUserId = user1Id === currentUser.uid ? user2Id : user1Id;
       setMatchedUserId(() => newMatchedUserId);
@@ -195,26 +191,23 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
       setMatchingId,
       beginCollaboration,
       cancelCollaboration,
-      changeCode,
-      changeLanguage,
-    };
-  }, [
-    beginCollaboration,
-    cancelCollaboration,
-    changeCode,
-    changeLanguage,
-    connectionLoading,
-    establishedConnection,
-    foundMatch,
-    matchLoading,
-    matchedUserId,
-    matchingId,
-    setMatchedUserId,
-    setMatchingId,
-    socketCode,
-    socketLanguage,
-    matchedQuestionId
-  ]);
+      resetMatch,
+    }),
+    [
+      matchingId,
+      matchedUserId,
+      establishedConnection,
+      foundMatch,
+      connectionLoading,
+      matchLoading,
+      matchedQuestionId,
+      setMatchedUserId,
+      setMatchingId,
+      beginCollaboration,
+      cancelCollaboration,
+      resetMatch,
+    ],
+  );
 
   return (
     <MatchingContext.Provider value={value}>

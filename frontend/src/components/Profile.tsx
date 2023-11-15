@@ -47,7 +47,7 @@ function Profile() {
 
     userController
       .updateUser(currentUser.uid, {
-        name,
+        username: name,
       })
       .then((res) => {
         // setName(res.name);
