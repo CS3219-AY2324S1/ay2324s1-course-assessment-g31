@@ -1,31 +1,53 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
-import router from "./routes";
+import bodyParser from "body-parser";
 import cors from "cors";
-import morgan from "morgan";
+import dotenv from "dotenv";
+import express, { Express } from "express";
+
+import UserController from "./controllers/user/user.controller";
+import kafka from "./events/kafka";
+import UserProducer from "./events/producers/user/producer";
+import UserParser from "./parsers/user/user.parser";
+import UserRouter from "./routers/user/router";
+import UserService from "./services/user/user.service";
+import prismaClient from "./util/prisma/client";
+import { ProducerConfig, Partitioners } from "kafkajs";
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000; //TODO: remove default once dockerized
 
-// logging for debugging
-app.use(morgan("tiny"));
+// Event Producer
+const producerConfig: ProducerConfig = {
+    createPartitioner: Partitioners.LegacyPartitioner
+}
 
-app.use(express.json());
+const userEventProducer = new UserProducer(kafka.producer(producerConfig));
 
-// Configure CORS to allow requests from http://localhost:8080
-app.use(cors({ origin: "http://localhost:8080" }));
+// Services
+const userService = new UserService(prismaClient);
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to the authentication service.");
+// Parsers
+const userParser = new UserParser();
+
+// Controllers
+const userController = new UserController(
+  userService,
+  userParser,
+  userEventProducer,
+);
+
+// Routers
+const userRouter = new UserRouter(userController, express.Router());
+
+app.use(cors());
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
+
+app.use("/api/healthCheck", (_req, res) => {
+  res.send("OK");
 });
+app.use("/api/users", userRouter.registerRoutes());
 
-// routes
-app.use("/user-services", router);
-
-app.listen(port, () => {
-  console.log(
-    `⚡️[server]: Authentication Service is running at http://localhost:${port}`
-  );
-});
+export default app;

@@ -4,8 +4,8 @@ restart_matching_staging:
 restart_question_staging:
 	docker-compose -f docker-compose.staging.yml up question --build -d
 
-restart_socket_staging:
-	docker-compose -f docker-compose.staging.yml up socket --build -d
+restart_collaboration_staging:
+	docker-compose -f docker-compose.staging.yml up collaboration --build -d
 
 restart_user_staging:
 	docker-compose -f docker-compose.staging.yml up user --build -d
@@ -23,8 +23,8 @@ up_matching_staging:
 up_question_staging:
 	docker-compose -f docker-compose.staging.yml up question -d
 
-up_socket_staging:
-	docker-compose -f docker-compose.staging.yml up socket -d
+up_collaboration_staging:
+	docker-compose -f docker-compose.staging.yml up collaboration -d
 
 up_user_staging:
 	docker-compose -f docker-compose.staging.yml up user -d
@@ -44,11 +44,11 @@ format_matching:
 format_question:
 	cd ./backend/question-service && yarn run format && cd ../..
 
-format_socket:
-	cd ./backend/socket-service && yarn run format && cd ../..
+format_collaboration:
+	cd ./backend/collaboration-service && yarn run format && cd ../..
 
 format_user:
 	cd ./backend/user-service && yarn run format && cd ../..
 
 format_all:
-	$(MAKE) format_client format_matching format_question format_socket format_user
+	$(MAKE) format_client format_matching format_question format_collaboration format_user

@@ -10,9 +10,11 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model VideoCall {
-    id               Int      @id @default(autoincrement())
-    user1Id          Int
-    user2Id          Int
-    videoCallStarted DateTime
+model User {
+    id                String   @id
+    username          String
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+    questionsAuthored Int      @default(0)
+    roles             String[]
 }
