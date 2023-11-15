@@ -1,15 +1,22 @@
-import React, { useContext, useState } from "react";
-
+import React, { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { QuestionContext } from "../../context/QuestionContext";
 import classNames from "../../util/ClassNames";
-
 import Solution from "../../components/Solution";
 import { QuestionSolution } from "../../interfaces/questionService/questionSolution/object";
 import PageContainer from "../../components/container/Page";
 
 export default function SolutionsPage() {
-  const { question } = useContext(QuestionContext);
+  const { question, setQuestionId } = useContext(QuestionContext);
+  const { questionId } = useParams();
+
   const [selectedSolution, setSelectedSolution] = useState<QuestionSolution>();
+
+  useEffect(() => {
+    if (questionId) {
+      setQuestionId(parseInt(questionId, 10));
+    }
+  }, [questionId, setQuestionId]);
 
   return (
     <PageContainer>
@@ -32,7 +39,7 @@ export default function SolutionsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-gray-100 dark:bg-gray-800">
-            {question.solutions.length > 0 ? (
+            {question?.solutions.length > 0 ? (
               question.solutions.map((solution) => (
                 <tr key={solution.id}>
                   <td>
