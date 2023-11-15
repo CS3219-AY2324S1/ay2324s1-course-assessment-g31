@@ -41,27 +41,27 @@ io.on("connection", (socket) => {
     logger.info(`User:${data.userId} joined Room:${roomId}`);
     io.to(roomId).emit(
       events.get("begin-collaboration")!,
-      `User:${data.userId} joined Room:${roomId}`
+      `User:${data.userId} joined Room:${roomId}`,
     );
   });
 
   socket.on("change-code", (data) => {
     logger.info(
-      `Editing Code Matching: ${data.requestId} \t User Id: ${data.userId} \t Code: ${data.code}`
+      `Editing Code Matching: ${data.requestId} \t User Id: ${data.userId} \t Code: ${data.code}`,
     );
     io.to(data.requestId).emit(events.get("change-code")!, data);
   });
 
   socket.on("change-language", (data) => {
     logger.info(
-      `Change Language: ${data.requestId} \t User Id: ${data.userId} \t to Language: ${data.language}`
+      `Change Language: ${data.requestId} \t User Id: ${data.userId} \t to Language: ${data.language}`,
     );
     io.to(data.requestId).emit(events.get("change-language")!, data);
   });
 
   socket.on("cancel-collaboration", (data) => {
     logger.info(
-      `Cancelling Matching: ${data.requestId} \t User Id: ${data.userId}`
+      `Cancelling Matching: ${data.requestId} \t User Id: ${data.userId}`,
     );
     io.to(data.requestId).emit(events.get("cancel-collaboration")!, data);
     produceEvent(ProducerTopics.COLLABORATION_END, [
@@ -85,7 +85,7 @@ app.get("/", (_req: Request, res: Response) => {
 
 server.listen(port, () => {
   logger.info(
-    `⚡️[server]: Question Service is running at http://localhost:${port}`
+    `⚡️[server]: Question Service is running at http://localhost:${port}`,
   );
 
   questionEventConsumer(io).catch((err: any) => {

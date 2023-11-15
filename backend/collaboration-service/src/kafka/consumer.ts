@@ -27,7 +27,7 @@ const questionEventConsumer = async (io: Server) => {
             "Topic: " +
             topic +
             " Message: " +
-            message.value?.toString()
+            message.value?.toString(),
         );
         io.emit(topic, message.value ? message.value.toString() : "");
       },

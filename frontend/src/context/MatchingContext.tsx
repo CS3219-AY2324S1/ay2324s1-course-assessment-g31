@@ -1,8 +1,15 @@
-import React, { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useNavigate } from "react-router-dom";
 
-import socket from '../util/socket';
-import { useAuth } from './AuthContext';
+import socket from "../util/socket";
+import { useAuth } from "./AuthContext";
 
 interface MatchingProviderProps {
   children: ReactNode;
@@ -82,25 +89,32 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     (code: string, language: string) => {
       if (!matchingId || !currentUser) return;
       type cancelCollaborationData = {
-        requestId: string
-          questionId: string;
-          userId: string
-          matchedUserId: string
-          code: string
-          language: string
-      }
+        requestId: string;
+        questionId: string;
+        userId: string;
+        matchedUserId: string;
+        code: string;
+        language: string;
+      };
       const data: cancelCollaborationData = {
-          requestId: matchingId,
-          questionId: matchedQuestionId.toString(),
-          userId: currentUser.uid,
-          matchedUserId,
-          code,
-          language,
-      }
+        requestId: matchingId,
+        questionId: matchedQuestionId.toString(),
+        userId: currentUser.uid,
+        matchedUserId,
+        code,
+        language,
+      };
       emitSocketEvent("cancel-collaboration", data);
       resetMatch();
     },
-    [emitSocketEvent, resetMatch, currentUser,matchingId, matchedUserId, matchedQuestionId],
+    [
+      emitSocketEvent,
+      resetMatch,
+      currentUser,
+      matchingId,
+      matchedUserId,
+      matchedQuestionId,
+    ],
   );
 
   const beginCollaboration = useCallback(() => {

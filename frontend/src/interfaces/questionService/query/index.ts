@@ -1,12 +1,12 @@
 export type Query<T> = {
   [K in keyof T]: T[K] extends Array<infer U>
     ? Array<{
-        value: U;
+        value?: U;
         order: "asc" | "desc";
         sortBy: boolean;
       }>
     : {
-        value: T[K];
+        value?: T[K];
         order: "asc" | "desc";
         sortBy: boolean;
       };

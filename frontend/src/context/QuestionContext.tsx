@@ -342,7 +342,7 @@ export function QuestionProvider({ children }: QuestionProviderProps) {
         }
       })
       .catch((err: any) => {
-        console.log(err)
+        console.log(err);
       });
   }, [controller, questionId]);
 

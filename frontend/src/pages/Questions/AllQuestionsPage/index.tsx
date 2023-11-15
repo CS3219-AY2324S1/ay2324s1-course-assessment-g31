@@ -29,9 +29,39 @@ function AllQuestionPage() {
     DESC = "desc",
   }
 
-  const [sortByStatus, setSortByStatus] = useState<SortBy>(SortBy.ASC);
   const [sortByTitle, setSortByTitle] = useState<SortBy>(SortBy.ASC);
   const [sortByDifficulty, setSortByDifficulty] = useState<SortBy>(SortBy.ASC);
+  const [sortByPopularity, setSortByPopularity] = useState<SortBy>(SortBy.ASC);
+
+  useEffect(() => {
+    setQuestionQuery((prevState) => ({
+      ...prevState,
+      title: {
+        order: sortByTitle,
+        sortBy: true,
+      },
+    }));
+  }, [sortByTitle, setQuestionQuery]);
+
+  useEffect(() => {
+    setQuestionQuery((prevState) => ({
+      ...prevState,
+      difficulty: {
+        order: sortByDifficulty,
+        sortBy: true,
+      },
+    }));
+  }, [sortByDifficulty, setQuestionQuery]);
+
+  useEffect(() => {
+    setQuestionQuery((prevState) => ({
+      ...prevState,
+      popularity: {
+        order: sortByPopularity,
+        sortBy: true,
+      },
+    }));
+  }, [sortByPopularity, setQuestionQuery]);
 
   const navigate = useNavigate();
 
@@ -512,21 +542,6 @@ function AllQuestionPage() {
                       >
                         <button type="button" className="group inline-flex">
                           Status
-                          <span className="ml-2 flex-none rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 group-hover:bg-gray-200 dark:group-hover:bg-gray-800">
-                            {sortByStatus === SortBy.ASC ? (
-                              <ChevronUpIcon
-                                className="h-4 w-4"
-                                aria-hidden="true"
-                                onClick={() => setSortByStatus(SortBy.DESC)}
-                              />
-                            ) : (
-                              <ChevronDownIcon
-                                className="h-4 w-4"
-                                aria-hidden="true"
-                                onClick={() => setSortByStatus(SortBy.ASC)}
-                              />
-                            )}
-                          </span>
                         </button>
                       </th>
                       <th
@@ -583,6 +598,27 @@ function AllQuestionPage() {
                       </th>
                       <th
                         scope="col"
+                        className="px-3 py-3 text-left text-xs font-medium tracking-wide text-gray-500 dark:text-gray-400"
+                      >
+                        Popularity
+                        <span className="ml-2 flex-none rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 group-hover:bg-gray-200 dark:group-hover:bg-gray-800">
+                          {sortByPopularity === SortBy.ASC ? (
+                            <ChevronUpIcon
+                              className="h-4 w-4"
+                              aria-hidden="true"
+                              onClick={() => setSortByPopularity(SortBy.DESC)}
+                            />
+                          ) : (
+                            <ChevronDownIcon
+                              className="h-4 w-4"
+                              aria-hidden="true"
+                              onClick={() => setSortByPopularity(SortBy.ASC)}
+                            />
+                          )}
+                        </span>
+                      </th>
+                      <th
+                        scope="col"
                         className="relative py-3 pl-3 pr-4 sm:pr-0"
                       >
                         <span className="sr-only">Attempt</span>
@@ -610,7 +646,10 @@ function AllQuestionPage() {
                                 "text-gray-700 dark:text-gray-300",
                               )}
                             >
-                              Not Done
+                              {question.histories &&
+                              question.histories.length > 0
+                                ? "Done"
+                                : "Not Done"}
                             </td>
                             <td
                               className={classNames(
@@ -644,6 +683,14 @@ function AllQuestionPage() {
                                   {category.name}
                                 </span>
                               ))}
+                            </td>
+                            <td
+                              className={classNames(
+                                "whitespace-nowrap px-3 py-4 text-sm",
+                                "text-gray-700 dark:text-gray-300",
+                              )}
+                            >
+                              {question.popularity}
                             </td>
                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                               <Link
