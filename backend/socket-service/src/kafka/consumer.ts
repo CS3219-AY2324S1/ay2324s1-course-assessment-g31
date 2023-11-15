@@ -22,6 +22,13 @@ const questionEventConsumer = async (io: Server) => {
     await consumer.run({
       eachMessage: async ({ topic, message }: EachMessagePayload) => {
         // here, we just log the message to the standard output
+        logger.info(
+          "Received Topic from Kafka " +
+            "Topic: " +
+            topic +
+            " Message: " +
+            message.value?.toString()
+        );
         io.emit(topic, message.value ? message.value.toString() : "");
       },
     });

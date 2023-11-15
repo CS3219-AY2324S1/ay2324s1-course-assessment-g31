@@ -11,62 +11,27 @@ datasource db {
 }
 
 model Question {
-    id          Int        @id @default(autoincrement())
-    title       String
-    category    Category[]
-    difficulty  Difficulty
-    description String
-    example     String
-    constraint  String
-    popularity  Int        @default(0)
-    solutions   Solution[]
-}
-
-model Solution {
-    id          String   @id @default(uuid())
-    question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-    questionId  Int
-    title       String
-    description String
-    code        String
-    language    String
-}
-
-enum Difficulty {
-    Easy
-    Medium
-    Hard
-}
-
-enum Category {
-    Strings
-    DataStructures
-    Algorithms
-    BitManipulation
-    Databases
-    Arrays
-    Brainteaser
-    Recursion
-}
-
-model NewQuestion {
     id           Int                   @id @default(autoincrement())
     title        String
-    category     Category[]
-    difficulty   Difficulty
     description  String
-    example      String[]
-    constraint   String[]
+    difficulty   String
+    examples     String[]
+    constraints  String[]
+    createdAt    DateTime              @default(now())
+    updatedAt    DateTime              @updatedAt
+    authorId     String
     popularity   Int                   @default(0)
     initialCodes QuestionInitialCode[]
     runnerCodes  QuestionRunnerCode[]
     testCases    QuestionTestCase[]
+    categories   QuestionCategory[]
+    solutions    QuestionSolution[]
 }
 
 model QuestionInitialCode {
     language   String
     code       String
-    Question   NewQuestion @relation(fields: [questionId], references: [id])
+    Question   Question @relation(fields: [questionId], references: [id])
     questionId Int
 
     @@unique([language, questionId])
@@ -75,7 +40,7 @@ model QuestionInitialCode {
 model QuestionRunnerCode {
     language   String
     code       String
-    Question   NewQuestion @relation(fields: [questionId], references: [id])
+    Question   Question @relation(fields: [questionId], references: [id])
     questionId Int
 
     @@unique([language, questionId])
@@ -85,8 +50,26 @@ model QuestionTestCase {
     testCaseNumber Int
     input          String
     expectedOutput String[]
-    Question       NewQuestion @relation(fields: [questionId], references: [id])
+    Question       Question @relation(fields: [questionId], references: [id])
     questionId     Int
 
     @@unique([testCaseNumber, questionId])
+}
+
+model QuestionCategory {
+    name       String
+    Question   Question @relation(fields: [questionId], references: [id])
+    questionId Int
+
+    @@unique([name, questionId])
+}
+
+model QuestionSolution {
+    id          String   @id @default(uuid())
+    title       String
+    description String
+    language    String
+    code        String
+    Question    Question @relation(fields: [questionId], references: [id])
+    questionId  Int
 }

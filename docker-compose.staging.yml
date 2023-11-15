@@ -1,9 +1,9 @@
 version: "3"
 services:
   user:
-    container_name: user-service2
+    container_name: user-service
     build:
-      context: ./backend/user-service2
+      context: ./backend/user-service
       dockerfile: Dockerfile.staging
     ports:
       - "5001:5000"
@@ -11,7 +11,7 @@ services:
       - PORT=5000
       - NODE_ENV=production
     env_file:
-      - ./backend/user-service2/.env
+      - ./backend/user-service/.env
     depends_on:
       postgres_user_service:
         condition: service_healthy
@@ -24,7 +24,7 @@ services:
     volumes:
       - "progresDB:/data/postgres/user-service"
     env_file:
-      - ./backend/user-service2/.env
+      - ./backend/user-service/.env
     networks:
       - user-service-network
     healthcheck:
@@ -71,7 +71,7 @@ services:
   question:
     container_name: question-service
     build:
-      context: ./backend/question-service2
+      context: ./backend/question-service
       dockerfile: Dockerfile.staging
     ports:
       - "5003:5000"
@@ -79,7 +79,7 @@ services:
       - PORT=5000
       - NODE_ENV=production
     env_file:
-      - ./backend/question-service2/.env
+      - ./backend/question-service/.env
     depends_on:
       postgres_question_service:
         condition: service_healthy
@@ -92,7 +92,7 @@ services:
     volumes:
       - "progresDB:/data/postgres/question-service"
     env_file:
-      - ./backend/question-service2/.env
+      - ./backend/question-service/.env
     networks:
       - question-service-network
     healthcheck:

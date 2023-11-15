@@ -8,6 +8,7 @@ import QuestionTopics from "../topics/question";
 import { ConsumerFunction } from "./main.interface";
 import { matchingCreatedConsumer } from "./matchingCreated";
 import { sessionEndConsumer } from "./sessionEnd";
+import logger from "../../util/logger";
 
 const SubscribedCollaborationTopics: Map<string, ConsumerFunction> = new Map([
   [CollaborationTopics.ENDED, sessionEndConsumer],
@@ -23,10 +24,13 @@ const questionEventConsumer = async () => {
   // first, we wait for the client to connect and subscribe to the given topic
   await consumer.connect();
 
+  const topics: string[] = Array.from(SubscribedCollaborationTopics.keys()).concat(
+    Array.from(SubscribedMatchingTopics.keys()),
+  )
+
+  logger.info("Subscribed Topics: "+ topics)
   await consumer.subscribe({
-    topics: Array.from(SubscribedCollaborationTopics.keys()).concat(
-      Array.from(SubscribedMatchingTopics.keys()),
-    ),
+    topics
   });
 
   await consumer.run({

@@ -126,17 +126,17 @@ function MatchingControlPanelPage() {
     if (requests) {
       setEasyQueueRequests(
         requests.filter(
-          (request) => request.difficulty === "easy" && !request.success,
+          (request) => request.difficulty.toLowerCase() === "easy" && !request.success,
         ),
       );
       setMediumQueueRequests(
         requests.filter(
-          (request) => request.difficulty === "medium" && !request.success,
+          (request) => request.difficulty.toLowerCase() === "medium" && !request.success,
         ),
       );
       setHardQueueRequests(
         requests.filter(
-          (request) => request.difficulty === "hard" && !request.success,
+          (request) => request.difficulty.toLowerCase() === "hard" && !request.success,
         ),
       );
     }
