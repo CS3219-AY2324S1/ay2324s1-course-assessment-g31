@@ -277,7 +277,6 @@ function RegistrationPage() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>

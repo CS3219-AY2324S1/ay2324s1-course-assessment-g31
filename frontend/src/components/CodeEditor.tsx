@@ -47,7 +47,7 @@ function CodeEditor() {
 
   useEffect(() => {
     if (!currentUser) return;
-    if (socketCode === "") return;
+    // if (socketCode === "") return;
     setCurrentCode(socketCode);
   }, [socketCode, currentUser, initialCode, setCurrentCode]);
 
@@ -64,6 +64,9 @@ function CodeEditor() {
 
   const codeMirrorOptions: BasicSetupOptions = {
     indentOnInput: true,
+    autocompletion: true,
+    lineNumbers: true,
+    highlightActiveLine: true,
   };
 
   type themeValue = {

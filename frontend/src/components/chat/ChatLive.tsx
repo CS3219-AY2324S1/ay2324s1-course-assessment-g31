@@ -87,9 +87,12 @@ function ChatLive({ socket, username, room }: ChatProps) {
             >
               <div className="flex flex-col items-start">
                 <div className="flex justify-between items-center">
-                  <h1 className="font-medium text-xl text-gray-900">{messageContent.author}</h1>
-                  <div className="message-meta" style={{ marginLeft: '8px' }}>
-                    <p id="time">{messageContent.time}</p> {/* Format time as AMPM */}
+                  <h1 className="font-medium text-xl text-gray-900">
+                    {messageContent.author}
+                  </h1>
+                  <div className="message-meta" style={{ marginLeft: "8px" }}>
+                    <p id="time">{messageContent.time}</p>{" "}
+                    {/* Format time as AMPM */}
                   </div>
                 </div>
                 <div className="mt-2 max-w-none">

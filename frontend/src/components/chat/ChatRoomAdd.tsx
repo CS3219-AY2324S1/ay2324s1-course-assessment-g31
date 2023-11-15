@@ -10,7 +10,6 @@ interface ChatRoomAddProps {
 }
 
 function ChatRoomAdd({ matchingId, username }: ChatRoomAddProps) {
-
   useEffect(() => {
     const joinRoom = () => {
       if (username !== "" && matchingId !== "") {

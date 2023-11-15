@@ -10,13 +10,18 @@ import UserParser from "./parsers/user/user.parser";
 import UserRouter from "./routers/user/router";
 import UserService from "./services/user/user.service";
 import prismaClient from "./util/prisma/client";
+import { ProducerConfig, Partitioners } from "kafkajs";
 
 dotenv.config();
 
 const app: Express = express();
 
 // Event Producer
-const userEventProducer = new UserProducer(kafka.producer());
+const producerConfig: ProducerConfig = {
+    createPartitioner: Partitioners.LegacyPartitioner
+}
+
+const userEventProducer = new UserProducer(kafka.producer(producerConfig));
 
 // Services
 const userService = new UserService(prismaClient);
