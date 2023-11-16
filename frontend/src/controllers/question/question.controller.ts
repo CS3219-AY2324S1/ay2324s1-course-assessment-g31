@@ -9,7 +9,7 @@ import GenericController, {
 } from "../generic.controller";
 
 const devServerUri = "http://localhost:5003";
-const prodServerUri = "https://question-service-qzxsy455sq-as.a.run.app";
+const prodServerUri = "https://cs3219-question-service-xndosa77qq-as.a.run.app";
 
 class QuestionController extends GenericController {
   constructor() {

@@ -4,7 +4,11 @@ import ChatLive from "./ChatLive";
 import { useAuth } from "../../context/AuthContext";
 import UserController from "../../controllers/user/user.controller";
 
-const socket = io("http://localhost:9000"); // Corrected the port number
+const socket = io(
+  window.location.hostname !== "localhost"
+    ? "https://cs3219-chat-service-xndosa77qq-as.a.run.app"
+    : "http://localhost:9000",
+); // Corrected the port number
 
 interface ChatRoomAddProps {
   matchingId: string;

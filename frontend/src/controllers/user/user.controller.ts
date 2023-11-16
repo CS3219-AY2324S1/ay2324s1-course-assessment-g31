@@ -7,7 +7,7 @@ class UserController extends GenericController {
   constructor() {
     super(
       window.location.hostname !== "localhost"
-        ? "https://user-service-qzxsy455sq-as.a.run.app"
+        ? "https://cs3219-user-service-xndosa77qq-as.a.run.app"
         : "http://localhost:5001",
       "api",
     );

@@ -2,7 +2,7 @@ import { History } from "../../interfaces/historyService/history/object";
 import GenericController, { ControllerResponse } from "../generic.controller";
 
 const devServerUri = "http://localhost:5007";
-const prodServerUri = "placeholder IDK what it is";
+const prodServerUri = "https://cs3219-history-service-xndosa77qq-as.a.run.app";
 
 class HistoryController extends GenericController {
   constructor() {

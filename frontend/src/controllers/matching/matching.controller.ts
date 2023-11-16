@@ -3,9 +3,15 @@ import { MatchingRequestCreateDTO } from "../../interfaces/matchingService/match
 import { MatchingRequest } from "../../interfaces/matchingService/matchingRequest/object";
 import GenericController from "../generic.controller";
 
+const devServerUri = "http://localhost:5002";
+const prodServerUri = "https://cs3219-matching-service-xndosa77qq-as.a.run.app";
+
 class MatchingController extends GenericController {
   constructor() {
-    super("http://localhost:5002", "api");
+    super(
+      window.location.hostname !== "localhost" ? prodServerUri : devServerUri,
+      "api",
+    );
   }
 
   public async cancelMatchingRequest(id: string) {
