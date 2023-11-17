@@ -5,6 +5,20 @@
 
 version: "3"
 services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+    env_file:
+      - ./frontend/.env
+    networks:
+      - api-network
+
   matching:
     container_name: matching-service
     build:

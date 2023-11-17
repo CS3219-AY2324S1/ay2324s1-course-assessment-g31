@@ -96,7 +96,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [currentUser],
   );
 
-  async function getUserRole(user: User): Promise<string> {
+  async function getUserRole(): Promise<string> {
     return "user";
   }
 
@@ -104,7 +104,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const unsubscribe = onAuthStateChanged(database, async (user) => {
       if (user) {
         setCurrentUser(user);
-        const role = await getUserRole(user);
+        const role = await getUserRole();
         setCurrentRole(role);
       } else {
         setCurrentUser(null);

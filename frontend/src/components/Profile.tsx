@@ -2,7 +2,6 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import UserController from "../controllers/user/user.controller";
 import { changeEmail, changePassword, removeUser } from "../util/auth";
 import Toast from "./Toast";
 import { useAuth } from "../context/AuthContext";
@@ -14,14 +13,12 @@ function Profile() {
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const [showUpdateProfileToast, setShowUpdateProfileToast] =
+  const [showUpdateProfileToast, _setShowUpdateProfileToast] =
     useState<boolean>(false);
 
   const { currentUser } = useAuth();
 
   const navigate = useNavigate();
-
-  const userController = new UserController();
 
   React.useEffect(() => {
     if (!currentUser) {
@@ -34,9 +31,7 @@ function Profile() {
     setName(currentUser.displayName ? currentUser.displayName : "Anonymous");
   }, [currentUser]);
 
-  const handleUpdateProfile = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+  const handleUpdateProfile = async () => {
     if (!currentUser) {
       return;
     }
@@ -45,23 +40,12 @@ function Profile() {
       return;
     }
 
-    userController
-      .updateUser(currentUser.uid, {
-        name,
-      })
-      .then((res) => {
-        // setName(res.name);
-        setShowUpdateProfileToast(true);
-      });
-
     if (currentUser.email !== emailAddress) {
       changeEmail(currentUser, emailAddress);
     }
   };
 
-  const handleChangePassword = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+  const handleChangePassword = async () => {
     if (!currentUser) {
       return;
     }
@@ -73,14 +57,11 @@ function Profile() {
     changePassword(currentUser, newPassword);
   };
 
-  const handleDeleteAccount = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+  const handleDeleteAccount = async () => {
     if (!currentUser) {
       return;
     }
 
-    userController.deleteUser(currentUser.uid);
     removeUser(currentUser);
 
     navigate("/");

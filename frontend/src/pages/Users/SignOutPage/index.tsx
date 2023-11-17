@@ -1,15 +1,15 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import { Fragment, useContext, useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 
-import { AuthContext } from "../../../context/FirebaseAuthContext";
+import { useAuth } from "../../../context/AuthContext";
 
-function SignOutPage() {
+function LogoutPage() {
   const [open, setOpen] = useState(true);
 
   const cancelButtonRef = useRef(null);
 
-  const { signOut } = useContext(AuthContext);
+  const { logout } = useAuth();
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -71,7 +71,7 @@ function SignOutPage() {
                   <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-                    onClick={signOut}
+                    onClick={logout}
                   >
                     Sign Out
                   </button>
@@ -93,4 +93,4 @@ function SignOutPage() {
   );
 }
 
-export default SignOutPage;
+export default LogoutPage;

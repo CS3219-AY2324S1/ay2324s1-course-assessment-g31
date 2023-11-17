@@ -1,0 +1,20 @@
+FROM node:20-alpine
+
+# Add package file
+COPY package.json ./
+COPY yarn.lock ./
+
+# Install deps
+RUN yarn install
+
+# Copy source
+COPY src ./src
+COPY tsconfig.json ./tsconfig.json
+COPY tsconfig.node.json ./tsconfig.node.json
+
+# Build dist
+RUN yarn build
+
+EXPOSE 8080
+
+CMD yarn run dev

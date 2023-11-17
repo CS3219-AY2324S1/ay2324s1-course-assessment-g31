@@ -26,7 +26,6 @@ function CodeEditor() {
   const { isDarkMode } = useContext(DarkModeContext);
 
   const [initializing, setInitializing] = useState<boolean>(true);
-  const [_codeSubmitted, setCodeSubmitted] = useState<boolean>(false);
   const [extensions, setExtensions] = useState<Extension[]>();
 
   const onChange = useCallback(
@@ -37,7 +36,7 @@ function CodeEditor() {
   );
 
   useEffect(() => {
-    console.log(selectedLanguage)
+    console.log(selectedLanguage);
     if (langs[selectedLanguage]) {
       setExtensions([langs[selectedLanguage]()]);
     } else {
@@ -59,7 +58,7 @@ function CodeEditor() {
   useEffect(() => {
     setCurrentCode("// Default Code");
     setInitializing(false);
-  },[setCurrentCode])
+  }, [setCurrentCode]);
 
   const codeMirrorOptions: BasicSetupOptions = {
     indentOnInput: true,

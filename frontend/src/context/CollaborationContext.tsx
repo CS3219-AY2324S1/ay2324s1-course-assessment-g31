@@ -68,7 +68,11 @@ export function CollaborationProvider({
 
   const changeCode = useCallback(
     (code: string) => {
-        console.log("Collaboration Context","Change Code Flag:",!currentUser || !matchingId)
+      console.log(
+        "Collaboration Context",
+        "Change Code Flag:",
+        !currentUser || !matchingId,
+      );
       if (!currentUser || !matchingId) return;
       emitSocketEvent("change-code", {
         requestId: matchingId,
