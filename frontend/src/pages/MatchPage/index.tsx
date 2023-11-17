@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import MatchingModal from "../../components/MatchingModal";
@@ -27,8 +27,9 @@ function MatchPage() {
 
   const navigate = useNavigate();
 
-  const matchingController = useRef<MatchingController>(
-    new MatchingController(),
+  const matchingController = useMemo<MatchingController>(
+    () => new MatchingController(),
+    [],
   );
 
   const { time, startTimer, stopTimer, resetTimer, isActive, percent } =
@@ -39,9 +40,7 @@ function MatchPage() {
     setOpen(false);
     setDifficulty("");
     stopTimer();
-    await matchingController.current.cancelMatchingRequest(
-      currentMatchingRequestId,
-    );
+    await matchingController.cancelMatchingRequest(currentMatchingRequestId);
   }, [currentUser, stopTimer, currentMatchingRequestId]);
 
   const startMatching = useCallback(
@@ -62,7 +61,7 @@ function MatchPage() {
         difficulty: newDifficulty,
       };
       console.log(obj);
-      const res = await matchingController.current.createMatchingRequest(obj);
+      const res = await matchingController.createMatchingRequest(obj);
       if (res && res.data) {
         setCurrentMatchingRequestId(res.data.id.toString());
       }
