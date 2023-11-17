@@ -57,18 +57,39 @@ const createMatchingRequestConsumer: ConsumerFunction = async (message) => {
       questionIdRequested: matchReqFromDB.questionId,
     });
 
-    // Update matching request
-    await matchingRequestService.update(counterPartyMatchReq.id, {
-      ...counterPartyMatchReq,
-      success: true,
-    });
+    if (matching) {
+      // Update matching request
+      await matchingRequestService.update(counterPartyMatchReq.id, {
+        ...counterPartyMatchReq,
+        success: true,
+      });
 
-    await matchingRequestService.update(matchReqFromDB.id, {
-      ...matchReqFromDB,
-      success: true,
-    });
+      await matchingRequestService.update(matchReqFromDB.id, {
+        ...matchReqFromDB,
+        success: true,
+      });
 
-    matchingEventProducer.create(matching);
+      const matchingReqs = await matchingRequestService.findAll();
+      console.log(
+        "Match Created. NUMBER OF EASY MATCHING REQUEST: ",
+        matchingReqs.filter(
+          (x) => x.difficulty.toLowerCase() === "easy" && !x.success,
+        ).length,
+      );
+      console.log(
+        "Match Created. NUMBER OF MEDIUM MATCHING REQUEST: ",
+        matchingReqs.filter(
+          (x) => x.difficulty.toLowerCase() === "medium" && !x.success,
+        ).length,
+      );
+      console.log(
+        "Match Created. NUMBER OF HARD MATCHING REQUEST: ",
+        matchingReqs.filter(
+          (x) => x.difficulty.toLowerCase() === "hard" && !x.success,
+        ).length,
+      );
+      matchingEventProducer.create(matching);
+    }
   }
 };
 

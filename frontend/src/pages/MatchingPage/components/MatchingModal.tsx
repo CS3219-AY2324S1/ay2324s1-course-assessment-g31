@@ -20,6 +20,7 @@ interface IModalProps {
   matchSuccess: boolean;
   cancelMatch: () => void;
   waitingPercentage: number;
+  isActive: boolean;
 }
 
 function MatchingModal({
@@ -32,6 +33,7 @@ function MatchingModal({
   matchSuccess,
   cancelMatch,
   waitingPercentage,
+  isActive
 }: IModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -199,7 +201,7 @@ function MatchingModal({
                     className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     onClick={cancelMatch}
                   >
-                    Cancel
+                    {isActive ? "Cancel" : "No Match Found. Please Cancel"}
                   </button>
                 </div>
               </Dialog.Panel>

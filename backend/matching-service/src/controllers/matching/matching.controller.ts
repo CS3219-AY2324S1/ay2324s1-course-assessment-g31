@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 
+import MatchingProducer from "../../events/producers/matching/producer";
 import MatchingParser from "../../parsers/matching/matching.parser";
 import MatchingService from "../../services/matching/matching.service";
 import Controller from "../controller.abstract";
 import CRUDController from "../crudController.interface";
-import MatchingProducer from "../../events/producers/matching/producer";
 
 class MatchingController extends Controller implements CRUDController {
   constructor(
@@ -27,8 +27,9 @@ class MatchingController extends Controller implements CRUDController {
       const matching = await this.service.create(parsedMatching);
       if (matching) {
         await this.eventProducer.create(matching);
+        return MatchingController.handleSuccess(res, matching);
       }
-      return MatchingController.handleSuccess(res, matching);
+      return MatchingController.handleNotFound(res, "Matching was not created");
     } catch (e: any) {
       return MatchingController.handleBadRequest(res, e.message);
     }

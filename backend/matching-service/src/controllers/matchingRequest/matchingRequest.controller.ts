@@ -25,6 +25,25 @@ class MatchingRequestController extends Controller implements CRUDController {
     try {
       const parsedMatchingRequest = this.parser.parseCreateInput(req.body);
       const matchingRequest = await this.service.create(parsedMatchingRequest);
+      const matchingReqs = await this.service.findAll();
+      console.log(
+        "Match Request Created. NUMBER OF EASY MATCHING REQUEST: ",
+        matchingReqs.filter(
+          (x) => x.difficulty.toLowerCase() === "easy" && !x.success,
+        ).length,
+      );
+      console.log(
+        "Match Request Created. NUMBER OF MEDIUM MATCHING REQUEST: ",
+        matchingReqs.filter(
+          (x) => x.difficulty.toLowerCase() === "medium" && !x.success,
+        ).length,
+      );
+      console.log(
+        "Match Request Created. NUMBER OF HARD MATCHING REQUEST: ",
+        matchingReqs.filter(
+          (x) => x.difficulty.toLowerCase() === "hard" && !x.success,
+        ).length,
+      );
       if (matchingRequest) {
         await this.eventProducer.create(matchingRequest);
       }

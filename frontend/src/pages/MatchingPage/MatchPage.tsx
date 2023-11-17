@@ -74,11 +74,11 @@ function MatchPage() {
     ],
   );
 
-  useEffect(() => {
-    if (!isActive) {
-      cancelMatch();
-    }
-  }, [isActive, cancelMatch, time]);
+//   useEffect(() => {
+//     if (!isActive) {
+//       cancelMatch();
+//     }
+//   }, [isActive, cancelMatch, time]);
 
   useEffect(() => {
     if (
@@ -113,6 +113,7 @@ function MatchPage() {
         matchSuccess={foundMatch}
         cancelMatch={cancelMatch}
         waitingPercentage={percent}
+        isActive={isActive}
       />
     </div>
   );
