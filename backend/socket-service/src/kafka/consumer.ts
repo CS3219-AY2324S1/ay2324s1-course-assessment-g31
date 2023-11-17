@@ -11,6 +11,12 @@ const SubscribedTopics: ConsumerSubscribeTopics = {
 
 const consumer = kafka.consumer({ groupId: "socket-service" });
 
+function emitIo(io: Server, topic: string, message: string) {
+  console.log("Emitting", "Topic: ", topic, "Message: ", message);
+  io.emit(topic, message);
+  return Promise.resolve();
+}
+
 const questionEventConsumer = async (io: Server) => {
   logger.info("Question Service Starting to Listen");
   // first, we wait for the client to connect and subscribe to the given topic
@@ -22,7 +28,9 @@ const questionEventConsumer = async (io: Server) => {
     await consumer.run({
       eachMessage: async ({ topic, message }: EachMessagePayload) => {
         // here, we just log the message to the standard output
-        io.emit(topic, message.value ? message.value.toString() : "");
+        if (message.value) {
+          await emitIo(io, topic, message.value.toString());
+        }
       },
     });
   } catch (error) {

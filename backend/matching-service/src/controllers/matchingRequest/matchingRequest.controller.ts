@@ -26,7 +26,7 @@ class MatchingRequestController extends Controller implements CRUDController {
       const parsedMatchingRequest = this.parser.parseCreateInput(req.body);
       const matchingRequest = await this.service.create(parsedMatchingRequest);
       if (matchingRequest) {
-        this.eventProducer.create(matchingRequest);
+        await this.eventProducer.create(matchingRequest);
       }
       return MatchingRequestController.handleSuccess(res, matchingRequest);
     } catch (e: any) {
@@ -96,7 +96,7 @@ class MatchingRequestController extends Controller implements CRUDController {
         parsedUpdateInput,
       );
       if (matchingRequest) {
-        this.eventProducer.update(matchingRequest);
+        await this.eventProducer.update(matchingRequest);
       }
       return MatchingRequestController.handleSuccess(res, matchingRequest);
     } catch (e: any) {
@@ -111,14 +111,29 @@ class MatchingRequestController extends Controller implements CRUDController {
       return MatchingRequestController.handleValidationError(res, errors);
     }
 
+    const parsedId = this.parser.parseFindByIdInput(req.params.id);
+
     try {
-      const parsedId = this.parser.parseFindByIdInput(req.params.id);
+      const matchingRequestFromDb = await this.service.findById(parsedId);
+      if (!matchingRequestFromDb) {
+        return MatchingRequestController.handleNotFound(
+          res,
+          "Matching Request Not Found",
+        );
+      }
+    } catch (e: any) {
+      console.log(e);
+      return MatchingRequestController.handleBadRequest(res, e.message);
+    }
+
+    try {
       const matchingRequest = await this.service.delete(parsedId);
       if (matchingRequest) {
-        this.eventProducer.delete(matchingRequest);
+        await this.eventProducer.delete(matchingRequest);
       }
       return MatchingRequestController.handleSuccess(res, matchingRequest);
     } catch (e: any) {
+      console.log(e);
       return MatchingRequestController.handleBadRequest(res, e.message);
     }
   };

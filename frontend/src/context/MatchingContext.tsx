@@ -72,6 +72,7 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
   );
 
   const join = useCallback(() => {
+    console.log("HELLO", currentUser);
     if (!currentUser) return;
     emitSocketEvent("join");
   }, [emitSocketEvent, currentUser]);
@@ -101,6 +102,7 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
 
   const onMatchingCreated = useCallback(
     (value: any) => {
+      console.log("Matching Created", currentUser);
       if (!currentUser) return;
       const obj = JSON.parse(value);
       const { user1Id, user2Id, requestId } = obj;
@@ -138,29 +140,21 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
 
     socket.on("joined", onJoined);
     socket.on("matching-created", onMatchingCreated);
+    socket.on("collaboration-cancelled", onCollaborationCancelled);
 
     return () => {
       socket.off("joined", onJoined);
       socket.off("matching-created", onMatchingCreated);
-      socket.disconnect();
-    };
-  }, [currentUser, join, onJoined, onMatchingCreated]);
-
-  useEffect(() => {
-    setConnectionLoading(true);
-    socket.connect();
-
-    if (currentUser) {
-      join();
-    }
-
-    socket.on("collaboration-cancelled", onCollaborationCancelled);
-
-    return () => {
       socket.off("collaboration-cancelled", onCollaborationCancelled);
       socket.disconnect();
     };
-  }, [currentUser, matchedUserId, matchingId, join, onCollaborationCancelled]);
+  }, [
+    currentUser,
+    join,
+    onJoined,
+    onMatchingCreated,
+    onCollaborationCancelled,
+  ]);
 
   const value = useMemo(
     () => ({

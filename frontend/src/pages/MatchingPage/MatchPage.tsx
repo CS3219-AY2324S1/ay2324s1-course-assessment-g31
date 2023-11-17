@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { MatchingContext } from "../../context/MatchingContext";
@@ -27,22 +27,20 @@ function MatchPage() {
 
   const navigate = useNavigate();
 
-  const matchingController = useRef<MatchingController>(
-    new MatchingController(),
-  );
+  const matchingController = useMemo(() => new MatchingController(), []);
 
   const { time, startTimer, stopTimer, resetTimer, isActive, percent } =
-    useTimer(10);
+    useTimer(30);
 
   const cancelMatch = useCallback(async () => {
     if (!currentUser) return;
     setOpen(false);
     setDifficulty("");
     stopTimer();
-    await matchingController.current.cancelMatchingRequest(
-      currentMatchingRequestId,
-    );
-  }, [currentUser, stopTimer, currentMatchingRequestId]);
+    if (currentMatchingRequestId !== "") {
+      await matchingController.cancelMatchingRequest(currentMatchingRequestId);
+    }
+  }, [currentUser, stopTimer, currentMatchingRequestId, matchingController]);
 
   const startMatching = useCallback(
     async (newDifficulty: string) => {
@@ -61,13 +59,19 @@ function MatchPage() {
         userId: currentUser.uid,
         difficulty: newDifficulty,
       };
-      console.log(obj);
-      const res = await matchingController.current.createMatchingRequest(obj);
+      const res = await matchingController.createMatchingRequest(obj);
       if (res && res.data) {
         setCurrentMatchingRequestId(res.data.id.toString());
       }
     },
-    [currentUser, establishedConnection, foundMatch, startTimer, resetTimer],
+    [
+      currentUser,
+      establishedConnection,
+      foundMatch,
+      startTimer,
+      resetTimer,
+      matchingController,
+    ],
   );
 
   useEffect(() => {

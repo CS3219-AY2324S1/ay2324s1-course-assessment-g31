@@ -82,12 +82,14 @@ class MatchingRequestService
     if (!id) throw new Error("No id provided");
 
     try {
-      return await this.prismaClient.matchingRequest.delete({
+      const matchingRequest = await this.prismaClient.matchingRequest.delete({
         where: {
           id,
         },
       });
+      return matchingRequest;
     } catch (error) {
+      console.log(error);
       throw new Error("Failed to delete matching request.");
     }
   }

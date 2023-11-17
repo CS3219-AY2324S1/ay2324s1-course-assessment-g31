@@ -24,6 +24,13 @@ abstract class Controller {
     });
   }
 
+  protected static handleNotFound(res: Response, message: string) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      errors: message,
+    });
+  }
+
   public healthCheck(_req: Request, res: Response) {
     return Controller.handleSuccess(res, { message: "OK" });
   }

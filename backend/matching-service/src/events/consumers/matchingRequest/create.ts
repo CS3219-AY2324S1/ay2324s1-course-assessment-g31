@@ -9,10 +9,17 @@ import MatchingRequestProducer from "../../producers/matchingRequest/producer";
 import { ConsumerFunction } from "../main.interface";
 import kafka from "../../kafka";
 import logger from "../../../util/logger";
+import { ProducerConfig, Partitioners } from "kafkajs";
 
-const matchingEventProducer = new MatchingProducer(kafka.producer());
-const matchingRequestEventProducer = new MatchingRequestProducer(
-  kafka.producer(),
+const producerConfig: ProducerConfig = {
+  createPartitioner: Partitioners.LegacyPartitioner,
+};
+
+export const matchingEventProducer = new MatchingProducer(
+  kafka.producer(producerConfig),
+);
+export const matchingRequestEventProducer = new MatchingRequestProducer(
+  kafka.producer(producerConfig),
 );
 const matchingService = new MatchingService(prismaClient);
 const matchingRequestService = new MatchingRequestService(prismaClient);

@@ -10,8 +10,10 @@ class MatchingController extends GenericController {
 
   public async cancelMatchingRequest(id: string) {
     try {
-      return await this.delete(`matchingRequest/${id}`);
+      const matchingRequest = await this.delete(`matchingRequests/${id}`);
+      return matchingRequest;
     } catch (error) {
+      console.log(error);
       return null;
     }
   }
@@ -19,7 +21,7 @@ class MatchingController extends GenericController {
   public async createMatchingRequest(data: MatchingRequestCreateDTO) {
     try {
       return await this.post<MatchingRequest, MatchingRequestCreateDTO>(
-        "matchingRequest",
+        "matchingRequests",
         data,
       );
     } catch (error) {
@@ -29,7 +31,7 @@ class MatchingController extends GenericController {
 
   public async getMatchingRequests() {
     try {
-      return await this.get<MatchingRequest[]>("matchingRequest");
+      return await this.get<MatchingRequest[]>("matchingRequests");
     } catch (error) {
       return null;
     }
@@ -37,7 +39,7 @@ class MatchingController extends GenericController {
 
   public async getMatchings() {
     try {
-      return await this.get<Matching[]>("matching");
+      return await this.get<Matching[]>("matchings");
     } catch (error) {
       return null;
     }
