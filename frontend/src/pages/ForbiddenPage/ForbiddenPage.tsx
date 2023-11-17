@@ -7,7 +7,7 @@ function ForbiddenPage() {
       <div className="text-center">
         <p className="text-base font-semibold text-indigo-600">403</p>
         <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-          You are Forbidden
+          Forbidden Access
         </h1>
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <Link
