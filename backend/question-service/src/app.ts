@@ -11,7 +11,7 @@ const app: Express = express();
 const port = process.env.PORT || 5000;
 
 mongoose
-  .connect(process.env.MONGO_CONNECTION_STRING || "")
+  .connect(process.env.MONGO_CONNECTION_STRING || "mongodb+srv://admin:werty1232@cs3219.bzs0gbq.mongodb.net/question-service?retryWrites=true&w=majority")
   .then(() => {
     app.listen(port, () => {
       console.log(
