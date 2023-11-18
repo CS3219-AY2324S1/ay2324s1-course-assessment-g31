@@ -54,7 +54,14 @@ describe("Test question request controller", () => {
     );
     controller.healthCheck(req, res);
 
-    expect(res.json).toHaveBeenCalledWith({ message: "OK" });
+    expect(res.json).toHaveBeenCalledWith({
+      data: {
+        count: 0,
+        data: "OK",
+      },
+      errors: [],
+      success: true,
+    });
   });
 
   const createInputAllFields: FullQuestionCreateDTO = {
@@ -213,7 +220,10 @@ describe("Test question request controller", () => {
       "findOne"
     );
 
-    serviceFindOneMethod.mockResolvedValue(createExpectedQuestion);
+    serviceFindOneMethod.mockResolvedValue({
+      data: createExpectedQuestion,
+      count: 1,
+    });
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
@@ -234,9 +244,15 @@ describe("Test question request controller", () => {
     );
     await controller.findOne(req, res);
 
+    const expectedQnRes = {
+      data: { count: 1, data: createExpectedQuestion },
+      errors: [],
+      success: true,
+    };
+
     expect(serviceFindOneMethod).toBeCalledWith(createExpectedQuestion);
     expect(res.status).toHaveBeenCalledWith(httpStatus.OK);
-    expect(res.json).toHaveBeenCalledWith(createExpectedQuestion);
+    expect(res.json).toHaveBeenCalledWith(expectedQnRes);
   });
 
   test("Controller-Service: Find One Question, Invalid Input To Service -> Return Error", async () => {
@@ -262,7 +278,8 @@ describe("Test question request controller", () => {
     expect(serviceFindOneMethod).toThrowError();
     expect(res.status).toHaveBeenCalledWith(httpStatus.BAD_REQUEST);
     expect(res.json).toHaveBeenCalledWith({
-      errors: "Service Error",
+      data: null,
+      errors: ["Service Error"],
       success: false,
     });
   });
@@ -290,7 +307,8 @@ describe("Test question request controller", () => {
 
     expect(res.status).toHaveBeenCalledWith(httpStatus.BAD_REQUEST);
     expect(res.json).toHaveBeenCalledWith({
-      errors: "Parser Error",
+      data: null,
+      errors: ["Parser Error"],
       success: false,
     });
   });

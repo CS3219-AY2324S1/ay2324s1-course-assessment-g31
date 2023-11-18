@@ -110,7 +110,7 @@ describe("Test question service", () => {
     const service = new QuestionService(prismaMock);
     const result = await service.findById(testId);
 
-    expect(result).toEqual(expectedQuestion);
+    expect(result.data).toEqual(expectedQuestion);
   });
 
   // Find One

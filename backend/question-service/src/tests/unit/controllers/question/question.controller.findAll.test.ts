@@ -52,7 +52,14 @@ describe("Test question request controller", () => {
     );
     controller.healthCheck(req, res);
 
-    expect(res.json).toHaveBeenCalledWith({ message: "OK" });
+    expect(res.json).toHaveBeenCalledWith({
+      data: {
+        count: 0,
+        data: "OK",
+      },
+      errors: [],
+      success: true,
+    });
   });
 
   const createInputAllFields: FullQuestionCreateDTO = {
@@ -210,7 +217,10 @@ describe("Test question request controller", () => {
       "findAll"
     );
 
-    serviceFindAllMethod.mockResolvedValue(expectedQuestions);
+    serviceFindAllMethod.mockResolvedValue({
+      data: expectedQuestions,
+      count: 1,
+    });
 
     const { res } = getMockRes({});
     const req = getMockReq({});
@@ -224,7 +234,11 @@ describe("Test question request controller", () => {
 
     expect(serviceFindAllMethod).toBeCalled();
     expect(res.status).toHaveBeenCalledWith(httpStatus.OK);
-    expect(res.json).toHaveBeenCalledWith(expectedQuestions);
+    expect(res.json).toHaveBeenCalledWith({
+      data: { count: 1, data: expectedQuestions },
+      errors: [],
+      success: true,
+    });
   });
 
   test("Controller-Service: Find All Question, Invalid Input To Service -> Return Error", async () => {
@@ -250,7 +264,8 @@ describe("Test question request controller", () => {
     expect(serviceFindAllMethod).toThrowError();
     expect(res.status).toHaveBeenCalledWith(httpStatus.BAD_REQUEST);
     expect(res.json).toHaveBeenCalledWith({
-      errors: "Service Error",
+      data: null,
+      errors: ["Service Error"],
       success: false,
     });
   });

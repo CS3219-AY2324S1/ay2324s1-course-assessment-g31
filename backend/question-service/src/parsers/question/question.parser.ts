@@ -9,7 +9,7 @@ class QuestionParser
   implements Parser<FullQuestionCreateDTO, FullQuestionUpdateDTO, FullQuestion>
 {
   public parseCreateInput(
-    input: StringInterface<FullQuestionCreateDTO>,
+    input: StringInterface<FullQuestionCreateDTO>
   ): FullQuestionCreateDTO {
     if (
       !input.title ||
@@ -25,7 +25,7 @@ class QuestionParser
     input.testCases.forEach((x) => {
       if (!x.testCaseNumber || !x.input || !x.expectedOutput) {
         throw new Error(
-          "Required fields for question's test case of test case number or input or expected output are missing",
+          "Required fields for question's test case of test case number or input or expected output are missing"
         );
       }
     });
@@ -35,7 +35,7 @@ class QuestionParser
     input.initialCodes.forEach((x) => {
       if (!x.code || !x.language) {
         throw new Error(
-          "Required fields for question's initial code of code or language are missing",
+          "Required fields for question's initial code of code or language are missing"
         );
       }
     });
@@ -45,7 +45,7 @@ class QuestionParser
     input.runnerCodes.forEach((x) => {
       if (!x.code || !x.language) {
         throw new Error(
-          "Required fields for question's runner code of code or language are missing",
+          "Required fields for question's runner code of code or language are missing"
         );
       }
     });
@@ -55,7 +55,7 @@ class QuestionParser
     input.solutions.forEach((x) => {
       if (!x.code || !x.language || !x.description || !x.title) {
         throw new Error(
-          "Required fields for question's solution of code or language or description or title are missing",
+          "Required fields for question's solution of code or language or description or title are missing"
         );
       }
     });
@@ -65,7 +65,7 @@ class QuestionParser
     input.categories.forEach((x) => {
       if (!x.name) {
         throw new Error(
-          "Required fields for question's categories of name are missing",
+          "Required fields for question's categories of name are missing"
         );
       }
     });
@@ -84,7 +84,7 @@ class QuestionParser
   }
 
   public parseFindOneInput(
-    input: Partial<StringInterface<FullQuestion>>,
+    input: Partial<StringInterface<FullQuestion>>
   ): Partial<FullQuestion> {
     if (!input || Object.keys(input).length == 0)
       throw new Error("Invalid Input");
@@ -145,7 +145,7 @@ class QuestionParser
   }
 
   public parseUpdateInput(
-    input: Partial<StringInterface<FullQuestionUpdateDTO>>,
+    input: Partial<StringInterface<FullQuestionUpdateDTO>>
   ): Partial<FullQuestionUpdateDTO> {
     const parsedInput: Partial<FullQuestionUpdateDTO> = {};
     parsedInput.title = input.title;
@@ -159,6 +159,9 @@ class QuestionParser
       ...x,
       testCaseNumber: parseInt(x.testCaseNumber, 10),
     }));
+    parsedInput.popularity = input.popularity
+      ? parseInt(input.popularity)
+      : undefined;
     parsedInput.solutions = input.solutions;
     parsedInput.categories = input.categories;
     return parsedInput;

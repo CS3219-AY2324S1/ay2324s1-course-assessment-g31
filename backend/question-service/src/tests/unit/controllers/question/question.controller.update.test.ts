@@ -51,7 +51,11 @@ describe("Test question request controller", () => {
     );
     controller.healthCheck(req, res);
 
-    expect(res.json).toHaveBeenCalledWith({ message: "OK" });
+    expect(res.json).toHaveBeenCalledWith({
+      data: { data: "OK", count: 0 },
+      errors: [],
+      success: true,
+    });
   });
 
   const updateInputAllFields: FullQuestionUpdateDTO = {
@@ -130,7 +134,10 @@ describe("Test question request controller", () => {
       "update"
     );
 
-    serviceUpdateMethod.mockResolvedValue({data: updateExpectedQuestion, count: 1});
+    serviceUpdateMethod.mockResolvedValue({
+      data: updateExpectedQuestion,
+      count: 1,
+    });
 
     const eventProducerMethod = jest.spyOn(
       MockQuestionEventProducerInstance,
@@ -160,10 +167,19 @@ describe("Test question request controller", () => {
     );
     await controller.update(req, res);
 
+    const updateExpectedQuestionRes = {
+      data: {
+        count: 1,
+        data: updateExpectedQuestion,
+      },
+      errors: [],
+      success: true,
+    };
+
     expect(serviceUpdateMethod).toBeCalledWith(testId, updateInputAllFields);
     expect(eventProducerMethod).toBeCalled();
     expect(res.status).toHaveBeenCalledWith(httpStatus.OK);
-    expect(res.json).toHaveBeenCalledWith(updateExpectedQuestion);
+    expect(res.json).toHaveBeenCalledWith(updateExpectedQuestionRes);
   });
 
   test("Controller-Service: Update Question, Invalid Input To Service -> Return Error", async () => {
@@ -189,7 +205,8 @@ describe("Test question request controller", () => {
     expect(serviceUpdateMethod).toThrowError();
     expect(res.status).toHaveBeenCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
     expect(res.json).toHaveBeenCalledWith({
-      errors: "Service Error",
+      data: null,
+      errors: ["Service Error"],
       success: false,
     });
   });
@@ -239,7 +256,8 @@ describe("Test question request controller", () => {
 
     expect(res.status).toHaveBeenCalledWith(httpStatus.BAD_REQUEST);
     expect(res.json).toHaveBeenCalledWith({
-      errors: "Parser Error",
+      data: null,
+      errors: ["Parser Error"],
       success: false,
     });
   });
@@ -267,7 +285,8 @@ describe("Test question request controller", () => {
 
     expect(res.status).toHaveBeenCalledWith(httpStatus.BAD_REQUEST);
     expect(res.json).toHaveBeenCalledWith({
-      errors: "Parser Error",
+      data: null,
+      errors: ["Parser Error"],
       success: false,
     });
   });

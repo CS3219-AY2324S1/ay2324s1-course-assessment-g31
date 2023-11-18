@@ -12,11 +12,12 @@ type ControllerResponse = {
 abstract class Controller {
   protected static handleValidationError(
     res: Response,
-    errors: Result<ValidationError>,
+    errors: Result<ValidationError>
   ) {
+    console.log(errors);
     const result: ControllerResponse = {
       success: false,
-      errors: errors.array().map((x) => x.msg),
+      errors: errors.array().map((x) => JSON.stringify(x)),
       data: undefined,
     };
     return res.status(httpStatus.BAD_REQUEST).json(result);
