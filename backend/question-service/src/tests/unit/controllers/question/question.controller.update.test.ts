@@ -130,7 +130,7 @@ describe("Test question request controller", () => {
       "update"
     );
 
-    serviceUpdateMethod.mockResolvedValue(updateExpectedQuestion);
+    serviceUpdateMethod.mockResolvedValue({data: updateExpectedQuestion, count: 1});
 
     const eventProducerMethod = jest.spyOn(
       MockQuestionEventProducerInstance,

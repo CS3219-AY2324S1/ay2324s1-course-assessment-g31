@@ -98,7 +98,7 @@ describe("Test question service", () => {
     const service = new QuestionService(prismaMock);
     const result = await service.create(input);
 
-    expect(result).toEqual(expectedQuestion);
+    expect(result.data).toEqual(expectedQuestion);
   });
 
   // Find By Id
@@ -120,7 +120,7 @@ describe("Test question service", () => {
     const service = new QuestionService(prismaMock);
     const result = await service.findOne(expectedQuestion);
 
-    expect(result).toEqual(expectedQuestion);
+    expect(result.data).toEqual(expectedQuestion);
   });
 
   // Find All
@@ -168,7 +168,7 @@ describe("Test question service", () => {
     const service = new QuestionService(prismaMock);
     const result = await service.findAll({});
 
-    expect(result).toEqual(expectedQuestions);
+    expect(result.data).toEqual(expectedQuestions);
   });
 
   // Update
@@ -221,7 +221,7 @@ describe("Test question service", () => {
     const service = new QuestionService(prismaMock);
     const result = await service.update(testId, input);
 
-    expect(result).toEqual(expectedQuestion);
+    expect(result.data).toEqual(expectedQuestion);
   });
 
   // Delete
@@ -233,6 +233,6 @@ describe("Test question service", () => {
     const service = new QuestionService(prismaMock);
     const result = await service.delete(testId);
 
-    expect(result).toEqual(expectedQuestion);
+    expect(result.data).toEqual(expectedQuestion);
   });
 });

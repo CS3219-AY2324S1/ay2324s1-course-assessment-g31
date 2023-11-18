@@ -142,7 +142,7 @@ describe("Test question request controller", () => {
       "delete"
     );
 
-    serviceDeleteMethod.mockResolvedValue(createExpectedQuestion);
+    serviceDeleteMethod.mockResolvedValue({data: createExpectedQuestion, count: 1});
 
     const eventProducerMethod = jest.spyOn(
       MockQuestionEventProducerInstance,

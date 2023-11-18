@@ -144,7 +144,7 @@ describe("Test question request controller", () => {
       "create"
     );
 
-    serviceCreateMethod.mockResolvedValue(createExpectedQuestion);
+    serviceCreateMethod.mockResolvedValue({data: createExpectedQuestion, count: 1});
 
     const { res } = getMockRes({});
     const req = getMockReq({});
