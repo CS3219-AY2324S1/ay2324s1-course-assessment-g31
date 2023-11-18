@@ -78,12 +78,18 @@ describe("Test matching request controller", () => {
       "create",
     );
 
+    const serviceFindAllMethod = jest.spyOn(
+      MockMatchingRequestServiceInstance,
+      "findAll",
+    );
+
     const eventProducerMethod = jest.spyOn(
       MockMatchingRequestEventProducerInstance,
       "create",
     );
 
     serviceCreateMethod.mockResolvedValue(expectedMatchingRequest);
+    serviceFindAllMethod.mockResolvedValue([expectedMatchingRequest]);
 
     const { res } = getMockRes({});
     const req = getMockReq({});
@@ -122,7 +128,7 @@ describe("Test matching request controller", () => {
     await controller.create(req, res);
 
     expect(serviceCreateMethod).toThrowError();
-    expect(res.status).toHaveBeenCalledWith(httpStatus.BAD_REQUEST);
+    expect(res.status).toHaveBeenCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
     expect(res.json).toHaveBeenCalledWith({
       errors: "Service Error",
       success: false,

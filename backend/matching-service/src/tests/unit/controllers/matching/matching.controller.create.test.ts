@@ -34,7 +34,7 @@ const MockMatchingParserInstance = new MockMatchingParser();
 const MockPrismaInstance = new MockPrisma();
 const MockMatchingServiceInstance = new MockMatchingService(MockPrismaInstance);
 
-describe("Test matching request controller", () => {
+describe("Test matching controller", () => {
   beforeEach(() => {
     MockMatchingService.mockClear();
     MockMatchingEventProducer.mockClear();
@@ -120,7 +120,7 @@ describe("Test matching request controller", () => {
     await controller.create(req, res);
 
     expect(serviceCreateMethod).toThrowError();
-    expect(res.status).toHaveBeenCalledWith(httpStatus.BAD_REQUEST);
+    expect(res.status).toHaveBeenCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
     expect(res.json).toHaveBeenCalledWith({
       errors: "Service Error",
       success: false,

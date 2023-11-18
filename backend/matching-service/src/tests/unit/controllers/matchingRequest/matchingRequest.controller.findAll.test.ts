@@ -124,7 +124,7 @@ describe("Test matching request controller", () => {
     await controller.findAll(req, res);
 
     expect(serviceFindAllMethod).toThrowError();
-    expect(res.status).toHaveBeenCalledWith(httpStatus.BAD_REQUEST);
+    expect(res.status).toHaveBeenCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
     expect(res.json).toHaveBeenCalledWith({
       errors: "Service Error",
       success: false,

@@ -22,16 +22,32 @@ class MatchingController extends Controller implements CRUDController {
     if (!errors.isEmpty()) {
       return MatchingController.handleValidationError(res, errors);
     }
+
+    let parsedMatching, matching;
     try {
-      const parsedMatching = this.parser.parseCreateInput(req.body);
-      const matching = await this.service.create(parsedMatching);
-      if (matching) {
-        await this.eventProducer.create(matching);
-        return MatchingController.handleSuccess(res, matching);
+      parsedMatching = this.parser.parseCreateInput(req.body);
+    } catch (parserError: any) {
+      return MatchingController.handleBadRequest(res, parserError.message);
+    }
+
+    try {
+      matching = await this.service.create(parsedMatching);
+      if (!matching) {
+        return MatchingController.handleError(
+          res,
+          "Service did not return matching after create",
+        );
       }
-      return MatchingController.handleNotFound(res, "Matching was not created");
-    } catch (e: any) {
-      return MatchingController.handleBadRequest(res, e.message);
+      await this.eventProducer.create(matching);
+      return MatchingController.handleSuccess(res, matching);
+    } catch (serviceError: any) {
+      if (serviceError instanceof Error) {
+        return MatchingController.handleError(res, serviceError.message);
+      }
+      return MatchingController.handleError(
+        res,
+        "Unknown Service Error: Matching Create",
+      );
     }
   };
 
@@ -42,13 +58,29 @@ class MatchingController extends Controller implements CRUDController {
       return MatchingController.handleValidationError(res, errors);
     }
 
+    let parsedId, matching;
     try {
-      const parsedId = this.parser.parseFindByIdInput(req.params.id);
-      const matching = await this.service.findById(parsedId);
-      return MatchingController.handleSuccess(res, matching);
-    } catch (e: any) {
-      return MatchingController.handleBadRequest(res, e.message);
+      parsedId = this.parser.parseFindByIdInput(req.params.id);
+    } catch (parserError: any) {
+      return MatchingController.handleBadRequest(res, parserError.message);
     }
+
+    try {
+      matching = await this.service.findById(parsedId);
+    } catch (serviceError: any) {
+      if (serviceError instanceof Error) {
+        return MatchingController.handleError(res, serviceError.message);
+      }
+      return MatchingController.handleError(
+        res,
+        "Unknown Service Error: Matching Find By Id",
+      );
+    }
+    if (matching) {
+      return MatchingController.handleSuccess(res, matching);
+    }
+
+    return MatchingController.handleNotFound(res, "Matching Was Not Found");
   };
 
   public findOne = async (req: Request, res: Response) => {
@@ -58,13 +90,29 @@ class MatchingController extends Controller implements CRUDController {
       return MatchingController.handleValidationError(res, errors);
     }
 
+    let parsedFindOneInput, matching;
     try {
-      const parsedFindOneInput = this.parser.parseFindOneInput(req.body);
-      const matching = await this.service.findOne(parsedFindOneInput);
-      return MatchingController.handleSuccess(res, matching);
-    } catch (e: any) {
-      return MatchingController.handleBadRequest(res, e.message);
+      parsedFindOneInput = this.parser.parseFindOneInput(req.body);
+    } catch (parserError: any) {
+      return MatchingController.handleBadRequest(res, parserError.message);
     }
+
+    try {
+      matching = await this.service.findOne(parsedFindOneInput);
+    } catch (serviceError: any) {
+      if (serviceError instanceof Error) {
+        return MatchingController.handleError(res, serviceError.message);
+      }
+      return MatchingController.handleError(
+        res,
+        "Unknown Service Error: Matching Find One",
+      );
+    }
+    if (matching) {
+      return MatchingController.handleSuccess(res, matching);
+    }
+
+    return MatchingController.handleNotFound(res, "Matching Was Not Found");
   };
 
   public findAll = async (req: Request, res: Response) => {
@@ -77,8 +125,14 @@ class MatchingController extends Controller implements CRUDController {
     try {
       const matchings = await this.service.findAll();
       return MatchingController.handleSuccess(res, matchings);
-    } catch (e: any) {
-      return MatchingController.handleBadRequest(res, e.message);
+    } catch (serviceError: any) {
+      if (serviceError instanceof Error) {
+        return MatchingController.handleError(res, serviceError.message);
+      }
+      return MatchingController.handleError(
+        res,
+        "Unknown Service Error: Matching Find All",
+      );
     }
   };
 
@@ -89,16 +143,37 @@ class MatchingController extends Controller implements CRUDController {
       return MatchingController.handleValidationError(res, errors);
     }
 
+    let parsedId, parsedUpdateInput, matching;
     try {
-      const parsedId = this.parser.parseFindByIdInput(req.params.id);
-      const parsedUpdateInput = this.parser.parseUpdateInput(req.body);
-      const matching = await this.service.update(parsedId, parsedUpdateInput);
-      if (matching) {
-        await this.eventProducer.update(matching);
+      parsedId = this.parser.parseFindByIdInput(req.params.id);
+    } catch (parserError: any) {
+      return MatchingController.handleBadRequest(res, parserError.message);
+    }
+
+    try {
+      parsedUpdateInput = this.parser.parseUpdateInput(req.body);
+    } catch (parserError: any) {
+      return MatchingController.handleBadRequest(res, parserError.message);
+    }
+
+    try {
+      matching = await this.service.update(parsedId, parsedUpdateInput);
+      if (!matching) {
+        return MatchingController.handleError(
+          res,
+          "Service did not return matching after update",
+        );
       }
+      await this.eventProducer.update(matching);
       return MatchingController.handleSuccess(res, matching);
-    } catch (e: any) {
-      return MatchingController.handleBadRequest(res, e.message);
+    } catch (serviceError: any) {
+      if (serviceError instanceof Error) {
+        return MatchingController.handleError(res, serviceError.message);
+      }
+      return MatchingController.handleError(
+        res,
+        "Unknown Service Error: Matching Update",
+      );
     }
   };
 
@@ -109,15 +184,31 @@ class MatchingController extends Controller implements CRUDController {
       return MatchingController.handleValidationError(res, errors);
     }
 
+    let parsedId, matching;
     try {
-      const parsedId = this.parser.parseFindByIdInput(req.params.id);
-      const matching = await this.service.delete(parsedId);
-      if (matching) {
-        await this.eventProducer.delete(matching);
+      parsedId = this.parser.parseFindByIdInput(req.params.id);
+    } catch (parserError: any) {
+      return MatchingController.handleBadRequest(res, parserError.message);
+    }
+
+    try {
+      matching = await this.service.delete(parsedId);
+      if (!matching) {
+        return MatchingController.handleError(
+          res,
+          "Service did not return matching after delete",
+        );
       }
+      await this.eventProducer.delete(matching);
       return MatchingController.handleSuccess(res, matching);
-    } catch (e: any) {
-      return MatchingController.handleBadRequest(res, e.message);
+    } catch (serviceError: any) {
+      if (serviceError instanceof Error) {
+        return MatchingController.handleError(res, serviceError.message);
+      }
+      return MatchingController.handleError(
+        res,
+        "Unknown Service Error: Matching Delete",
+      );
     }
   };
 }
