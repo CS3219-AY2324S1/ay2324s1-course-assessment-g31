@@ -28,7 +28,7 @@ const MockKafkaInstance = new MockKafka({
   clientId: "question-service",
 });
 const MockQuestionEventProducerInstance = new MockQuestionEventProducer(
-  MockKafkaInstance.producer(),
+  MockKafkaInstance.producer()
 );
 const MockQuestionParserInstance = new MockQuestionParser();
 const MockPrismaInstance = new MockPrisma();
@@ -47,7 +47,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     controller.healthCheck(req, res);
 
@@ -58,6 +58,7 @@ describe("Test question request controller", () => {
     title: "Question 1",
     description: "This is the question description",
     difficulty: "easy",
+    categories: [{ name: "Strings" }],
     examples: ["1,2,3 = 6"],
     constraints: ["No constraints"],
     authorId: "abc",
@@ -78,6 +79,14 @@ describe("Test question request controller", () => {
         testCaseNumber: 1,
         input: "1",
         expectedOutput: ["1"],
+      },
+    ],
+    solutions: [
+      {
+        title: "Question 1",
+        description: "This is the question solution",
+        language: "java",
+        code: "hello world",
       },
     ],
   };
@@ -109,18 +118,30 @@ describe("Test question request controller", () => {
         questionId: 1,
       },
     ],
+    categories: [{ questionId: 1, name: "Strings" }],
+    popularity: 1,
+    solutions: [
+      {
+        id: "1",
+        title: "Question 1",
+        description: "This is the question solution",
+        language: "java",
+        code: "hello world",
+        questionId: 1,
+      },
+    ],
   };
 
   // Create
   test("Controller-Service: Create Question, Valid Input To Service -> Return Object", async () => {
     const serviceCreateMethod = jest.spyOn(
       MockQuestionServiceInstance,
-      "create",
+      "create"
     );
 
     const eventProducerMethod = jest.spyOn(
       MockQuestionEventProducerInstance,
-      "create",
+      "create"
     );
 
     serviceCreateMethod.mockResolvedValue(createExpectedQuestion);
@@ -131,7 +152,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     await controller.create(req, res);
 
@@ -144,7 +165,7 @@ describe("Test question request controller", () => {
   test("Controller-Service: Create Question, Invalid Input To Service -> Return Error", async () => {
     const serviceCreateMethod = jest.spyOn(
       MockQuestionServiceInstance,
-      "create",
+      "create"
     );
 
     serviceCreateMethod.mockImplementation(() => {
@@ -157,7 +178,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     await controller.create(req, res);
@@ -179,12 +200,12 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseCreateInput",
+      "parseCreateInput"
     );
 
     await controller.create(req, res);
@@ -199,12 +220,12 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseCreateInput",
+      "parseCreateInput"
     );
 
     parserParseMethod.mockImplementation(() => {
@@ -295,7 +316,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     await controller.create(req, res);

@@ -29,7 +29,7 @@ const MockKafkaInstance = new MockKafka({
   clientId: "question-service",
 });
 const MockQuestionEventProducerInstance = new MockQuestionEventProducer(
-  MockKafkaInstance.producer(),
+  MockKafkaInstance.producer()
 );
 const MockQuestionParserInstance = new MockQuestionParser();
 const MockPrismaInstance = new MockPrisma();
@@ -48,7 +48,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     controller.healthCheck(req, res);
 
@@ -59,6 +59,7 @@ describe("Test question request controller", () => {
     title: "Question 1",
     description: "This is the question description",
     difficulty: "easy",
+    categories: [{ name: "Strings" }],
     examples: ["1,2,3 = 6"],
     constraints: ["No constraints"],
     authorId: "abc",
@@ -79,6 +80,14 @@ describe("Test question request controller", () => {
         testCaseNumber: 1,
         input: "1",
         expectedOutput: ["1"],
+      },
+    ],
+    solutions: [
+      {
+        title: "Question 1",
+        description: "This is the question solution",
+        language: "java",
+        code: "hello world",
       },
     ],
   };
@@ -110,6 +119,18 @@ describe("Test question request controller", () => {
         questionId: 1,
       },
     ],
+    categories: [{ questionId: 1, name: "Strings" }],
+    popularity: 1,
+    solutions: [
+      {
+        id: "1",
+        title: "Question 1",
+        description: "This is the question solution",
+        language: "java",
+        code: "hello world",
+        questionId: 1,
+      },
+    ],
   };
 
   const updateInputAllFields: FullQuestionUpdateDTO = {
@@ -137,6 +158,17 @@ describe("Test question request controller", () => {
         expectedOutput: ["2"],
       },
     ],
+    popularity: 1,
+    categories: [{ name: "Non Strings" }],
+    solutions: [
+      {
+        id: "1",
+        title: "Question 2",
+        description: "This is the question solution",
+        language: "python",
+        code: "print('hello world')",
+      },
+    ],
   };
 
   const updateExpectedQuestion: FullQuestion = {
@@ -157,6 +189,16 @@ describe("Test question request controller", () => {
       ...x,
       questionId: 1,
     })),
+
+    categories: updateInputAllFields.categories.map((x) => ({
+      ...x,
+      questionId: 1,
+    })),
+    solutions: updateInputAllFields.solutions.map((x) => ({
+      ...x,
+      questionId: 1,
+    })),
+    popularity: 1,
   };
 
   // Find All
@@ -165,7 +207,7 @@ describe("Test question request controller", () => {
 
     const serviceFindAllMethod = jest.spyOn(
       MockQuestionServiceInstance,
-      "findAll",
+      "findAll"
     );
 
     serviceFindAllMethod.mockResolvedValue(expectedQuestions);
@@ -176,7 +218,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     await controller.findAll(req, res);
 
@@ -188,7 +230,7 @@ describe("Test question request controller", () => {
   test("Controller-Service: Find All Question, Invalid Input To Service -> Return Error", async () => {
     const serviceFindAllMethod = jest.spyOn(
       MockQuestionServiceInstance,
-      "findAll",
+      "findAll"
     );
 
     serviceFindAllMethod.mockImplementation(() => {
@@ -201,7 +243,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     await controller.findAll(req, res);
 
@@ -288,7 +330,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     await controller.findAll(req, res);

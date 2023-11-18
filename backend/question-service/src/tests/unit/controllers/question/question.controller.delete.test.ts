@@ -10,6 +10,7 @@ import { FullQuestion } from "../../../../interfaces/fullQuestion/object";
 import QuestionParser from "../../../../parsers/question/question.parser";
 import QuestionService from "../../../../services/question/question.service";
 import QuestionController from "../../../../controllers/question/question.controller";
+import { QuestionCategoryCreateDTO } from "../../../../interfaces/questionCategory/createDTO";
 
 jest.mock("kafkajs");
 jest.mock("@prisma/client");
@@ -28,7 +29,7 @@ const MockKafkaInstance = new MockKafka({
   clientId: "question-service",
 });
 const MockQuestionEventProducerInstance = new MockQuestionEventProducer(
-  MockKafkaInstance.producer(),
+  MockKafkaInstance.producer()
 );
 const MockQuestionParserInstance = new MockQuestionParser();
 const MockPrismaInstance = new MockPrisma();
@@ -47,7 +48,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     controller.healthCheck(req, res);
 
@@ -57,6 +58,7 @@ describe("Test question request controller", () => {
   const createInputAllFields: FullQuestionCreateDTO = {
     title: "Question 1",
     description: "This is the question description",
+    categories: [{ name: "Strings" }],
     difficulty: "easy",
     examples: ["1,2,3 = 6"],
     constraints: ["No constraints"],
@@ -78,6 +80,14 @@ describe("Test question request controller", () => {
         testCaseNumber: 1,
         input: "1",
         expectedOutput: ["1"],
+      },
+    ],
+    solutions: [
+      {
+        title: "Question 1",
+        description: "This is the question solution",
+        language: "java",
+        code: "hello world",
       },
     ],
   };
@@ -109,6 +119,18 @@ describe("Test question request controller", () => {
         questionId: 1,
       },
     ],
+    categories: [{ questionId: 1, name: "Strings" }],
+    popularity: 1,
+    solutions: [
+      {
+        id: "1",
+        title: "Question 1",
+        description: "This is the question solution",
+        language: "java",
+        code: "hello world",
+        questionId: 1,
+      },
+    ],
   };
 
   // Delete
@@ -117,19 +139,19 @@ describe("Test question request controller", () => {
 
     const serviceDeleteMethod = jest.spyOn(
       MockQuestionServiceInstance,
-      "delete",
+      "delete"
     );
 
     serviceDeleteMethod.mockResolvedValue(createExpectedQuestion);
 
     const eventProducerMethod = jest.spyOn(
       MockQuestionEventProducerInstance,
-      "delete",
+      "delete"
     );
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseFindByIdInput",
+      "parseFindByIdInput"
     );
 
     parserParseMethod.mockImplementation(() => parseInt(testId));
@@ -144,7 +166,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     await controller.delete(req, res);
 
@@ -157,7 +179,7 @@ describe("Test question request controller", () => {
   test("Controller-Service: Delete Question, Invalid Input To Service -> Return Error", async () => {
     const serviceDeleteMethod = jest.spyOn(
       MockQuestionServiceInstance,
-      "delete",
+      "delete"
     );
 
     serviceDeleteMethod.mockImplementation(() => {
@@ -170,7 +192,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     await controller.delete(req, res);
@@ -195,12 +217,12 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseFindByIdInput",
+      "parseFindByIdInput"
     );
 
     await controller.delete(req, res);
@@ -215,12 +237,12 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseFindByIdInput",
+      "parseFindByIdInput"
     );
 
     parserParseMethod.mockImplementation(() => {
@@ -311,7 +333,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     await controller.delete(req, res);

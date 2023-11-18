@@ -28,7 +28,7 @@ const MockKafkaInstance = new MockKafka({
   clientId: "question-service",
 });
 const MockQuestionEventProducerInstance = new MockQuestionEventProducer(
-  MockKafkaInstance.producer(),
+  MockKafkaInstance.producer()
 );
 const MockQuestionParserInstance = new MockQuestionParser();
 const MockPrismaInstance = new MockPrisma();
@@ -47,7 +47,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     controller.healthCheck(req, res);
 
@@ -79,6 +79,17 @@ describe("Test question request controller", () => {
         expectedOutput: ["2"],
       },
     ],
+    popularity: 1,
+    categories: [{ name: "Non Strings" }],
+    solutions: [
+      {
+        id: "1",
+        title: "Question 2",
+        description: "This is the question solution",
+        language: "python",
+        code: "print('hello world')",
+      },
+    ],
   };
 
   const updateExpectedQuestion: FullQuestion = {
@@ -99,6 +110,15 @@ describe("Test question request controller", () => {
       ...x,
       questionId: 1,
     })),
+    categories: updateInputAllFields.categories.map((x) => ({
+      ...x,
+      questionId: 1,
+    })),
+    solutions: updateInputAllFields.solutions.map((x) => ({
+      ...x,
+      questionId: 1,
+    })),
+    popularity: 1,
   };
 
   // Update
@@ -107,24 +127,24 @@ describe("Test question request controller", () => {
 
     const serviceUpdateMethod = jest.spyOn(
       MockQuestionServiceInstance,
-      "update",
+      "update"
     );
 
     serviceUpdateMethod.mockResolvedValue(updateExpectedQuestion);
 
     const eventProducerMethod = jest.spyOn(
       MockQuestionEventProducerInstance,
-      "update",
+      "update"
     );
 
     const parserParseFindByIdInputMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseFindByIdInput",
+      "parseFindByIdInput"
     );
 
     const parserParseUpdateInputMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseUpdateInput",
+      "parseUpdateInput"
     );
 
     parserParseFindByIdInputMethod.mockImplementation(() => testId);
@@ -136,7 +156,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     await controller.update(req, res);
 
@@ -149,7 +169,7 @@ describe("Test question request controller", () => {
   test("Controller-Service: Update Question, Invalid Input To Service -> Return Error", async () => {
     const serviceUpdateMethod = jest.spyOn(
       MockQuestionServiceInstance,
-      "update",
+      "update"
     );
 
     serviceUpdateMethod.mockImplementation(() => {
@@ -162,7 +182,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     await controller.update(req, res);
 
@@ -183,12 +203,12 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseUpdateInput",
+      "parseUpdateInput"
     );
 
     await controller.update(req, res);
@@ -203,12 +223,12 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseFindByIdInput",
+      "parseFindByIdInput"
     );
 
     parserParseMethod.mockImplementation(() => {
@@ -231,12 +251,12 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseUpdateInput",
+      "parseUpdateInput"
     );
 
     parserParseMethod.mockImplementation(() => {
@@ -327,7 +347,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     await controller.update(req, res);

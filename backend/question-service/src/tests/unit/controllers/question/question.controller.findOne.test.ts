@@ -31,7 +31,7 @@ const MockKafkaInstance = new MockKafka({
   clientId: "question-service",
 });
 const MockQuestionEventProducerInstance = new MockQuestionEventProducer(
-  MockKafkaInstance.producer(),
+  MockKafkaInstance.producer()
 );
 const MockQuestionParserInstance = new MockQuestionParser();
 const MockPrismaInstance = new MockPrisma();
@@ -50,7 +50,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     controller.healthCheck(req, res);
 
@@ -60,6 +60,7 @@ describe("Test question request controller", () => {
   const createInputAllFields: FullQuestionCreateDTO = {
     title: "Question 1",
     description: "This is the question description",
+    categories: [{ name: "Strings" }],
     difficulty: "easy",
     examples: ["1,2,3 = 6"],
     constraints: ["No constraints"],
@@ -81,6 +82,14 @@ describe("Test question request controller", () => {
         testCaseNumber: 1,
         input: "1",
         expectedOutput: ["1"],
+      },
+    ],
+    solutions: [
+      {
+        title: "Question 1",
+        description: "This is the question solution",
+        language: "java",
+        code: "hello world",
       },
     ],
   };
@@ -112,6 +121,18 @@ describe("Test question request controller", () => {
         questionId: 1,
       },
     ],
+    categories: [{ questionId: 1, name: "Strings" }],
+    popularity: 1,
+    solutions: [
+      {
+        id: "1",
+        title: "Question 1",
+        description: "This is the question solution",
+        language: "java",
+        code: "hello world",
+        questionId: 1,
+      },
+    ],
   };
 
   const updateInputAllFields: FullQuestionUpdateDTO = {
@@ -139,6 +160,17 @@ describe("Test question request controller", () => {
         expectedOutput: ["2"],
       },
     ],
+    popularity: 1,
+    categories: [{ name: "Non Strings" }],
+    solutions: [
+      {
+        id: "1",
+        title: "Question 2",
+        description: "This is the question solution",
+        language: "python",
+        code: "print('hello world')",
+      },
+    ],
   };
 
   const updateExpectedQuestion: FullQuestion = {
@@ -159,24 +191,33 @@ describe("Test question request controller", () => {
       ...x,
       questionId: 1,
     })),
+    categories: updateInputAllFields.categories.map((x) => ({
+      ...x,
+      questionId: 1,
+    })),
+    solutions: updateInputAllFields.solutions.map((x) => ({
+      ...x,
+      questionId: 1,
+    })),
+    popularity: 1,
   };
 
   // Find One
   test("Controller-Service: Find One Question, Valid Input To Service -> Return Object", async () => {
     const input: StringInterface<FullQuestion> = stringify(
-      updateExpectedQuestion,
+      updateExpectedQuestion
     );
 
     const serviceFindOneMethod = jest.spyOn(
       MockQuestionServiceInstance,
-      "findOne",
+      "findOne"
     );
 
     serviceFindOneMethod.mockResolvedValue(createExpectedQuestion);
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseFindOneInput",
+      "parseFindOneInput"
     );
 
     parserParseMethod.mockImplementation(() => createExpectedQuestion);
@@ -189,7 +230,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     await controller.findOne(req, res);
 
@@ -201,7 +242,7 @@ describe("Test question request controller", () => {
   test("Controller-Service: Find One Question, Invalid Input To Service -> Return Error", async () => {
     const serviceFindOneMethod = jest.spyOn(
       MockQuestionServiceInstance,
-      "findOne",
+      "findOne"
     );
 
     serviceFindOneMethod.mockImplementation(() => {
@@ -214,7 +255,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
     await controller.findOne(req, res);
 
@@ -233,12 +274,12 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     const parserParseMethod = jest.spyOn(
       MockQuestionParserInstance,
-      "parseFindOneInput",
+      "parseFindOneInput"
     );
 
     parserParseMethod.mockImplementation(() => {
@@ -329,7 +370,7 @@ describe("Test question request controller", () => {
     const controller = new QuestionController(
       MockQuestionServiceInstance,
       MockQuestionParserInstance,
-      MockQuestionEventProducerInstance,
+      MockQuestionEventProducerInstance
     );
 
     await controller.findOne(req, res);
