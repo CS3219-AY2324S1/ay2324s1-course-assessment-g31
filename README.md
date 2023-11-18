@@ -58,3 +58,4 @@ Steps to take to test for Assignment 3:
 ## Frontend
 - In the terminal, cd to the `frontend` directory, and type `yarn`.
 - Next type `yarn run dev` in the terminal in this same directory.
+- Access site at the specified url (http://localhost:8080/)
