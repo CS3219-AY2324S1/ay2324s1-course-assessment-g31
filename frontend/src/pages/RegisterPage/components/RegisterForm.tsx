@@ -49,7 +49,7 @@ export default function RegisterForm() {
       } else {
         console.log("Successfully registered:", formData);
         setMessage("Successfully registered"); // Set the success message
-        navigate("/login"); // Navigate to the login page
+        navigate("/user/login"); // Navigate to the login page
       }
     } catch (err: any) {
       console.error("Network error:", err.message);

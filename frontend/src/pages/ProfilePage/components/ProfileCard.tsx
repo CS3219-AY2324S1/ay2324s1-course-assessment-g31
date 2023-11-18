@@ -24,7 +24,7 @@ export default function ProfileCard() {
 
   const handleLogout = () => {
     // TODO: Perform logout actions here (e.g., clearing user session)
-    navigate("/login");
+    navigate("/user/login");
   };
 
   const openUpdateProfileModal = () => {

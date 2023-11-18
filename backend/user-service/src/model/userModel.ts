@@ -17,7 +17,7 @@ export const userFunctions = {
   async isEmailTaken(email: string): Promise<boolean> {
     try {
       const user = await db.query(
-        "SELECT * FROM public.users WHERE email = $1",
+        "SELECT * FROM public.usersA2 WHERE email = $1",
         [email]
       );
       if (user.rows.length > 0) {
@@ -34,7 +34,7 @@ export const userFunctions = {
   async insertUser(user: User): Promise<void> {
     try {
       const query = `
-                INSERT INTO public.users (user_id, account_type, username, email, hashed_pw)
+                INSERT INTO public.usersA2 (user_id, account_type, username, email, hashed_pw)
                 VALUES ($1, $2, $3, $4, $5);
             `;
       const values = [
@@ -54,7 +54,7 @@ export const userFunctions = {
   async getUserByEmail(email: string): Promise<User | null> {
     try {
       const queryResult = await db.query<User>(
-        "SELECT * FROM public.users WHERE email = $1",
+        "SELECT * FROM public.usersA2 WHERE email = $1",
         [email]
       );
 
@@ -74,7 +74,7 @@ export const userFunctions = {
     try {
       const uuidConvert = parse(id);
       const queryResult = await db.query<User>(
-        "SELECT * FROM public.users WHERE user_id = $1",
+        "SELECT * FROM public.usersA2 WHERE user_id = $1",
         [uuidConvert]
       );
 
@@ -94,7 +94,7 @@ export const userFunctions = {
     try {
       const uuidConvert = parse(id);
       const deleteResult = await db.query(
-        "DELETE FROM public.users WHERE user_id = $1",
+        "DELETE FROM public.usersA2 WHERE user_id = $1",
         [uuidConvert]
       );
 
@@ -116,7 +116,7 @@ export const userFunctions = {
     try {
       const uuidConvert = parse(id);
       const updateResult = await db.query(
-        "UPDATE public.users SET email = $2, username = $3 WHERE user_id = $1",
+        "UPDATE public.usersA2 SET email = $2, username = $3 WHERE user_id = $1",
         [uuidConvert, email, username]
       );
       if (updateResult.rowCount === 1) {
@@ -150,7 +150,7 @@ export const userFunctions = {
 
       const newPasswordHash = await bcrypt.hash(newPassword, 8);
       const updateResult = await db.query(
-        "UPDATE public.users SET hashed_pw = $2 WHERE user_id = $1",
+        "UPDATE public.usersA2 SET hashed_pw = $2 WHERE user_id = $1",
         [user.user_id, newPasswordHash]
       );
 
