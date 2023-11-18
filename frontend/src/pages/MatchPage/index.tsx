@@ -41,7 +41,7 @@ function MatchPage() {
     setDifficulty("");
     stopTimer();
     await matchingController.cancelMatchingRequest(currentMatchingRequestId);
-  }, [currentUser, stopTimer, currentMatchingRequestId]);
+  }, [currentUser, stopTimer, currentMatchingRequestId, matchingController]);
 
   const startMatching = useCallback(
     async (newDifficulty: string) => {
@@ -66,7 +66,14 @@ function MatchPage() {
         setCurrentMatchingRequestId(res.data.id.toString());
       }
     },
-    [currentUser, establishedConnection, foundMatch, startTimer, resetTimer],
+    [
+      currentUser,
+      establishedConnection,
+      foundMatch,
+      startTimer,
+      resetTimer,
+      matchingController,
+    ],
   );
 
   useEffect(() => {
