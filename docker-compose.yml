@@ -1,26 +1,57 @@
 version: "3"
 services:
-  video-call:
-    container_name: video-call-service
-    build:
-      context: ./backend/services/video-call-service
-      dockerfile: Dockerfile
-    ports:
-      - "5005:5000"
-    environment:
-      - PORT=5000 
-    env_file:
-      - ./backend/services/video-call-service/.env
-    links:
-      - postgres_video_call_service
 
-  postgres_video_call_service:
-    image: postgres:latest
-    container_name: postgres-video-call-service
-    volumes:
-      - progresDB:/data/postgres/video-call-service
+  frontend: 
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports: "8080:8080"
+    depends_on:
+      - user-service
+      - question-service
+
+  question_service:
+    container_name: question_service
+    build:
+      context: backend/question-service
+      dockerfile: Dockerfile
+    ports: "5000:5000"
     env_file:
-      - ./backend/services/video-call-service/.env
+      - .env
+    links:
+      - postgres_db
+    depends_on:
+      - postgres_db
+  
+  user_service:
+    container_name: user_service
+    build:
+      context: backend/user-service
+      dockerfile: Dockerfile
+    ports: "3000:3000"
+    env_file:
+      - .env
+    links:
+      - postgres_db
+    depends_on:
+      - postgres_db
+
+  postgres_db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres_db
+      POSTGRES_USER: postgres
+      POSTGRES_HOST: postgres_db
+      POSTGRES_PORT: 5432
+    healthcheck:
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   progresDB:

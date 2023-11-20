@@ -27,7 +27,7 @@ COPY --from=base /dist /dist
 COPY --from=base /prisma /prisma
 COPY package.json ./
 
-# Expose port 5000
-EXPOSE 5000
+# Expose port 3000
+EXPOSE 3000
 
 CMD yarn run start:migrate
