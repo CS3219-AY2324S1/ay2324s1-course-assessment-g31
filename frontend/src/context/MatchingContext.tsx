@@ -134,7 +134,6 @@ export function MatchingProvider({ children }: MatchingProviderProps) {
     (value: any) => {
       if (!currentUser) return;
       const obj = JSON.parse(value);
-      const { matchingIdFromSocket, user1Id, user2Id, questionId } = obj;
 
       const newMatchedUserId = user1Id === currentUser.uid ? user2Id : user1Id;
       setMatchedUserId(() => newMatchedUserId);
