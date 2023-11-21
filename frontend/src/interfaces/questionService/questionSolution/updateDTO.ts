@@ -1,0 +1,11 @@
+export type QuestionSolutionUpdateDTO = {
+  id: string;
+  title: string;
+  description: string;
+  language: string;
+  code: string;
+};
+
+export type QuestionSolutionUpdateDTOs = {
+  solutions: QuestionSolutionUpdateDTO[];
+};

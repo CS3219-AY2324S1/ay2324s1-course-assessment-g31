@@ -1,0 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Matching {
+    id                  Int      @id @default(autoincrement())
+    user1Id             String
+    user2Id             String
+    requestId           Int
+    difficulty          String
+    questionIdRequested Int?
+    dateTimeMatched     DateTime @default(now())
+}
+
+model MatchingRequest {
+    id            Int      @id @default(autoincrement())
+    userId        String
+    questionId    Int?
+    difficulty    String
+    dateRequested DateTime @default(now())
+    success       Boolean  @default(false)
+}
