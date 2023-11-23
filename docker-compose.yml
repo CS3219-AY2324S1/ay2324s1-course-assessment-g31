@@ -1,26 +1,78 @@
 version: "3"
 services:
-  video-call:
-    container_name: video-call-service
+  frontend: 
+    container_name: frontend
     build:
-      context: ./backend/services/video-call-service
+      context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "5005:5000"
-    environment:
-      - PORT=5000 
-    env_file:
-      - ./backend/services/video-call-service/.env
-    links:
-      - postgres_video_call_service
+    ports: 
+     - "8080:8080"
+    depends_on:
+      - user_service  
+      - question_service
 
-  postgres_video_call_service:
-    image: postgres:latest
-    container_name: postgres-video-call-service
-    volumes:
-      - progresDB:/data/postgres/video-call-service
+  question_service_db:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    restart: always
+    environment:
+      - MONGODB_CONNSTRING=mongodb+srv://admin:werty1232@cs3219.bzs0gbq.mongodb.net/question-service?retryWrites=true&w=majority
+
+  # mongo-express:
+  #   image: mongo-express
+  #   restart: always
+  #   ports:
+  #     - 8081:8081
+    # environment:
+    #   ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+    #   ME_CONFIG_MONGODB_ADMINPASSWORD: werty1232
+    #   ME_CONFIG_MONGODB_URL: mongodb+srv://admin:werty1232@cs3219.bzs0gbq.mongodb.net/question-service?retryWrites=true&w=majority
+  #     - question-service
+
+  question_service:
+    container_name: question_service
+    build:
+      context: backend/question-service
+      dockerfile: Dockerfile
+    ports: 
+      - "5000:5000"
     env_file:
-      - ./backend/services/video-call-service/.env
+      - backend/question-service/.env
+    links:
+      - question_service_db
+    depends_on:
+      - question_service_db
+  
+  user_service:
+    container_name: user_service
+    build:
+      context: backend/user-service
+      dockerfile: Dockerfile
+    ports: 
+      - "3000:3000"
+    env_file:
+      - backend/user-service/.env
+    links:
+      - postgres_db
+    depends_on:
+      - postgres_db
+
+  postgres_db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: cs3219assignmentgroup31
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_HOST: 34.142.179.10
+      POSTGRES_PORT: 5432
+    # healthcheck:
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 5
 
 volumes:
   progresDB:
